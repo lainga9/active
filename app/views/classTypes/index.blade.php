@@ -1,0 +1,1 @@
+/Users/Alex/Sites/active/app/views/ClassTypes/index.blade.php

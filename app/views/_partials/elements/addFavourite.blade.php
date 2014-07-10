@@ -1,0 +1,1 @@
+<a href="{{ URL::route('activity.addFavourite') }}" class="btn btn-sm btn-success add-favourite" data-id="{{$activity->id}}">Add Favourite</a>

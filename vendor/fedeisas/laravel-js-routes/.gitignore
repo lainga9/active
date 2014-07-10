@@ -1,0 +1,7 @@
+/vendor/
+/node_modules/
+/.grunt/
+/build/
+composer.phar
+_SpecRunner.html
+.DS_Store

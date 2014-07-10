@@ -1,0 +1,1 @@
+<a href="{{ URL::route('activity.removeFavourite') }}" class="btn btn-sm btn-danger remove-favourite" data-id="{{$activity->id}}">Remove Favourite</a>

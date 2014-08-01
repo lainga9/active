@@ -5,8 +5,7 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		$.ajax({
 			type: "POST",
-			url: $(this).attr('href'),
-			data: "id=" + $(this).data('id')
+			url: $(this).attr('href')
 		}).done(function(result) {
 			$this.replaceWith(result.html);
 		});

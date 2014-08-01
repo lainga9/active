@@ -11,6 +11,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	protected $guarded = [];
 
+	// This array is used to distinguish which fields should be stored in the users table as opposed to the clients or instructors table. It's used when static::createAccount() is called in UsersController
+
 	public static $userAttributes = [
 		'first_name',
 		'last_name',
@@ -21,9 +23,19 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	/* Relationships */
 
-	// Classes listed by an Instructor
-	public function Activities()
+	public function CreditHistory()
 	{
+		return $this->hasMany('Credit', 'instructor_id');
+	}
+
+	// Classes listed by an Instructor
+	public function Activities($date = null)
+	{
+		if( $date )
+		{
+			return $this->hasMany('Activity')->whereDate($date);	
+		}
+
 		return $this->hasMany('Activity');
 	}
 
@@ -33,26 +45,31 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->belongsToMany('Activity');
 	}
 
+	// Clients favourite activities
 	public function Favourites()
 	{
 		return $this->belongsToMany('Activity', 'activity_favourite');
 	}
 
+	// Feedback an instructor has received
 	public function Feedback()
 	{
 		return $this->hasMany('Feedback', 'instructor_id');
 	}
 
+	// Messages sent by a User
 	public function sentMessages()
 	{
 		return $this->hasMany('Message', 'sender_id');
 	}
 
+	// Messages received by a user
 	public function receivedMessages()
 	{
 		return $this->hasMany('Message', 'recipient_id');
 	}
 
+	// Class types associated to an instructor. It checks all activities listed by an instructor and returns all of the classtypes associated to them.
 	public static function ClassTypes($user)
 	{
 		$classTypes = [];

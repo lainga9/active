@@ -5,16 +5,46 @@ class ActivitiesController extends \BaseController {
 	protected $layout = 'layouts.main';
 	protected $activity;
 	protected $classType;	
+	protected $instructor;
+	protected $client;
 
-	public function __construct(Activity $activity, ClassType $classType)
+	public function __construct(
+		Activity $activity, 
+		ClassType $classType,
+		Instructor $instructor,
+		Client $client
+	)
 	{
 		$this->activity 	= $activity;
 		$this->classType 	= $classType;
+		$this->instructor 	= $instructor;
+		$this->client 		= $client;
 
-		// Filters
-		$this->beforeFilter('instructor', ['only' => ['create', 'store']] );
-		$this->beforeFilter('client', ['only' => ['attending']] );
+		/*-------- FILTERS -------*/
+
+		// Instructor Only Pages
+		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'timetable']] );
+
+		// Client Only Pages
+		$this->beforeFilter('client', ['only' => ['attending', 'favourites']] );
+
+		$this->beforeFilter('instructor.hasCredits', ['only' => ['create', 'store']] );
+		// Checks the user is not an instructor since they're not allowed to book. Checks that the user isn't already booked in.
 		$this->beforeFilter('activity.book', ['only' => ['book']] );
+
+		// Checks that the activity exists
+		$this->beforeFilter('exists.activity', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending']] );
+
+		// Checks the activity lasts at least 30 minutes
+		// $this->beforeFilter('activity.hasLength', ['only' => ['store']] );
+
+		// Makes sure the activity isn't already a favourite when trying to add to favourites
+		$this->beforeFilter('activity.isFavourite', ['only' => ['addFavourite']] );
+
+		// Makes sure activity is a favourite before it's removed
+		$this->beforeFilter('activity.notFavourite', ['only' => ['removeFavourite']] );
+
+		$this->beforeFilter('activity.belongsTo', ['only' => ['edit']] );
 	}
 
 	/**
@@ -25,7 +55,7 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function index()
 	{
-		$activities = $this->activity->all();
+		$activities = $this->activity->paginate(10);
 
 		if( User::isInstructor() )
 		{
@@ -82,22 +112,23 @@ class ActivitiesController extends \BaseController {
 			->withInput();
 		}
 
-		if(strtotime(Input::get('time_from')) >= strtotime(Input::get('time_until')))
+		$clashes = $this->instructor->checkAvailable(Auth::user(), Input::get());
+
+		if( !$clashes->isEmpty() )
 		{
 			return Redirect::back()
-			->with('error', 'Please make sure your class last at least 30 minutes');
+			->withInput()
+			->with([
+				'error' 		=> 'There has been a clash!',
+				'activities' 	=> $clashes
+			]);
 		}
 
 		$activity = $this->activity->create(Input::except('class_type_id'));
 
-		// If there are any class types associated with this activity then insert the relationships
-		if( $classTypes = Input::get('class_type_id') )
-		{
-			foreach( $classTypes as $classType )
-			{
-				$activity->classTypes()->attach($classType);
-			}
-		}
+		$this->activity->attachClassTypes($activity);
+		
+		$this->instructor->spendCredit(Auth::user(), $activity);
 
 		return Redirect::back()
 		->with('success', 'Activity added successfully');
@@ -113,13 +144,6 @@ class ActivitiesController extends \BaseController {
 	public function show($id)
 	{
 		$activity = $this->activity->find($id);
-
-		if( !$activity )
-		{
-			return Redirect::back()
-			->with('error', 'Activity not found!');
-		}
-
 		$this->layout = View::make('layouts.full');
 		$this->layout->content = View::make('activities.show', compact('activity'));
 	}
@@ -133,7 +157,8 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		$activity = $this->activity->find($id);
+		$this->layout->content = View::make('activities.edit', compact('activity'));
 	}
 
 	/**
@@ -145,7 +170,35 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		$validation = new Services\Validators\Activity;
+
+		if( !$validation->passes() )
+		{
+			return Redirect::back()
+			->withErrors($validation->errors)
+			->withInput();
+		}
+
+		$activity = $this->activity->find($id);
+
+		$activity = $activity->update(Input::except('class_type_id'));
+
+		$clashes = $this->instructor->checkAvailable(Auth::user(), Input::all());
+
+		if( !$clashes->isEmpty() )
+		{
+			return Redirect::back()
+			->withInput()
+			->with([
+				'error' 		=> 'There has been a clash!',
+				'activities' 	=> $clashes
+			]);
+		}
+
+		$activity->attachClassTypes($activity);
+
+		return Redirect::back()
+		->with('success', 'Activity added successfully');
 	}
 
 	/**
@@ -160,7 +213,6 @@ class ActivitiesController extends \BaseController {
 		//
 	}
 
-
 	/**
 	 * Attaches a user to an activity
 	 * POST /bookActivity
@@ -170,25 +222,22 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function book($id)
 	{
-		$activity = $this->activity->find($id);
+		$activity = $this->activity->find($id);		
 
-		if( !$activity )
-		{
-			return Redirect::route('admin')
-			->with('error', 'Sorry, we can\'t find the activity you requested!');
-		}
+		$clashes = $this->client->checkAvailable(Auth::user(), $activity);
 
-		if( Auth::user()->attendingActivities->contains($id) )
+		if( !$clashes->isEmpty() )
 		{
 			return Redirect::back()
-			->with('status', 'You are already booked into this class!');
+			->with([
+				'error' 		=> 'You are already booked into ' . $clashes->first()->name . ' at that time!',
+				'activities' 	=> $clashes
+			]);
 		}
 
 		Auth::user()->attendingActivities()->attach($id);
 
-		// Reduce number of places by 1
-		$activity->places = (int) $activity->places - 1;
-		$activity->save();
+		$this->activity->reducePlaces($activity);
 		
 		return Redirect::back()
 		->with('success', 'You have successfully booked this activity');
@@ -202,8 +251,8 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function favourites()
 	{
-		$activities = Auth::user()->favourites;
-		$this->layout->content = View::make('activities.favourites')->with(compact('activities'));
+		$activities = Auth::user()->favourites()->paginate(10);
+		$this->layout->content = View::make('activities.client.index')->with(compact('activities'));
 	}
 
 	/**
@@ -212,25 +261,10 @@ class ActivitiesController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function addFavourite()
+	public function addFavourite($id)
 	{
-		$id = Input::get('id');
-
 		$activity = $this->activity->find($id);
-		if( !$activity )
-		{
-			return Response::json([
-				'error' => 'Sorry, we can\'t find the activity you requested!'
-			]);
-		}
-
-		if( Auth::user()->favourites->contains($id) )
-		{
-			return Response::json([
-				'status' => 'This is already in your favourites!'
-			]);
-		}
-
+		
 		// Add the activity to the users favourites
 		Auth::user()->favourites()->attach($id);
 
@@ -248,24 +282,9 @@ class ActivitiesController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function removeFavourite()
+	public function removeFavourite($id)
 	{
-		$id = Input::get('id');
-
 		$activity = $this->activity->find($id);
-		if( !$activity )
-		{
-			return Response::json([
-				'error' => 'Sorry, we can\'t find the activity you requested!'
-			]);
-		}
-
-		if( !Auth::user()->favourites->contains($id) )
-		{
-			return Response::json([
-				'status' => 'This activity is not in your favourites!'
-			]);
-		}
 
 		// Add the activity to the users favourites
 		Auth::user()->favourites()->detach($id);
@@ -280,8 +299,17 @@ class ActivitiesController extends \BaseController {
 
 	public function getSearch()
 	{
-		$activities = $this->activity->all();
-		$this->layout->content = View::make('activities.search')->with(compact('activities'));
+		$activities = Search::execute(Input::all());
+
+		if( Request::ajax() )
+		{
+			return Response::json([
+				'activities' => $activities
+			]);
+		}
+
+		// Returning the view since we are overriding the layout in the template
+		return View::make('activities.search')->with(compact('activities'));
 	}
 
 	/**
@@ -306,10 +334,37 @@ class ActivitiesController extends \BaseController {
 		}
 	}
 
+	public function buildPagination(Paginator $paginator)
+	{
+		
+	}
+
 	public function api()
 	{
 		$activities = Search::execute(Input::all());
 
 		return $activities;
+	}
+
+	public function apiFavourites()
+	{
+		return Auth::user()->favourites;
+	}
+
+	public function apiAttending()
+	{
+		return Auth::user()->attendingActivities;
+	}
+
+	public function isFavourite($id)
+	{
+		$activity = $this->activity->find($id);
+		return $this->activity->isFavourite($activity);
+	}
+
+	public function isAttending($id)
+	{
+		$activity = $this->activity->find($id);
+		return $this->activity->isAttending($activity);
 	}
 }

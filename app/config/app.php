@@ -122,7 +122,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
-		'Fedeisas\LaravelJsRoutes\LaravelJsRoutesServiceProvider'
+		'Fedeisas\LaravelJsRoutes\LaravelJsRoutesServiceProvider',
+		'Laravel\Cashier\CashierServiceProvider'
 	),
 
 	/*

@@ -4,20 +4,26 @@ class FeedbackController extends \BaseController {
 
 	protected $layout = 'layouts.main';
 	protected $feedback;
-	protected $activity;
+	protected $feedbackValue;
+	protected $instructor;
 	protected $user;
 
 	public function __construct(
-		Feedback $feedback, 
-		Activity $activity,
+		Feedback $feedback,
+		FeedbackValue $feedbackValue,
+		Instructor $instructor,
 		User $user)
 	{
-		$this->feedback = $feedback;
-		$this->activity = $activity;
-		$this->user 	= $user;
+		$this->feedback 		= $feedback;
+		$this->feedbackValue 	= $feedbackValue;
+		$this->instructor 		= $instructor;
+		$this->user 			= $user;
 
 		// Filters
 		$this->beforeFilter('exists.user', ['only' => ['index']]);
+		$this->beforeFilter('exists.activity', ['only' => ['store']]);
+		$this->beforeFilter('client', ['only' => ['store']]);
+		$this->beforeFilter('feedback.store', ['only' => ['store']]);
 	}
 
 	/**
@@ -57,34 +63,12 @@ class FeedbackController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store($activityId)
+	public function store($instructorId)
 	{
 		// Find the activity the feedback is being left for
-		$activity 	= $this->activity->find($activityId);
+		$instructor = $this->instructor->find($instructorId);
 
-		// Find the instructor of the activity
-		$instructor = $activity->instructor;
-
-		// Create the feedback container
-		$feedback = Feedback::create([
-			'activity_id' 	=> $activity->id,
-			'client_id'		=> Auth::user()->id,
-			'instructor_id' => $instructor->id
-		]);
-
-		// In the leave feedback form, the fields are created by looping through all of the FeedbackItems. Each of them has a name corresponding to the FeedbackItem->id so we capture an associative array of FeedbackItem->id => value and loop through this to create the actual FeedbackValue items. We have to unset the _token field for the loop to work
-
-		$input = Input::get();
-		unset($input['_token']);
-
-		foreach( $input as $id => $value )
-		{
-			$feedbackValue = FeedbackValue::create([
-				'feedback_item_id' 	=> $id,
-				'value' 			=> $value,
-				'feedback_id'		=> $feedback->id
-			]);
-		}
+		$this->feedback->store($this->feedback, $this->feedbackValue, $activity, $instructor, Auth::user(), Input::get());
 
 		return Redirect::back()
 		->with('success', 'Thanks for leaving feedback!');

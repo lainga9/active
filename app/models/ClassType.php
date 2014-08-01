@@ -52,7 +52,7 @@ class ClassType extends \Eloquent {
 		return $html;
 	}
 
-	public static function printFormHTML()
+	public static function printFormHTML(Activity $activity = null)
 	{
 		$classTypes = ClassType::all();
 		if(!$classTypes)
@@ -72,8 +72,19 @@ class ClassType extends \Eloquent {
 				{
 					foreach( $children as $child )
 					{
+						$checked = false;
+
+						if($activity)
+						{
+							$checked = $activity->classTypes->contains($child->id) ? true : false;
+						}
+						else
+						{
+							$checked = Input::get('class_type_id') ? in_array($child->id, Input::get('class_type_id')) : null;
+						}
+				
 						$html .= '<label>' . $child->name . '</label>';
-						$html .= Form::checkbox('class_type_id[]', $child->id);
+						$html .= Form::checkbox('class_type_id[]', $child->id, $checked);
  					}
 				}
 				else

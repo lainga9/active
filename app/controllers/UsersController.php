@@ -9,6 +9,7 @@ class UsersController extends \BaseController {
 	{
 		$this->user = $user;
 		$this->beforeFilter('auth', ['except' => ['create', 'store'] ] );
+		$this->beforeFilter('exists.user', ['only' => ['show', 'edit', 'update'] ] );
 	}
 
 	/**
@@ -50,10 +51,8 @@ class UsersController extends \BaseController {
 			->withInput();
 		}
 
-		$userType = Input::get('user_type');
-
 		$user = $this->user->createAccount(
-			$userType,
+			Input::get('user_type'),
 			Input::except('email_confirmation', 'password_confirmation', 'user_type'),
 			[]
 		);
@@ -72,11 +71,16 @@ class UsersController extends \BaseController {
 	public function show($id)
 	{
 		$user = $this->user->find($id);
-		if(!$user)
-		{
-			return Redirect::back()
-			->with('error', 'Sorry we cannot find the user you requested');
-		}
+	
+		$userType = get_class($user->userable);
+
+		// Returning a View instead of using the layout since we need a full screen layout
+		return View::make('users.' . $userType . '.show')->with(compact('user'));
+	}
+
+	public function profile()
+	{
+		$user = Auth::user();
 
 		$userType = get_class($user->userable);
 

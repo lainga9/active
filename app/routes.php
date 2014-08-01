@@ -25,12 +25,26 @@ Validator::extend('future', function($attribute, $value, $parameters)
 |
 */
 
-Route::get('/', ['as' => 'register', 'uses' => 'AuthController@register']);
+Route::get('/', 
+	['as' => 'register', 
+	'uses' => 'AuthController@register']);
 
 Route::group(['before' => 'auth'], function() {
 
 	// Dashboard
-	Route::get('dashboard', ['as' => 'dashboard', 'uses' => 'DashboardController@index']);
+	Route::get('dashboard', 
+		['as' => 'dashboard', 
+		'uses' => 'DashboardController@index']);
+
+	// My Account
+	Route::get('account', 
+		['as' => 'account', 
+		'uses' => 'AccountController@index']);
+
+	// Buy a credit through stripe
+	Route::post('account/goPro', 
+		['as' => 'account.goPro', 
+		'uses' => 'AccountController@goPro']);
 
 	// Activities
 	Route::resource('activities', 'ActivitiesController');
@@ -45,48 +59,49 @@ Route::group(['before' => 'auth'], function() {
 	);
 
 	Route::get('messages', 
-		['as' => 'messages.index', 'uses' => 'MessagesController@index']
-	);
+		['as' => 'messages.index', 
+		'uses' => 'MessagesController@index']);
 
 	// Send a message
 	Route::post('messages/send/{id}', 
-		['as' => 'messages.send', 'uses' => 'MessagesController@send']
-	);
+		['as' => 'messages.send', 
+		'uses' => 'MessagesController@send']);
 
 	// Get a message thread
 	Route::get('messages/thread',
-		['as' => 'messages.getThread', 'uses' => 'MessagesController@getThread']
-	);
+		['as' => 'messages.getThread', 
+		'uses' => 'MessagesController@getThread']);
 
 	// Updates the timetable with a new date
 	Route::get('timetable',
 		['as' => 'activities.timetable',
-		'uses' => 'ActivitiesController@timetable']
-	);
+		'uses' => 'ActivitiesController@timetable']);
 
 	// Activities a user is attending
 	Route::get('attending',
 		['as' => 'activities.attending',
-		'uses' => 'ActivitiesController@attending']
-	);
+		'uses' => 'ActivitiesController@attending']);
 
 	// User Favourites
-	Route::get('favourites', 
+	Route::get('activity/favourites', 
 		['as' => 'favourites', 
-		'uses' => 'ActivitiesController@favourites']
-	);
+		'uses' => 'ActivitiesController@favourites']);
 
 	// Add a favourite
-	Route::post('addFavourite', 
+	Route::post('activity/addFavourite/{id}', 
 		['as' => 'activity.addFavourite', 
 		'uses' => 'ActivitiesController@addFavourite']
 	);
 
 	// Remove a favourite
-	Route::post('removeFavourite',
+	Route::post('activity/removeFavourite/{id}',
 		['as' => 'activity.removeFavourite',
 		'uses' => 'ActivitiesController@removeFavourite']
 	);
+
+	Route::get('profile',
+		['as' => 'profile.show',
+		'uses' => 'UsersController@profile']);
 
 	// Edit your profile
 	Route::get('profile/edit',
@@ -100,52 +115,91 @@ Route::group(['before' => 'auth'], function() {
 	);
 
 	// Leave feedback
-	Route::post('feedback/{activityId}', ['as' => 'feedback.store', 'uses' => 'FeedbackController@store']);
-});
+	Route::post('feedback/{instructorId?}', 
+		['as' => 'feedback.store', 
+		'uses' => 'FeedbackController@store']);
 
-Route::group(['prefix' => 'search'], function() 
-{
-	// Show the advanced search page
-	Route::get('/', 
-		['as' => 'search', 
-		'uses' => 'ActivitiesController@getSearch']);
+	/*
+	|--------------------------------------------------------------------------
+	| Search Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
 
-	// Perform the search
-	Route::get('activities', 
-		['as' => 'activities.search', 
-		'uses' => 'ActivitiesController@search']);
-});
+	Route::group(['prefix' => 'search'], function() 
+	{
+		// Show the advanced search page
+		Route::get('/', 
+			['as' => 'search', 
+			'uses' => 'ActivitiesController@getSearch']);
 
-Route::group(['prefix' => 'api'], function() 
-{
-	Route::get('activities', 
-		['as' => 'api.activities', 
-		'uses' => 'ActivitiesController@api']
-	);
+		// Perform the search
+		Route::get('activities', 
+			['as' => 'activities.search', 
+			'uses' => 'ActivitiesController@search']);
 
-	Route::get('threads',
-		['as' => 'api.threads',
-		'uses' => 'MessagesController@apiThreads']);
+		Route::get('buildPagination',
+			['as' => 'search.buildPagination',
+			'uses' => 'ActivitiesController@buildPagination']);
+	});
 
-	Route::get('thread/{id}',
-		['as' => 'api.thread',
-		'uses' => 'MessagesController@apiThread']);
+	/*
+	|--------------------------------------------------------------------------
+	| API Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
 
-	Route::post('messages/send/{id}',
-		['as' => 'api.sendMessage',
-		'uses' => 'MessagesController@apiSend']);
+	Route::group(['prefix' => 'api'], function() 
+	{
+		Route::get('activities', 
+			['as' => 'api.activities', 
+			'uses' => 'ActivitiesController@api']
+		);
 
-	Route::get('findMessageRecipient/{id}', 
-		['as' => 'api.findMessageRecipient',
-		'uses' => 'MessagesController@findRecipient']);
+		Route::get('favourites', 
+			['as' => 'api.favourites',
+			'uses' => 'ActivitiesController@apiFavourites']);
+
+		Route::get('attending', 
+			['as' => 'api.attending',
+			'uses' => 'ActivitiesController@apiAttending']);
+
+		Route::get('activity/isFavourite/{id}',
+			['as' => 'activity.isFavourite',
+			'uses' => 'ActivitiesController@isFavourite']);
+
+		Route::get('activity/isAttending/{id}',
+			['as' => 'activity.isAttending',
+			'uses' => 'ActivitiesController@isAttending']);
+
+		Route::get('threads',
+			['as' => 'api.threads',
+			'uses' => 'MessagesController@apiThreads']);
+
+		Route::get('thread/{id}',
+			['as' => 'api.thread',
+			'uses' => 'MessagesController@apiThread']);
+
+		Route::post('messages/send/{id}',
+			['as' => 'api.sendMessage',
+			'uses' => 'MessagesController@apiSend']);
+
+		Route::get('findMessageRecipient/{id}', 
+			['as' => 'api.findMessageRecipient',
+			'uses' => 'MessagesController@findRecipient']);
+	});
 });
 
 // Users
 Route::resource('users', 'UsersController', ['except' => 'edit']);
 
-/************************************
-*-----------AUTHENTICATION----------*
-************************************/
+/*
+|--------------------------------------------------------------------------
+| Authentication
+|--------------------------------------------------------------------------
+|
+*/
 
 // Login
 Route::get(

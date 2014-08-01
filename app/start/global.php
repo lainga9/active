@@ -20,6 +20,8 @@ ClassLoader::addDirectories(array(
 
 ));
 
+Instructor::setStripeKey('sk_test_4QR832L2BoSdqhwKsrNwIBt3');
+
 /*
 |--------------------------------------------------------------------------
 | Application Error Logger

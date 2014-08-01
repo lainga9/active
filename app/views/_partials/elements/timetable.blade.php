@@ -56,3 +56,5 @@
 	});
 
 </script>
+
+{{ HTML::script('js/timetable.js') }}

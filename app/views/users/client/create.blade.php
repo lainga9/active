@@ -1,5 +1,3 @@
-<h2>Client</h2>
-
 {{ Form::open(
 	['route' => 'users.store']
 ) }}

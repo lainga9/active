@@ -48,4 +48,14 @@ class Base extends \Eloquent {
     	return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string)));
 	}
 
+	public static function mainClass()
+	{
+		return 'col-md-9';
+	}
+
+	public static function sidebarClass()
+	{
+		return 'col-md-3';
+	}
+
 }

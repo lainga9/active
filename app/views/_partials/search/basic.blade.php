@@ -1,12 +1,12 @@
 <p>Find a class, instructor or venue in my area</p>
 
-{{ Form::open(['route' => 'search', 'method' => 'GET']) }}
+{{ Form::open(['route' => 'activities.search', 'method' => 'GET']) }}
 
 	<div>Postcode/Area</div>
 	<p>
 		{{ Form::text(
 			'postcode', 
-			Input::old('postcode'),
+			Input::get('postcode'),
 			['placeholder' => 'eg: G1 HGH / Glasgow']
 		) }}
 	</p>
@@ -15,7 +15,7 @@
 	<p>
 		{{ Form::text(
 			'terms', 
-			Input::old('terms'),
+			Input::get('terms'),
 			['placeholder' => 'eg: Zumba']
 		) }}
 	</p>
@@ -25,7 +25,7 @@
 		{{ Form::select(
 			'class_type_id',
 			Base::toSelect(ClassType::all(), 'name', 'Select'),
-			Input::old('class_type_id')
+			Input::get('class_type_id')
 		) }}
 	</p>
 
@@ -33,8 +33,15 @@
 	<p>
 		@if(Base::$days)
 			@foreach(Base::$days as $value => $name)
+				<?php $old = Input::get('day') ? in_array($value, Input::get('day')) : null; ?>
 				<div>
-					{{ Form::checkbox('day[]', $value) }} {{ $name }}
+					{{ Form::checkbox(
+						'day[]', 
+						$value, 
+						$old
+					) }}
+
+					{{ $name }}
 				</div>
 			@endforeach
 		@endif
@@ -49,5 +56,7 @@
 	</p>
 	
 	{{ Form::submit('Search', ['class' => 'btn btn-success']) }}
+
+	<p><a href="{{ URL::route('search'); }}">Click here for Advanced Search</a></p>
 
 {{ Form::close() }}

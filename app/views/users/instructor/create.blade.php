@@ -1,5 +1,3 @@
-<h2>Instructor</h2>
-
 {{ Form::open(
 	['route' => 'users.store']
 ) }}

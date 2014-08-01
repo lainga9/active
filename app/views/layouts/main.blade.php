@@ -12,13 +12,13 @@
 			@include('_partials.alerts')
 
 			<!-- The sidebar -->
-			<aside class="sidebar col-sm-3">
+			<aside class="sidebar {{ Base::sidebarClass() }}">
 				@yield('sidebar')
 			</aside>
 
 			<!-- The main content -->
-			<div class="col-sm-9">
-				@yield('content')		
+			<div class="{{ Base::mainClass() }}">
+				@yield('content')
 			</div>
 
 		</div>

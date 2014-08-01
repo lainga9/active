@@ -99,7 +99,7 @@ class MessagesController extends \BaseController {
 
 	public function apiThreads()
 	{
-		return $this->message->theads(Auth::user()->get());
+		return $this->message->threads(Auth::user()->get());
 	}
 
 	public function apiThread($id)

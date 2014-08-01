@@ -1,7 +1,15 @@
 <?php
 
-class Instructor extends \Eloquent {
+use Laravel\Cashier\BillableTrait;
+use Laravel\Cashier\BillableInterface;
+
+class Instructor extends \Eloquent implements BillableInterface {
+
+	use BillableTrait;
+
 	protected $guarded = [];
+
+	protected $dates = ['trial_ends_at', 'subscription_ends_at'];
 
 	public static $typeAttributes = [
 		'phone',
@@ -20,5 +28,52 @@ class Instructor extends \Eloquent {
     public function user()
     {
         return $this->morphOne('User', 'userable');
+    }
+
+    public static function spendCredit($user, $activity)
+    {
+    	$user->userable->credits = (int) $user->userable->credits - 1;
+    	$user->userable->save();
+
+    	$credit = Credit::create([
+    		'instructor_id' => $user->id,
+    		'activity_id' 	=> $activity->id
+    	]);
+    }
+
+    public static function getCreditsAttribute($value)
+    {
+    	return (int) $value;
+    }
+
+    public static function checkAvailable($user, $input)
+    {
+    	$activities = $user->activities;
+
+    	// The requested start and finish times for the new activity (in timestmamp form)
+    	$requestedStart 	= strtotime($input['date'] . ' ' . $input['time_from']);
+    	$requestedFinish 	= strtotime($input['date'] . ' ' . $input['time_until']);
+
+    	// Check for a date clash
+    	$activities = $activities->filter(function($activity) use ($requestedStart, $requestedFinish)
+    	{
+    		// The start and finish times for the current activity in the loop
+    		$start 	= strtotime($activity->date . ' ' . $activity->time_from);
+    		$finish = strtotime($activity->date . ' ' . $activity->time_until);
+    		
+    		// Check if the requested activity starts during the current activity
+    		if( $requestedStart >= $start && $requestedStart <= $finish )
+    		{
+    			return true;
+    		}
+
+    		// Check if the current activity starts during the requested activity
+    		if( $start >= $requestedStart && $start <= $requestedFinish )
+    		{
+    			return true;
+    		}
+    	});
+
+    	return $activities;
     }
 }

@@ -47,4 +47,26 @@ class Feedback extends \Eloquent {
     	return null;
     }
 
+    public static function store(Feedback $feedbackObj, FeedbackValue $feedbackValueObj, $activity, $instructor, $client, $input)
+    {
+    	$feedback = $feedbackObj->create([
+    		'activity_id' 	=> $activity->id,
+    		'client_id'		=> $client->id,
+    		'instructor_id' => $instructor->id
+    	]);
+
+    	unset($input['token']);
+
+    	foreach( $input as $id => $value )
+		{
+			$feedbackValue = $feedbackValueObj->create([
+				'feedback_item_id' 	=> $id,
+				'value' 			=> $value,
+				'feedback_id'		=> $feedback->id
+			]);
+		}
+
+		return $feedback;
+    }
+
 }

@@ -24,7 +24,7 @@
 
 			<hr />
 
-			@include('_partials.elements.sendMessage', ['activity' => $activity])
+			@include('_partials.elements.sendMessage', ['instructor' => $activity->instructor])
 
 		</div>
 		<div class="col-md-9">
@@ -41,7 +41,7 @@
 						<p>No Reviews</p>
 					@endif
 					<hr />
-					@include('_partials.elements.leaveFeedback', ['activity' => $activity])
+					@include('_partials.elements.leaveFeedback', ['instructor' => $activity->instructor])
 				</div>
 				<div class="col-md-9">
 					<h3>{{ $activity->name }}</h3>
@@ -88,7 +88,7 @@
 
 			<div class="row">
 				<div class="col-md-8">
-					@if( Activity::isFavourite($activity->id) )
+					@if( Activity::isFavourite($activity) )
 						@include('_partials.elements.removeFavourite')
 					@else
 						@include('_partials.elements.addFavourite')

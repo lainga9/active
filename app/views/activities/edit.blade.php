@@ -1,1 +1,151 @@
-/Users/Alex/Sites/active/app/views/activities/edit.blade.php
+@section('title', 'Edit Activity ' . $activity->id)
+
+@section('content')
+
+	<h4>Edit {{ $activity->name }}</h4>
+
+	{{ Form::open(
+		['route' => 
+			[
+				'activities.update',
+				$activity->id
+			],
+			'method' => 'PUT'
+		]
+	) }}
+
+		{{ Form::hidden('user_id', Auth::user()->id) }}
+
+		<div>Name</div>
+		<p>
+			{{ Form::text(
+				'name',
+				$activity->name
+			) }}
+		</p>
+
+		<div>Description</div>
+		<p>
+			{{ Form::textarea(
+				'description',
+				$activity->description
+			) }}
+		</p>
+
+		<div>Places Available</div>
+		<p>
+			{{ Form::text(
+				'places',
+				$activity->places
+			) }}
+		</p>
+
+		<div>Street Address</div>
+		<p>
+			{{ Form::text(
+				'street_address', 
+				$activity->street_address
+			) }}
+		</p>
+
+		<div>Town/City</div>
+		<p>
+			{{ Form::text(
+				'town', 
+				$activity->town
+			) }}
+		</p>
+
+		<div>Postcode</div>
+		<p>
+			{{ Form::text(
+				'postcode', 
+				$activity->postcode
+			) }}
+		</p>
+
+		<div>Date</div>
+		<p>
+			{{ Form::text(
+				'date',
+				$activity->date,
+				['class' => 'datepicker']
+			) }}
+		</p>
+
+		<div>Time From</div>
+		<p>
+			{{ Form::text(
+				'time_from',
+				$activity->time_from,
+				['class' => 'timepicker']
+			) }}
+		</p>
+
+		<div>Time Until</div>
+		<p>
+			{{ Form::text(
+				'time_until',
+				$activity->time_until,
+				['class' => 'timepicker']
+			) }}
+		</p>
+
+		<div>Cost</div>
+		<p>
+			{{ Form::text(
+				'cost',
+				$activity->cost
+			) }}
+		</p>
+
+		<hr />
+
+		<h4>Class Type</h4>
+		{{ ClassType::printFormHTML($activity) }}
+
+		<hr />
+
+		<h4>Class Level</h4>
+		<p>
+			{{ Form::select(
+				'level_id',
+				Base::toSelect(Level::all())
+			) }}
+		</p>
+
+		<hr />
+
+		{{ Form::submit(
+			'Save Changes', 
+			['class' => 'btn btn-success']
+		) }}
+
+	{{ Form::close() }}
+@stop
+
+@section('scripts')
+
+	<script>
+
+		jQuery(document).ready(function($) {
+
+			$('.datepicker').datetimepicker({
+				timepicker: false,
+				format:'Y-m-d',
+				minDate: 0,
+				inline: true
+			});
+
+			$('.timepicker').datetimepicker({
+				datepicker: false,
+				format: 'H:i',
+				inline: true,
+				step: 30
+			});
+
+		});
+
+	</script>
+
+@stop

@@ -14,6 +14,18 @@
 
 			@endforeach
 
+			<?php 
+				$appends = [
+					'day' 			=> Input::get('day'),
+					'postcode' 		=> Input::get('postcode'),
+					'terms' 		=> Input::get('terms'),
+					'class_type_id' => Input::get('class_type_id'),
+					'distance' 		=> Input::get('distance')
+				]; 
+			?>
+
+			{{ $activities->appends($appends)->links() }}
+
 		</div>
 
 	@else
@@ -28,12 +40,6 @@
 
 @section('sidebar')
 
-	@include('_partials.search.advanced')
+	@include('_partials.search.basic')
 	
-@stop
-
-@section('scripts')
-
-	{{ HTML::script('js/search.js') }}
-
 @stop

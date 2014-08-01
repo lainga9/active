@@ -18,14 +18,94 @@ class Activity extends \Eloquent {
 		return $this->belongsToMany('User');
 	}
 
+	public function Level()
+	{
+		return $this->belongsTo('Level');
+	}
+
 	public function Favourites()
 	{
 		return $this->belongsToMany('User', 'activity_favourite');
 	}
 
-	public static function isFavourite($id)
+	public static function feedbackable($client, $instructor)
 	{
-		return Auth::user()->favourites->contains($id) ? true : false;
+		$activities = $client->attendingActivities;
+
+		$activities = $activities->filter(function($activity) use ($instructor)
+		{
+			if( $activity->instructor->id == $instructor->id)
+			{
+				return static::hasPassed($activity);
+			}
+		});
+
+		return $activities;
+	}
+
+	public static function reducePlaces($activity)
+	{
+		$activity->places = (int) $activity->places - 1;
+		$activity->save();
+
+		return $activity;
+	}
+
+	public static function attachClassTypes($activity)
+	{
+		if( $classTypes = Input::get('class_type_id') )
+		{
+			foreach( $classTypes as $classType )
+			{
+				$activity->classTypes()->attach($classType);
+			}
+		}
+	}
+
+	public static function isFavourite($activity)
+	{
+		$favourite = Auth::user()->favourites->contains($activity->id) ? true : false;
+
+		if( Request::wantsJSON() )
+		{
+			return Response::json([
+				'favourite' => $favourite
+			]);
+		}
+
+		return $favourite;
+	}
+
+	public static function isAttending($activity)
+	{
+		$attending = Auth::user()->attendingActivities->contains($activity->id) ? true : false;
+
+		if( Request::wantsJSON() )
+		{
+			return Response::json([
+				'attending' => $attending
+			]);
+		}
+
+		return $attending;
+	}
+
+	public static function getStartTime($activity)
+	{
+		return strtotime($activity->date . ' ' . $activity->time_from);
+	}
+
+	public static function getEndTime($activity)
+	{
+		return strtotime($activity->date . ' ' . $activity->time_until);
+	}
+
+	public static function hasPassed($activity)
+	{
+		$endTime = static::getEndTime($activity);
+		$currentTime = strtotime("now");
+
+		return $endTime < $currentTime ? true : false;
 	}
 
 	public static function makeAddressURL($activity)
@@ -69,4 +149,35 @@ class Activity extends \Eloquent {
 
 		return $activities;
 	}
+
+	public static function checkAvailable($activities, $input)
+    {
+    	// The requested start and finish times for the new activity (in timestmamp form)
+    	$requestedStart 	= strtotime($input['date'] . ' ' . $input['time_from']);
+    	$requestedFinish 	= strtotime($input['date'] . ' ' . $input['time_until']);
+
+    	// Check for a date clash
+    	$activities = $activities->filter(function($activity) use ($requestedStart, $requestedFinish)
+    	{
+    		// The start and finish times for the current activity in the loop
+    		$start 	= strtotime($activity->date . ' ' . $activity->time_from);
+    		$finish = strtotime($activity->date . ' ' . $activity->time_until);
+    		
+    		// Check if the requested activity starts during the current activity
+    		if( $requestedStart >= $start && $requestedStart <= $finish )
+    		{
+    			return true;
+    		}
+
+    		// Check if the current activity starts during the requested activity
+    		if( $start >= $requestedStart && $start <= $requestedFinish )
+    		{
+    			return true;
+    		}
+
+    		return false;
+    	});
+
+    	return $activities;
+    }
 }

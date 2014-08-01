@@ -6,7 +6,8 @@
 	"require": {
 		"laravel/framework": "4.2.*",
 		"way/generators": "2.*",
-		"fedeisas/laravel-js-routes": "1.*"
+		"fedeisas/laravel-js-routes": "1.*",
+		"laravel/cashier": "~2.0"
 	},
 	"autoload": {
 		"classmap": [

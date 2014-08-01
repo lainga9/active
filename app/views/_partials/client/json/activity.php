@@ -6,7 +6,7 @@
 			</div>
 			<div class="col-sm-9">
 				<h4><a href="{{this.routes.showActivity}}">{{this.name}}</a></h4>
-				<h5>Suitable for: <strong>{{this.level_id}}</strong></h5>
+				<h5>Suitable for: <strong>{{this.level}}</strong></h5>
 				<div class="row">
 					<div class="col-md-6">
 						<p>{{this.description}}</p>
@@ -15,9 +15,7 @@
 						{{#if this.attending}}	
 							<button class="btn btn success btn-lg" disabled>Attending!</button>
 						{{else}}
-							<form method="POST" action="{{this.routes.book}}">
-								<input type="submit" class="btn btn-success btn-lg" value="Book Class" />
-							</form>
+							<a class="btn btn-lg btn-success" href="{{this.routes.showActivity}}">Book Now</a>
 						{{/if}}
 					</div>
 				</div>

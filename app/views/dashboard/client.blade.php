@@ -24,6 +24,8 @@
 				<hr>
 
 			@endforeach
+	
+			{{ $activities->links() }}
 
 		@else
 
@@ -43,6 +45,7 @@
 		<li><a href="{{ URL::route('favourites') }}">Favourites</a></li>
 	</ul>
 	<hr>
+
 	@include('_partials.search.basic')
 
 @stop

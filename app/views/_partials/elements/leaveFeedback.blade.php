@@ -2,7 +2,7 @@
 
 <div class="modal fade modal-feedback">
 
-	{{ Form::open(['route' => ['feedback.store', $activity->id]]) }}
+	{{ Form::open(['route' => ['feedback.store', $instructor->id]]) }}
 
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -13,24 +13,39 @@
 					<h4 class="modal-title">Leave Feedback</h4>
 				</div>
 				<div class="modal-body">
-					
-					@foreach( FeedbackItem::all() as $item )
 
-						<div>{{ $item->name }}</div>
+					<?php $feedbackable = Activity::feedbackable(Auth::user(), $instructor); ?>
+				
+					@if(count($feedbackable))
+
+						<div>Class Type</div>
 						<p>
-							{{ Form::select(
-								$item->id, 
-								[
-									1 => '1',
-									2 => '2',
-									3 => '3',
-									4 => '4',
-									5 => '5'
-								]
-							) }}
+							{{ Form::select('activity_id', Base::toSelect($feedbackable)) }}
 						</p>
+						
+						@foreach( FeedbackItem::all() as $item )
 
-					@endforeach
+							<div>{{ $item->name }}</div>
+							<p>
+								{{ Form::select(
+									$item->id, 
+									[
+										1 => '1',
+										2 => '2',
+										3 => '3',
+										4 => '4',
+										5 => '5'
+									]
+								) }}
+							</p>
+
+						@endforeach
+
+					@else
+
+						<div class="alert alert-info">You cannot leave feedback for this instructor</div>
+
+					@endif
 
 				</div>
 				<div class="modal-footer">

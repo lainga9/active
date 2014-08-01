@@ -93,9 +93,22 @@
 			) }}
 		</p>
 
+		<hr />
 
 		<h4>Class Type</h4>
 		{{ ClassType::printFormHTML() }}
+
+		<hr />
+
+		<h4>Class Level</h4>
+		<p>
+			{{ Form::select(
+				'level_id',
+				Base::toSelect(Level::all())
+			) }}
+		</p>
+
+		<hr />
 
 		{{ Form::submit(
 			'Add Activity', 

@@ -6,7 +6,14 @@
 		<div class="col-sm-9">
 			<h4><a href="{{ URL::route('activities.show', $activity->id) }}">{{ $activity->name }}</a></h4>
 			<h5>
-				Suitable for: <strong>{{ $activity->level_id }}</strong>
+				Suitable for: 
+				<strong>
+					@if($activity->level)
+						{{ $activity->level->name }}
+					@else
+						N/A
+					@endif
+				</strong>
 				<span class="pull-right">
 					Host Rating:
 					@if( $rating = Feedback::getAverage($activity->instructor) )
@@ -24,7 +31,7 @@
 					@if( User::isAttending($activity->id) )
 						@include('_partials.elements.attendingActivity', ['activity' => $activity])
 					@else
-						@include('_partials.elements.bookActivity', ['activity' => $activity])
+						<a href="{{ URL::route('activities.show', $activity->id) }}" class="btn btn-lg btn-success">Book Now</a>
 					@endif
 				</div>
 			</div>
@@ -32,7 +39,7 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12">
-			<p>Time: {{ $activity->time}} Date: {{ $activity->date }} Address: {{ $activity->street_address }}</p>
+			<p>Time: {{ $activity->time_from}} - {{ $activity->time_until}} Date: {{ $activity->date }} Address: {{ $activity->street_address }}</p>
 		</div>
 	</div>
 	<div class="row">
@@ -41,7 +48,7 @@
 				Tweet Share on Facebook
 			</p>
 			<p class="pull-left">
-				@if(Activity::isFavourite($activity->id))
+				@if(Activity::isFavourite($activity))
 					@include('_partials.elements.removeFavourite', ['activity' => $activity])
 				@else
 					@include('_partials.elements.addFavourite', ['activity' => $activity])

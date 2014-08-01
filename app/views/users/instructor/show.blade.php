@@ -1,3 +1,5 @@
+@extends('layouts.full')
+
 @section('title', $user->first_name . ' ' . $user->last_name . ' Profile')
 
 @section('content')
@@ -7,14 +9,14 @@
 			<div class="col-md-4">
 				<h5>Telephone: {{ $user->userable->phone }}</h5>
 				<h5>Mobile: {{ $user->userable->mobile }}</h5>
-				<a href="#" class="text-success">Send a message</a>
+				@include('_partials.elements.sendMessage', ['instructor' => $user])
 			</div>
 			<div class="col-md-8">
 				<div class="row">
 					<div class="col-md-3">
 						<img src="http://placehold.it/200x200" alt="" />
 						<h5>Average Rating</h5>
-						<a href="#" class="text-success">Leave Feedback</a>
+						@include('_partials.elements.leaveFeedback', ['instructor' => $user])
 					</div>
 					<div class="col-md-9">
 						<h3 class="text-success">{{ $user->first_name }} {{ $user->last_name }}</h3>
@@ -46,5 +48,16 @@
 			</div>
 		</div>
 	</article>
+
+	<div class="row">
+		<div class="col-md-4">
+			@include('_partials.search.basic')
+			<hr >
+			<img src="http://placehold.it/400x300&amp;text=Advertising+Space" alt="" />
+		</div>
+		<div class="col-md-8">
+			@include('_partials.elements.timetable', ['activities' => $activities = Activity::makeTimetable($user)])
+		</div>
+	</div>
 
 @stop

@@ -16,6 +16,7 @@
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active" id="client">
+					<!-- <p><strong>Scrap those monthly Gym Memberships!</strong><br />Sign up today and search thousands of classes and activities across the UK. <strong><em>It's free so Let's Get Active!</em></p> -->
 					@include('users.client.create')
 				</div>
 				<div class="tab-pane" id="instructor">

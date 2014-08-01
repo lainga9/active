@@ -63,6 +63,7 @@ Route::filter('instructor', function()
 	}
 });
 
+// Checks the user is a client
 Route::filter('client', function()
 {
 	if( !User::isClient() )
@@ -72,19 +73,44 @@ Route::filter('client', function()
 	}
 });
 
-Route::filter('activity.book', function()
+// Checks that the class doesn't finish before it starts
+Route::filter('activity.hasLength', function($route)
+{
+	if(strtotime(Input::get('time_from')) >= strtotime(Input::get('time_until')))
+	{
+		return Redirect::back()->withInput()
+		->with('error', 'Please make sure your class last at least 30 minutes');
+	}
+});
+
+// Checks that the user is an instructor and that the client isn't already booked in.
+Route::filter('activity.book', function($route)
 {
 	if( User::isInstructor() )
 	{
 		return Redirect::route('dashboard')
 		->with('error', 'Sorry, instructors cannot book activities');
 	}
+
+	$id = Route::input('id');
+
+	if( Auth::user()->attendingActivities->contains($id) )
+	{
+		return Redirect::back()
+		->with('status', 'You are already booked into this class!');
+	}
+
 });
 
 // Checks to see if the user exists
 Route::filter('exists.user', function($route)
 {
-	$id = Route::input('id');
+	$id = Route::input('users');
+
+	if( !$id )
+	{
+		$id = Route::input('id');
+	}
 
 	if($id)
 	{
@@ -93,9 +119,123 @@ Route::filter('exists.user', function($route)
 		if( !$user )
 		{
 			return Redirect::route('dashboard')
-			->with('error', 'Sorry, the instructor you requested cannot be found');	
+			->with('error', 'Sorry, the user you requested cannot be found');	
 		}
 	}
+});
+
+// Check to see if the activity exists
+Route::filter('exists.activity', function($route)
+{
+	$id = Route::input('activities');
+
+	if(!$id)
+	{
+		$id = Route::input('activityId');
+	}
+	
+	if($id)
+	{
+		$activity = Activity::find($id);
+
+		if( !$activity )
+		{
+			if( Request::ajax() )
+			{
+				return Response::json([
+					'error' => 'Sorry, we can\'t find the activity you requested!'
+				]);
+			}
+
+			return Redirect::route('dashboard')
+			->with('error', 'The activity you are looking for cannot be found');
+		}
+	}
+});
+
+// Check is an activity has passed or not
+Route::filter('activity.hasPassed', function($route)
+{
+	$id = Route::input('activityId');
+
+	$activity = Activity::find($id);
+
+	if( !Activity::hasPassed() )
+	{
+		return Redirect::back()
+		->with(
+			'error',
+			'This activity has not taken place yet'
+		);
+	}
+
+});
+
+// Makes sure the activity isn't already in the users favourites when trying to add
+Route::filter('activity.isFavourite', function($route) 
+{
+	$id = Route::input('id');
+
+	if( Auth::user()->favourites->contains($id) )
+	{
+		return Response::json([
+			'html' => 'This is already in your favourites!'
+		]);
+	}
+});
+
+// Makes sure the activity is in the users favourites when trying to remove
+Route::filter('activity.notFavourite', function($route)
+{
+	$id = Route::input('id');
+
+	if( !Auth::user()->favourites->contains($id) )
+	{
+		return Response::json([
+			'html' => 'This activity is not in your favourites!'
+		]);
+	}
+});
+
+// Checks the instructor has enough credits to list an activity
+Route::filter('instructor.hasCredits', function() 
+{
+	$credits = Auth::user()->userable->credits;
+
+	if( $credits < 1 )
+	{
+		return Redirect::route('dashboard')
+		->with('error', 'Sorry you do not have enough credits to list this activity');
+	}
+});
+
+Route::filter('feedback.store', function($route)
+{
+	$activity = Activity::find(Route::input('activityId'));
+	
+	if( !User::isAttending($activity->id) )
+	{
+		return Redirect::back()
+		->with(
+			'error',
+			'You can only leave feedback for classes which you have attended'
+		);
+	}
+});
+
+Route::filter('activity.belongsTo', function($route)
+{
+	$activity = Activity::find(Route::input('activities'));
+
+	if($activity->user_id != Auth::user()->id)
+	{
+		return Redirect::route('dashboard')
+		->with(
+			'error',
+			'You can only perform that action for activities which you have listed'
+		);
+	}
+
 });
 
 /*

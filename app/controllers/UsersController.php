@@ -72,7 +72,7 @@ class UsersController extends \BaseController {
 	{
 		$user = $this->user->find($id);
 	
-		$userType = get_class($user->userable);
+		$userType = strtolower(get_class($user->userable));
 
 		// Returning a View instead of using the layout since we need a full screen layout
 		return View::make('users.' . $userType . '.show')->with(compact('user'));
@@ -82,7 +82,7 @@ class UsersController extends \BaseController {
 	{
 		$user = Auth::user();
 
-		$userType = get_class($user->userable);
+		$userType = strtolower(get_class($user->userable));
 
 		$this->layout->content = View::make('users.' . $userType . '.show')->with(compact('user'));
 	}
@@ -97,7 +97,7 @@ class UsersController extends \BaseController {
 	public function edit()
 	{
 		$user = Auth::user();
-		$userType = get_class($user->userable);
+		$userType = strtolower(get_class($user->userable));
 		$this->layout->content = View::make('users.' . $userType . '.edit')->with(compact('user'));
 	}
 
@@ -126,7 +126,7 @@ class UsersController extends \BaseController {
 			->with('error', 'Sorry, the requested user cannot be found');
 		}
 
-		$userType = get_class($user->userable);
+		$userType = strtolower(get_class($user->userable));
 
 		$typeAttributes = $userType::$typeAttributes;
 

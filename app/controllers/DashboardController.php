@@ -28,7 +28,7 @@ class DashboardController extends \BaseController {
 			$activities = Auth::user()->activities;
 		}
 
-		$userType = get_class(Auth::user()->userable);
+		$userType = strtolower(get_class(Auth::user()->userable));
 		$this->layout->content = View::make('dashboard.' . $userType)->with(compact('activities'));
 	}
 

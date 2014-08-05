@@ -62,7 +62,7 @@ class ActivitiesController extends \BaseController {
 			$activities = Activity::makeTimetable(Auth::user());
 		}
 
-		$this->layout->content = View::make('activities.' . get_class(Auth::user()->userable) . '.index')->with(compact('activities'));
+		$this->layout->content = View::make('activities.' . strtolower(get_class(Auth::user()->userable)) . '.index')->with(compact('activities'));
 	}
 
 	public function attending()

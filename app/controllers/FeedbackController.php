@@ -12,17 +12,19 @@ class FeedbackController extends \BaseController {
 		Feedback $feedback,
 		FeedbackValue $feedbackValue,
 		Instructor $instructor,
+		Activity $activity,
 		User $user)
 	{
 		$this->feedback 		= $feedback;
 		$this->feedbackValue 	= $feedbackValue;
 		$this->instructor 		= $instructor;
 		$this->user 			= $user;
-
+		$this->activity 		= $activity;
 		// Filters
 		$this->beforeFilter('exists.user', ['only' => ['index']]);
 		$this->beforeFilter('exists.activity', ['only' => ['store']]);
 		$this->beforeFilter('client', ['only' => ['store']]);
+		$this->beforeFilter('instructor', ['only' => ['index']]);
 		$this->beforeFilter('feedback.store', ['only' => ['store']]);
 	}
 
@@ -66,13 +68,20 @@ class FeedbackController extends \BaseController {
 	public function store($instructorId)
 	{
 		// Find the activity the feedback is being left for
-		$instructor = $this->instructor->find($instructorId);
+		$instructor = $this->user->find($instructorId);
 
-		$this->feedback->store($this->feedback, $this->feedbackValue, $activity, $instructor, Auth::user(), Input::get());
+		$activity = $this->activity->find(Input::get('activity_id'));
+
+		if($activity)
+		{
+			$this->feedback->store($this->feedback, $this->feedbackValue, $activity, $instructor, Auth::user(), Input::get());
+
+			return Redirect::back()
+			->with('success', 'Thanks for leaving feedback!');
+		}
 
 		return Redirect::back()
-		->with('success', 'Thanks for leaving feedback!');
-
+		->with('error', 'Error finding activity');
 	}
 
 	/**

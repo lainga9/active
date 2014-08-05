@@ -137,10 +137,6 @@ Route::group(['before' => 'auth'], function() {
 		Route::get('activities', 
 			['as' => 'activities.search', 
 			'uses' => 'ActivitiesController@search']);
-
-		Route::get('buildPagination',
-			['as' => 'search.buildPagination',
-			'uses' => 'ActivitiesController@buildPagination']);
 	});
 
 	/*

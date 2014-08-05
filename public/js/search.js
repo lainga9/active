@@ -56,7 +56,6 @@ jQuery(document).ready(function($) {
 			$_location.on('blur', function() {
 				if( $.trim( $(this).val() ) != '' ) {
 					$('.refine').slideDown();
-					$distance = 5;
 					$location = encodeURI($(this).val()).replace(/%20/g,'+');
 				} else {
 					$('.refine').slideUp();
@@ -127,9 +126,6 @@ jQuery(document).ready(function($) {
 				$pagination.html(result.activities.links);
 				$activities.html(html);
 				$page = 1;
-				$('html,body').animate({
-					scrollTop: 0
-				}, 1000);
 			});
 		};
 

@@ -22,7 +22,8 @@ class AccountController extends \BaseController {
 	 */
 	public function index()
 	{
-		$this->layout->content = View::make('account.index');
+		$user = Auth::user();
+		$this->layout->content = View::make('account.index', compact('user'));
 	}
 
 	public function goPro()

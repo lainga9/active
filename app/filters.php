@@ -211,9 +211,9 @@ Route::filter('instructor.hasCredits', function()
 
 Route::filter('feedback.store', function($route)
 {
-	$activity = Activity::find(Route::input('activityId'));
+	$instructor = User::find(Route::input('instructorId'));
 	
-	if( !User::isAttending($activity->id) )
+	if( !Activity::feedbackable(Auth::user(), $instructor) )
 	{
 		return Redirect::back()
 		->with(

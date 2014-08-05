@@ -17,40 +17,46 @@
 
 	<hr />
 
-	<h3>My Credits</h3>
+	<h3>My Plan</h3>
 
-	<p>Credits Remaining : <strong>{{ Auth::user()->userable->credits }}</strong></p>
+	{{ ucwords($user->userable->stripe_plan) }}
 
-	<form action="{{ URL::route('account.goPro') }}" method="POST" id="payment-form">
+	@if( !$user->userable->subscribed('pro') )
 
-		<span class="payment-errors"></span>
-	
-		<div class="form-row">
-			<label>
-				<span>Card Number</span>
-				<input type="text" size="20" data-stripe="number"/>
-			</label>
-		</div>
+		<h3>Upgrade</h3>
 
-		<div class="form-row">
-			<label>
-				<span>CVC</span>
-				<input type="text" size="4" data-stripe="cvc"/>
-			</label>
-		</div>
+		<form action="{{ URL::route('account.goPro') }}" method="POST" id="payment-form">
 
-		<div class="form-row">
-			<label>
-				<span>Expiration (MM/YYYY)</span>
-				<input type="text" size="2" data-stripe="exp-month"/>
-			</label>
-			<span> / </span>
-			<input type="text" size="4" data-stripe="exp-year"/>
-		</div>
+			<span class="payment-errors"></span>
+		
+			<div class="form-row">
+				<label>
+					<span>Card Number</span>
+					<input type="text" size="20" data-stripe="number"/>
+				</label>
+			</div>
 
-		<button type="submit">Go Pro!</button>
+			<div class="form-row">
+				<label>
+					<span>CVC</span>
+					<input type="text" size="4" data-stripe="cvc"/>
+				</label>
+			</div>
 
-	</form>
+			<div class="form-row">
+				<label>
+					<span>Expiration (MM/YYYY)</span>
+					<input type="text" size="2" data-stripe="exp-month"/>
+				</label>
+				<span> / </span>
+				<input type="text" size="4" data-stripe="exp-year"/>
+			</div>
+
+			<button type="submit">Go Pro!</button>
+
+		</form>
+
+	@endif
 
 @stop
 

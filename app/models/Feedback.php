@@ -55,7 +55,8 @@ class Feedback extends \Eloquent {
     		'instructor_id' => $instructor->id
     	]);
 
-    	unset($input['token']);
+    	unset($input['_token']);
+    	unset($input['activity_id']);
 
     	foreach( $input as $id => $value )
 		{

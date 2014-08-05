@@ -22,14 +22,10 @@
 
 	<div>Type:</div>
 	<p>
-		{{ Form::select(
-			'class_type_id',
-			Base::toSelect(ClassType::all(), 'name', 'Select'),
-			Input::get('class_type_id')
-		) }}
+		{{ ClassType::printFormHTML() }}
 	</p>
 
-	<div>Day:</div>
+	<!-- <div>Day:</div>
 	<p>
 		@if(Base::$days)
 			@foreach(Base::$days as $value => $name)
@@ -53,7 +49,7 @@
 			'distance',
 			Input::old('distance')
 		) }}
-	</p>
+	</p> -->
 	
 	{{ Form::submit('Search', ['class' => 'btn btn-success']) }}
 

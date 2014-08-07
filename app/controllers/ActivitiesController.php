@@ -59,7 +59,7 @@ class ActivitiesController extends \BaseController {
 
 		if( User::isInstructor() )
 		{
-			$activities = Activity::makeTimetable(Auth::user());
+			$activities = Auth::user()->activities;
 		}
 
 		$this->layout->content = View::make('activities.' . strtolower(get_class(Auth::user()->userable)) . '.index')->with(compact('activities'));

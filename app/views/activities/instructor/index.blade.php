@@ -12,7 +12,21 @@
 
 	<hr />
 
-	@include('_partials.elements.timetable', ['activities' => $activities])
+	@include('_partials.elements.timetable', ['activities' => Activity::makeTimetable()])
+
+	<hr>
+
+	<h3>All Activities</h3>
+
+	@if( !$activities->isEmpty() )
+
+		@foreach( $activities as $activity )
+
+			@include('_partials.instructor.activity', compact('activity'))
+
+		@endforeach
+
+	@endif
 
 @stop
 

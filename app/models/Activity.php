@@ -127,8 +127,10 @@ class Activity extends \Eloquent {
 		return urlencode($activity->street_address) . ',' . urlencode($activity->town) . ',' . urlencode($activity->postcode);
 	}
 
-	public static function makeTimetable($user, $date = null)
+	public static function makeTimetable($user = null, $date = null)
 	{
+		$user = $user ? $user : Auth::user();
+		
 		// Initialise empty arrays
 		$dates = [];
 		$activities = [];

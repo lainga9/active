@@ -14,7 +14,7 @@
 		<p>
 			{{ Form::text(
 				'name',
-				Input::old('name')
+				Input::get('name', Input::old('name'))
 			) }}
 		</p>
 
@@ -22,7 +22,7 @@
 		<p>
 			{{ Form::textarea(
 				'description',
-				Input::old('description')
+				Input::get('description', Input::old('description'))
 			) }}
 		</p>
 
@@ -30,7 +30,7 @@
 		<p>
 			{{ Form::text(
 				'places',
-				Input::old('places')
+				Input::get('places', Input::old('places'))
 			) }}
 		</p>
 
@@ -38,7 +38,7 @@
 		<p>
 			{{ Form::text(
 				'street_address', 
-				Input::old('street_address')
+				Input::get('street_address', Input::old('street_address'))
 			) }}
 		</p>
 
@@ -46,7 +46,7 @@
 		<p>
 			{{ Form::text(
 				'town', 
-				Input::old('town')
+				Input::get('town', Input::old('town'))
 			) }}
 		</p>
 
@@ -54,7 +54,7 @@
 		<p>
 			{{ Form::text(
 				'postcode', 
-				Input::old('postcode')
+				Input::get('postcode', Input::old('postcode'))
 			) }}
 		</p>
 
@@ -62,7 +62,7 @@
 		<p>
 			{{ Form::text(
 				'date',
-				Input::old('date'),
+				Input::get('date', Input::old('date')),
 				['class' => 'datepicker']
 			) }}
 		</p>
@@ -71,7 +71,7 @@
 		<p>
 			{{ Form::text(
 				'time_from',
-				Input::old('time_from'),
+				Input::get('time_from', Input::old('time_from')),
 				['class' => 'timepicker']
 			) }}
 		</p>
@@ -80,7 +80,7 @@
 		<p>
 			{{ Form::text(
 				'time_until',
-				Input::old('time_until'),
+				Input::get('time_until', Input::old('time_until')),
 				['class' => 'timepicker']
 			) }}
 		</p>
@@ -89,7 +89,7 @@
 		<p>
 			{{ Form::text(
 				'cost',
-				Input::old('cost')
+				Input::get('cost', Input::old('cost'))
 			) }}
 		</p>
 

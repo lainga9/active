@@ -21,6 +21,8 @@
 	@foreach( $activities as $day => $collection )
 
 		<div data-day="{{ $day }}" class="day">
+
+			<h4>{{ ucwords($day) }}</h4>
 			
 			@if( !$collection->isEmpty() )
 
@@ -50,7 +52,9 @@
 			timepicker: false,
 			format:'Y-m-d',
 			minDate: 0,
-			closeOnDateSelect: true
+			closeOnDateSelect: true,
+			scrollMonth: false,
+			scrollInput: false
 		});
 
 	});

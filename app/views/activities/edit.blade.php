@@ -152,14 +152,18 @@
 				timepicker: false,
 				format:'Y-m-d',
 				minDate: 0,
-				inline: true
+				inline: true,
+				scrollMonth: false,
+				scrollInput: false
 			});
 
 			$('.timepicker').datetimepicker({
 				datepicker: false,
 				format: 'H:i',
 				inline: true,
-				step: 30
+				step: 30,
+				scrollTime: false,
+				scrollInput: false
 			});
 
 		});

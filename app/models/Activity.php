@@ -119,6 +119,13 @@ class Activity extends \Eloquent {
 		return $attending;
 	}
 
+	public function createdBy($user = null)
+	{
+		$user = $user ? $user : Auth::user();
+
+		return $this->user_id == $user->id ? true : false;
+	}
+
 	public static function getStartTime($activity)
 	{
 		return strtotime($activity->date . ' ' . $activity->time_from);

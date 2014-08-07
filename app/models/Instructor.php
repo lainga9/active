@@ -79,4 +79,31 @@ class Instructor extends \Eloquent implements BillableInterface {
 
     	return $activities;
     }
+
+    public function getAverageFeedback()
+    {
+    	$feedback = $this->user->feedback;
+
+    	if( $feedback->isEmpty() ) return null;
+
+    	$ratings = [];
+
+    	foreach( $feedback as $item )
+    	{
+    		if( $item->values )
+    		{
+    			foreach( $item->values as $value )
+    			{
+    				$ratings[] = $value->value;
+    			}
+    		}
+    	}
+
+    	if( count($ratings) )
+    	{
+    		return (float) array_sum($ratings)/count($ratings);
+    	}
+
+    	return null;
+    }
 }

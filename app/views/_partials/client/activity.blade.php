@@ -16,7 +16,7 @@
 				</strong>
 				<span class="pull-right">
 					Host Rating:
-					@if( $rating = Feedback::getAverage($activity->instructor) )
+					@if( $rating = $activity->instructor->userable->getAverageFeedback() )
 						{{ $rating }}
 					@else
 						No Reviews

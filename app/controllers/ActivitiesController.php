@@ -334,11 +334,6 @@ class ActivitiesController extends \BaseController {
 		}
 	}
 
-	public function buildPagination(Paginator $paginator)
-	{
-		
-	}
-
 	public function api()
 	{
 		$activities = Search::execute(Input::all());

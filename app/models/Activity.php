@@ -76,9 +76,9 @@ class Activity extends \Eloquent {
 		}
 	}
 
-	public static function isFavourite($activity)
+	public function isFavourite()
 	{
-		$favourite = Auth::user()->favourites->contains($activity->id) ? true : false;
+		$favourite = Auth::user()->favourites->contains($this->id) ? true : false;
 
 		if( Request::wantsJSON() )
 		{
@@ -90,9 +90,11 @@ class Activity extends \Eloquent {
 		return $favourite;
 	}
 
-	public static function isAttending($activity)
+	public function isAttending($user = null)
 	{
-		$attending = Auth::user()->attendingActivities->contains($activity->id) ? true : false;
+		$user = $user ? $user : Auth::user();
+
+		$attending = $user->attendingActivities->contains($this->id) ? true : false;
 
 		if( Request::wantsJSON() )
 		{
@@ -130,7 +132,7 @@ class Activity extends \Eloquent {
 	public static function makeTimetable($user = null, $date = null)
 	{
 		$user = $user ? $user : Auth::user();
-		
+
 		// Initialise empty arrays
 		$dates = [];
 		$activities = [];

@@ -18,7 +18,7 @@ class Search extends \Eloquent {
 		    }
 		}
 		
-		$activities = $activities->get();
+		$activities = $activities->orderBy('created_at', 'DESC')->get();
 
 		/*-------------- APPLY FILTERS ---------------*/	
 
@@ -166,8 +166,8 @@ class Search extends \Eloquent {
 		{
 			foreach( $activities as $activity )
 			{
-				$attending 					= User::isAttending($activity) ? true : false;
-				$favourite 					= Activity::isFavourite($activity) ? true : false;
+				$attending 					= $activity->isAttending() ? true : false;
+				$favourite 					= $activity->isFavourite() ? true : false;
 
 				// Convert the activity to an array so we can add extra values to it
 				$activityArr 				= $activity->toArray();

@@ -17,7 +17,7 @@
 	</table>
 	<div class="actions clearfix">
 		<div class="pull-left">
-			<a class="text-success" href="#">Edit Activity</a>
+			<a class="text-success" href="{{ URL::route('activities.edit', $activity->id) }}">Edit Activity</a>
 			<a class="text-success" href="{{ URL::route('activities.create', $activity->toArray()) }}">Create Similar Activity</a>
 		</div>
 		<div class="pull-right">

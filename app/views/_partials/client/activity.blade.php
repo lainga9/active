@@ -28,7 +28,7 @@
 					<p>{{ $activity->description}}</p>
 				</div>
 				<div class="col-md-6">
-					@if( User::isAttending($activity->id) )
+					@if( $activity->isAttending() )
 						@include('_partials.elements.attendingActivity', ['activity' => $activity])
 					@else
 						<a href="{{ URL::route('activities.show', $activity->id) }}" class="btn btn-lg btn-success">Book Now</a>
@@ -48,7 +48,7 @@
 				Tweet Share on Facebook
 			</p>
 			<p class="pull-left">
-				@if(Activity::isFavourite($activity))
+				@if($activity->isFavourite())
 					@include('_partials.elements.removeFavourite', ['activity' => $activity])
 				@else
 					@include('_partials.elements.addFavourite', ['activity' => $activity])

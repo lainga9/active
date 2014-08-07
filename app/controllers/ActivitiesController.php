@@ -12,13 +12,15 @@ class ActivitiesController extends \BaseController {
 		Activity $activity, 
 		ClassType $classType,
 		Instructor $instructor,
-		Client $client
+		Client $client,
+		User $user
 	)
 	{
 		$this->activity 	= $activity;
 		$this->classType 	= $classType;
 		$this->instructor 	= $instructor;
 		$this->client 		= $client;
+		$this->user 		= Auth::user();
 
 		/*-------- FILTERS -------*/
 
@@ -59,24 +61,24 @@ class ActivitiesController extends \BaseController {
 
 		if( User::isInstructor() )
 		{
-			$activities = Auth::user()->activities;
+			$activities = $this->user->activities;
 		}
 
-		$this->layout->content = View::make('activities.' . strtolower(get_class(Auth::user()->userable)) . '.index')->with(compact('activities'));
+		$this->layout->content = View::make('activities.' . strtolower(get_class($this->user->userable)) . '.index')->with(compact('activities'));
 	}
 
 	public function attending()
 	{
-		$activities = Auth::user()->attendingActivities;
+		$activities = $this->user->attendingActivities;
 
 		$this->layout->content = View::make('activities.client.attending', compact('activities'));
 	}
 
 	public function timetable()
 	{
-		$date = Input::get('date');
+		$date = Input::get('date') ? Input::get('date') : null;
 
-		$activities = Activity::makeTimetable(Auth::user(), $date);
+		$activities = $this->instructor->makeTimetable($this->user, $date);
 		
 		$this->layout->content = View::make('activities.instructor.index')->with(compact('activities'));
 	}
@@ -112,7 +114,7 @@ class ActivitiesController extends \BaseController {
 			->withInput();
 		}
 
-		$clashes = $this->instructor->checkAvailable(Auth::user(), Input::get());
+		$clashes = $this->instructor->checkAvailable($this->user, Input::get());
 
 		if( !$clashes->isEmpty() )
 		{
@@ -126,9 +128,9 @@ class ActivitiesController extends \BaseController {
 
 		$activity = $this->activity->create(Input::except('class_type_id'));
 
-		$this->activity->attachClassTypes($activity);
+		$activity->attachClassTypes();
 		
-		$this->instructor->spendCredit(Auth::user(), $activity);
+		$this->instructor->spendCredit($this->user, $activity);
 
 		return Redirect::back()
 		->with('success', 'Activity added successfully');
@@ -183,7 +185,7 @@ class ActivitiesController extends \BaseController {
 
 		$activity = $activity->update(Input::except('class_type_id'));
 
-		$clashes = $this->instructor->checkAvailable(Auth::user(), Input::all());
+		$clashes = $this->instructor->checkAvailable($this->user, Input::all());
 
 		if( !$clashes->isEmpty() )
 		{
@@ -195,7 +197,7 @@ class ActivitiesController extends \BaseController {
 			]);
 		}
 
-		$activity->attachClassTypes($activity);
+		$activity->attachClassTypes();
 
 		return Redirect::back()
 		->with('success', 'Activity added successfully');
@@ -224,7 +226,7 @@ class ActivitiesController extends \BaseController {
 	{
 		$activity = $this->activity->find($id);
 
-		$clashes = $this->client->checkAvailable(Auth::user(), $activity);
+		$clashes = $this->client->checkAvailable($this->user, $activity);
 
 		if( !$clashes->isEmpty() )
 		{
@@ -235,9 +237,9 @@ class ActivitiesController extends \BaseController {
 			]);
 		}
 
-		Auth::user()->attendingActivities()->attach($id);
+		$this->user->attendingActivities()->attach($id);
 
-		$this->activity->reducePlaces($activity);
+		$activity->reducePlaces();
 		
 		return Redirect::back()
 		->with('success', 'You have successfully booked this activity');
@@ -271,7 +273,7 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function favourites()
 	{
-		$activities = Auth::user()->favourites()->paginate(10);
+		$activities = $this->user->favourites()->paginate(10);
 		$this->layout->content = View::make('activities.client.index')->with(compact('activities'));
 	}
 
@@ -286,7 +288,7 @@ class ActivitiesController extends \BaseController {
 		$activity = $this->activity->find($id);
 		
 		// Add the activity to the users favourites
-		Auth::user()->favourites()->attach($id);
+		$this->user->favourites()->attach($id);
 
 		return Response::json([
 			'success' 	=> 'Activity added to favourites!',
@@ -307,7 +309,7 @@ class ActivitiesController extends \BaseController {
 		$activity = $this->activity->find($id);
 
 		// Add the activity to the users favourites
-		Auth::user()->favourites()->detach($id);
+		$this->user->favourites()->detach($id);
 
 		return Response::json([
 			'success' 	=> 'Activity removed from favourites!',
@@ -363,12 +365,12 @@ class ActivitiesController extends \BaseController {
 
 	public function apiFavourites()
 	{
-		return Auth::user()->favourites;
+		return $this->user->favourites;
 	}
 
 	public function apiAttending()
 	{
-		return Auth::user()->attendingActivities;
+		return $this->user->attendingActivities;
 	}
 
 	public function isFavourite($id)

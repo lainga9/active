@@ -10,6 +10,11 @@ class Feedback extends \Eloquent {
 		return $this->belongsTo('Activity');
 	}
 
+	public function client()
+	{
+		return $this->belongsTo('User', 'client_id');
+	}
+
 	public function values()
     {
         return $this->hasMany('FeedbackValue');

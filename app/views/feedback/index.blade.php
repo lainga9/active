@@ -6,7 +6,7 @@
 
 			@if( $values = $item->values )
 
-				<div>Left on {{ $item->created_at }} for {{ $item->activity->name }}</div>
+				<div>Left on {{ $item->created_at }} for {{ $item->activity->name }} by {{ $item->client->email }}</div>
 
 				<ul>
 

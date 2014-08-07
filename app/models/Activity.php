@@ -28,6 +28,11 @@ class Activity extends \Eloquent {
 		return $this->belongsToMany('User', 'activity_favourite');
 	}
 
+	public function isFull()
+	{
+		return $this->places == 0 ? true : false;
+	}
+
 	public static function feedbackable($client, $instructor)
 	{
 		$activities = $client->attendingActivities;
@@ -45,10 +50,19 @@ class Activity extends \Eloquent {
 
 	public static function reducePlaces($activity)
 	{
-		$activity->places = (int) $activity->places - 1;
-		$activity->save();
+		if( !$activity->isFull() )
+		{
+			$activity->places = (int) $activity->places - 1;
+			$activity->save();
 
-		return $activity;
+			return $activity;
+		}
+
+		return Redirect::back()
+		->with(
+			'status',
+			'Sorry this class is fully booked!'
+		);
 	}
 
 	public static function attachClassTypes($activity)

@@ -19,7 +19,32 @@
 
 	<h3>My Plan</h3>
 
-	{{ ucwords($user->userable->stripe_plan) }}
+	@if( $user->userable->subscribed('pro') )
+
+		<div class="alert alert-success">
+			{{ ucwords($user->userable->stripe_plan) }}
+		</div>
+
+	@else
+	
+		<div class="alert alert-danger">
+			Basic Plan
+		</div>
+
+	@endif
+
+	<h4>
+		Credits: 
+		<strong>
+			@if( $user->userable->subscribed('pro') )
+				Unlimited
+			@else
+				{{ $user->userable->credits }}
+			@endif
+		</strong>
+	</h4>
+
+	<hr>
 
 	@if( !$user->userable->subscribed('pro') )
 
@@ -52,9 +77,31 @@
 				<input type="text" size="4" data-stripe="exp-year"/>
 			</div>
 
-			<button type="submit">Go Pro!</button>
+			<button type="submit" class="btn btn-success">Go Pro!</button>
 
 		</form>
+
+	@else
+
+		@if( $user->userable->onGracePeriod() )
+
+			<div class="alert alert-info">
+				You have cancelled your pro plan and your subscription will expire at {{ $user->userable->subscription_ends_at }}
+			</div>
+
+			<form action="{{ URL::route('account.resumePro') }}" method="POST">
+				<button type="submit" class="btn btn-danger">Resume Pro Plan</button>
+			</form>			
+
+		@else
+
+			<h3>Cancel Subscription</h3>
+
+			<form action="{{ URL::route('account.cancelPro') }}" method="POST">
+				<button type="submit" class="btn btn-danger">Cancel Pro Plan</button>
+			</form>
+
+		@endif
 
 	@endif
 

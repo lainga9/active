@@ -28,12 +28,12 @@ class ActivitiesController extends \BaseController {
 		// Client Only Pages
 		$this->beforeFilter('client', ['only' => ['attending', 'favourites']] );
 
+		// Checks that the activity exists
+		$this->beforeFilter('exists.activity', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending']] );
+
 		$this->beforeFilter('instructor.hasCredits', ['only' => ['create', 'store']] );
 		// Checks the user is not an instructor since they're not allowed to book. Checks that the user isn't already booked in.
 		$this->beforeFilter('activity.book', ['only' => ['book']] );
-
-		// Checks that the activity exists
-		$this->beforeFilter('exists.activity', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending']] );
 
 		// Checks the activity lasts at least 30 minutes
 		// $this->beforeFilter('activity.hasLength', ['only' => ['store']] );
@@ -222,7 +222,7 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function book($id)
 	{
-		$activity = $this->activity->find($id);		
+		$activity = $this->activity->find($id);
 
 		$clashes = $this->client->checkAvailable(Auth::user(), $activity);
 

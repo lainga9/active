@@ -2,6 +2,12 @@
 
 @section('content')
 
+	@if( $activity->isFull() )
+		<div class="alert alert-info">
+			This class is currently fully booked!
+		</div>
+	@endif
+
 	<div class="row">
 		<div class="col-md-3">
 
@@ -81,7 +87,11 @@
 					@if( User::isAttending($activity->id) )
 						@include('_partials.elements.attendingActivity', ['activity' => $activity])
 					@else
-						@include('_partials.elements.bookActivity', ['activity' => $activity])
+						@if( $activity->isFull() )
+							@include('_partials.elements.fullActivity', ['activity' => $activity])
+						@else
+							@include('_partials.elements.bookActivity', ['activity' => $activity])
+						@endif
 					@endif
 				</div>
 			</div>

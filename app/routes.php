@@ -41,10 +41,23 @@ Route::group(['before' => 'auth'], function() {
 		['as' => 'account', 
 		'uses' => 'AccountController@index']);
 
-	// Buy a credit through stripe
+	// Upgrade to Pro Plan
 	Route::post('account/goPro', 
 		['as' => 'account.goPro', 
 		'uses' => 'AccountController@goPro']);
+
+	// Cancel the Pro Plan
+	Route::post('account/cancelPro', 
+		['as' => 'account.cancelPro', 
+		'uses' => 'AccountController@cancelPro']);
+
+	// Resume the Pro Plan
+	Route::post('account/resumePro', 
+		['as' => 'account.resumePro', 
+		'uses' => 'AccountController@resumePro']);
+
+	// Handles failed payments - http://laravel.com/docs/billing#handling-failed-payments
+	Route::post('stripe/webhook', 'Laravel\Cashier\WebhookController@handleWebhook');
 
 	// Activities
 	Route::resource('activities', 'ActivitiesController');

@@ -20,4 +20,14 @@ class Account extends \Eloquent {
 			throw new Exception($e->getMessage());
 		}
 	}
+
+	public static function cancelPro($user)
+	{
+		$user->userable->subscription('pro')->cancel();
+	}
+
+	public static function resumePro($user)
+	{
+		$user->userable->subscription('pro')->resume();
+	}
 }

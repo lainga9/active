@@ -94,6 +94,14 @@ Route::filter('activity.book', function($route)
 
 	$id = Route::input('id');
 
+	$activity = Activity::find($id);
+
+	if( $activity->isFull() )
+	{
+		return Redirect::back()
+		->with('status', 'Sorry this class is fully booked!');	
+	}
+
 	if( Auth::user()->attendingActivities->contains($id) )
 	{
 		return Redirect::back()
@@ -200,12 +208,15 @@ Route::filter('activity.notFavourite', function($route)
 // Checks the instructor has enough credits to list an activity
 Route::filter('instructor.hasCredits', function() 
 {
-	$credits = Auth::user()->userable->credits;
-
-	if( $credits < 1 )
+	if( !Auth::user()->userable->subscribed() )
 	{
-		return Redirect::route('dashboard')
-		->with('error', 'Sorry you do not have enough credits to list this activity');
+		$credits = Auth::user()->userable->credits;
+
+		if( $credits < 1 )
+		{
+			return Redirect::route('dashboard')
+			->with('error', 'Sorry you do not have enough credits to list this activity');
+		}
 	}
 });
 

@@ -57,7 +57,7 @@ class UsersController extends \BaseController {
 			[]
 		);
 
-		return Redirect::back()
+		return Redirect::route('dashboard')
 		->with('success', 'Thanks for signing up!');
 	}
 

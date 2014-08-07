@@ -32,8 +32,11 @@ class Instructor extends \Eloquent implements BillableInterface {
 
     public static function spendCredit($user, $activity)
     {
-    	$user->userable->credits = (int) $user->userable->credits - 1;
-    	$user->userable->save();
+    	if( !$user->userable->subscribed('pro') )
+    	{
+    		$user->userable->credits = (int) $user->userable->credits - 1;
+	    	$user->userable->save();
+    	}
 
     	$credit = Credit::create([
     		'instructor_id' => $user->id,

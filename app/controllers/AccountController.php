@@ -44,6 +44,28 @@ class AccountController extends \BaseController {
 
 	}
 
+	public function cancelPro()
+	{
+		$this->account->cancelPro(Auth::user());
+
+		return Redirect::back()
+		->with(
+			'success',
+			'You have successfully cancelled your Pro Subscription'
+		);
+	}
+
+	public function resumePro()
+	{
+		$this->account->resumePro(Auth::user());
+
+		return Redirect::back()
+		->with(
+			'success',
+			'You have successfully resumed your Pro Subscription'
+		);
+	}
+
 	/**
 	 * Store a newly created resource in storage.
 	 * POST /account

@@ -23,7 +23,7 @@
 		</div>
 		<div class="row">
 			<div class="col-sm-12">
-				<p>Time: {{this.time}} Date: {{this.date}} Address: {{this.street_address}}</p>
+				<p>Time: {{this.time_from}} - {{this.time_until}} Date: {{this.date}} Address: {{this.street_address}}</p>
 			</div>
 		</div>
 		<div class="row">

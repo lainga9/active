@@ -60,6 +60,24 @@ class Search extends \Eloquent {
 			});
 		}
 
+		// Time Filter 
+		if (Input::get('time_from') && Input::get('time_until') )
+		{
+			$timeFrom = strtotime(Input::get('time_from'));
+			$timeUntil = strtotime(Input::get('time_until'));
+			
+			$activities = $activities->filter(function($activity) use ($timeFrom, $timeUntil)
+			{
+				$startTime = strtotime($activity->time_from);
+				$endTime = strtotime($activity->time_until);
+
+				if( $startTime >= $timeFrom && $endTime <= $timeUntil)
+				{
+					return true;
+				}
+			});
+		}
+
 		// Day Search
 		if ($days = Input::get('day') )
 		{

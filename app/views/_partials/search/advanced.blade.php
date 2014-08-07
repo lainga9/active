@@ -31,13 +31,13 @@
 </div>
 
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-md-4">
 		<div>Type:</div>
 		<p>
 			{{ ClassType::printFormHTML() }}
 		</p>		
 	</div>
-	<div class="col-md-6">
+	<div class="col-md-4">
 		<div>Day:</div>
 		<p>
 			@if(Base::$days)
@@ -48,6 +48,17 @@
 				@endforeach
 			@endif
 		</p>
+	</div>
+	<div class="col-md-4">
+		<div>Time:</div>
+		<div class="row">
+			<div class="col-md-3">
+				From: <input type="text" class="datetimepicker" name="time_from" />	
+			</div>
+			<div class="col-md-3">
+				Until: <input type="text" class="datetimepicker" name="time_until" />
+			</div>
+		</div>
 	</div>
 </div>
 

@@ -11,12 +11,16 @@ jQuery(document).ready(function($) {
 			$_classType = $('input[name="class_type_id[]"]'),
 			$_terms = $('input[name="terms"]'),
 			$_genders = $('input[name="genders[]"]'),
+			$_time_from = $('input[name="time_from"]'),
+			$_time_until = $('input[name="time_until"]'),
 			$location = '',
 			$distance = 20,
 			$days = '',
 			$classType = '',
 			$terms = '',
 			$genders = '',
+			$time_from = '',
+			$time_until = '',
 			$page = 1,
 			$ul = $('ul.pagination'),
 			$lis = $ul.children(),
@@ -44,7 +48,23 @@ jQuery(document).ready(function($) {
 
 			initEvents();
 
+			timepicker();
+
 			performSearch();
+		},
+
+		timepicker = function() {
+			$_time_from.datetimepicker({
+				datepicker: false,
+				step: 30,
+				format: 'H:i',
+			});
+
+			$_time_until.datetimepicker({
+				datepicker: false,
+				step: 30,
+				format: 'H:i',
+			});
 		},
 
 		initEvents = function() {
@@ -53,6 +73,22 @@ jQuery(document).ready(function($) {
 				e.preventDefault();
 				$page = getParameterByName('page', $(this).attr('href'));
 				performSearch();
+			});
+
+			$_time_from.on('change', function() {
+				$time_from = $(this).val();
+				
+				if( $.trim( $(this).val() ) != '' && $.trim( $time_until ) != '' ) {
+					performSearch();
+				}
+			});
+
+			$_time_until.on('change', function() {
+				$time_until = $(this).val();
+
+				if( $.trim( $(this).val() ) != '' && $.trim( $time_from ) != '' ) {
+					performSearch();
+				}
 			});
 
 			$_location.on('blur', function() {
@@ -137,7 +173,7 @@ jQuery(document).ready(function($) {
 		performSearch = function() {
 			$.ajax({
 				type: "GET",
-				data: "distance=" + $distance + "&day=" + $days + "&class_type_id=" + $classType + "&terms=" + $terms + "&location=" + $location + "&page=" + $page + "&genders=" + $genders,
+				data: "distance=" + $distance + "&day=" + $days + "&class_type_id=" + $classType + "&terms=" + $terms + "&location=" + $location + "&page=" + $page + "&genders=" + $genders + "&time_from=" + $time_from + "&time_until=" + $time_until,
 				url: "/active/public/search/activities"
 			}).done(function(result) {
 				if(result.activities.activities.length > 0) {

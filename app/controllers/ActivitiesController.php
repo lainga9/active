@@ -55,7 +55,7 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function index()
 	{
-		$activities = $this->activity->paginate(10);
+		$activities = $this->activity->orderBy('created_at', 'DESC')->paginate(10);
 
 		if( User::isInstructor() )
 		{

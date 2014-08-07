@@ -10,11 +10,13 @@ jQuery(document).ready(function($) {
 			$_days = $('input[name="day[]"]'),
 			$_classType = $('input[name="class_type_id[]"]'),
 			$_terms = $('input[name="terms"]'),
+			$_genders = $('input[name="genders[]"]'),
 			$location = '',
 			$distance = 20,
 			$days = '',
 			$classType = '',
 			$terms = '',
+			$genders = '',
 			$page = 1,
 			$ul = $('ul.pagination'),
 			$lis = $ul.children(),
@@ -63,6 +65,7 @@ jQuery(document).ready(function($) {
 				performSearch();
 			});
 
+			// Location Search
 			$_location.on('change', function() {
 				$location = $(this).val();
 			});
@@ -81,6 +84,23 @@ jQuery(document).ready(function($) {
 
 				// Remove the trailing comma
 				$days = $days.replace(/,(?=[^,]*$)/, '');
+				performSearch();
+			});
+
+			// Gender
+			$_genders.on('click', function() {
+
+				$genders = '';
+
+				$_genders.each(function() {
+					if( $(this).is(":checked") )
+					{
+						$genders += $(this).val() + ',';
+					}
+				});
+
+				// Remove the trailing comma
+				$genders = $genders.replace(/,(?=[^,]*$)/, '');
 				performSearch();
 			});
 
@@ -117,14 +137,18 @@ jQuery(document).ready(function($) {
 		performSearch = function() {
 			$.ajax({
 				type: "GET",
-				data: "distance=" + $distance + "&day=" + $days + "&class_type_id=" + $classType + "&terms=" + $terms + "&location=" + $location + "&page=" + $page,
+				data: "distance=" + $distance + "&day=" + $days + "&class_type_id=" + $classType + "&terms=" + $terms + "&location=" + $location + "&page=" + $page + "&genders=" + $genders,
 				url: "/active/public/search/activities"
 			}).done(function(result) {
-				var source   = $template.html();
-				var template = Handlebars.compile(source);
-				var html = template(result.activities);
+				if(result.activities.activities.length > 0) {
+					var source   = $template.html();
+					var template = Handlebars.compile(source);
+					var html = template(result.activities);
+					$activities.html(html);
+				} else {
+					$activities.html('<div class="alert alert-info">No Activities Found</div>');
+				}
 				$pagination.html(result.activities.links);
-				$activities.html(html);
 				$page = 1;
 			});
 		};

@@ -20,7 +20,7 @@ class DashboardController extends \BaseController {
 	{
 		if( User::isClient() )
 		{
-			$activities = $this->activity->paginate(10);
+			$activities = $this->activity->orderBy('created_at', 'DESC')->paginate(10);
 		}
 
 		if( User::isInstructor() )

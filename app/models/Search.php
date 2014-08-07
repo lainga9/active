@@ -83,6 +83,22 @@ class Search extends \Eloquent {
 			});
 		}
 
+		// Gender Search
+		if( $genders = Input::get('genders') )
+		{
+			if( !is_array($genders) )
+			{
+				$genders = explode(',', $genders);
+			}
+
+			$activities = $activities->filter(function($activity) use ($genders)
+			{
+				foreach( $genders as $gender )
+				{
+					return $activity->instructor->gender == $gender ? true : false;
+				}
+			});
+		}
 
 		// Distance Search
 		if( Input::get('distance') && Input::get('location'))
@@ -125,7 +141,7 @@ class Search extends \Eloquent {
 			$chunk = $activities->chunk(10);
 
 			// Find the correct chunk depending on the page
-			$activeChunk = $chunk->get(0);
+			$activeChunk = $chunk->get($page);
 
 			// Create the pagination
 			$activities = Paginator::make($activeChunk->all(), count($activities), 10);
@@ -144,6 +160,7 @@ class Search extends \Eloquent {
 	public static function resultsToJSON($activities)
 	{
 		$activitiesArr = [];
+		$links = '';
 
 		if( count($activities) )
 		{
@@ -185,9 +202,9 @@ class Search extends \Eloquent {
 				];
 				$activitiesArr[]			= $activityArr;
 			}
-		}
 
-		$links = $activities->links()->render();
+			$links = $activities->links()->render();
+		}
 
 		$return = [
 			'activities' => $activitiesArr,

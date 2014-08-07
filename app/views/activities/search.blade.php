@@ -5,16 +5,19 @@
 @section('content')
 
 	<div class="row">
+		<div class="col-sm-12">
+			@include('_partials.search.advanced')
+		</div>
+	</div>
+
+	<div class="row">
 		<div class="col-md-4">
-			@include('_partials.search.advanced')	
+			<img src="http://placehold.it/400&text=Advertising+Space" alt="" style="margin-bottom: 20px;" />
+			<img src="http://placehold.it/400&text=Advertising+Space" alt="" />
 		</div>
 		<div class="col-md-8">
 			<div id="activities"></div>
 			<div id="pagination"></div>
 		</div>
 	</div>
-@stop
-
-@section('scripts')
-
 @stop

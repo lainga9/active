@@ -14,27 +14,17 @@
 
 	<p><em>Now lets get active!</em></p>	
 
-	<div id="activities">
-		@if( count($activities) )
+	@if( !$activities->isEmpty() )
 
-			@foreach( $activities as $activity )
+		@include('_partials.client.activities', compact('activities'))
 
-				@include('_partials.client.activity', ['activity' => $activity])
+	@else
 
-				<hr>
+		<div class="alert alert-info">
+			No Activities
+		</div>
 
-			@endforeach
-	
-			{{ $activities->links() }}
-
-		@else
-
-			<div class="alert alert-info">
-				You are not currently attending any activities
-			</div>
-
-		@endif
-	</div>
+	@endif
 
 @stop
 

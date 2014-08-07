@@ -33,6 +33,19 @@ class Activity extends \Eloquent {
 		return $this->places == 0 ? true : false;
 	}
 
+	public function cancel()
+	{
+		$this->cancelled = 1;
+		$this->save();
+
+		return $this;
+	}
+
+	public function isCancelled()
+	{
+		return $this->cancelled == 1 ? true : false;
+	}
+
 	public static function feedbackable($client, $instructor)
 	{
 		$activities = $client->attendingActivities;

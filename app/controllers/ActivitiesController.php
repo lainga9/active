@@ -22,14 +22,14 @@ class ActivitiesController extends \BaseController {
 
 		/*-------- FILTERS -------*/
 
+		// Checks that the activity exists
+		$this->beforeFilter('exists.activity', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending', 'cancel']] );
+
 		// Instructor Only Pages
-		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'timetable']] );
+		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'timetable', 'cancel']] );
 
 		// Client Only Pages
 		$this->beforeFilter('client', ['only' => ['attending', 'favourites']] );
-
-		// Checks that the activity exists
-		$this->beforeFilter('exists.activity', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending']] );
 
 		$this->beforeFilter('instructor.hasCredits', ['only' => ['create', 'store']] );
 		// Checks the user is not an instructor since they're not allowed to book. Checks that the user isn't already booked in.
@@ -241,6 +241,26 @@ class ActivitiesController extends \BaseController {
 		
 		return Redirect::back()
 		->with('success', 'You have successfully booked this activity');
+	}
+
+
+	/**
+	 * Allows an instructor to cancel an activity
+	 * POST /bookActivity
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function cancel($id)
+	{
+		$activity = $this->activity->find($id);
+		$activity->cancel();
+
+		return Redirect::back()
+		->with(
+			'success',
+			'Activity successfully cancelled'
+		);
 	}
 
 	/**

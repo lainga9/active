@@ -4,6 +4,24 @@
 
 	<h4>Edit {{ $activity->name }}</h4>
 
+	@if( $activity->isCancelled() )
+		<div class="alert alert-danger">
+			This activity has been cancelled
+		</div>
+	@else
+		{{ Form::open(
+			['route' => [
+				'activity.cancel', 
+				$activity->id
+			],
+			'method' => 'PUT']
+		) }}
+			<button type="submit" class="btn btn-danger">Cancel Activity</button>
+		{{ Form::close() }}
+	@endif
+
+	<hr />
+
 	{{ Form::open(
 		['route' => 
 			[

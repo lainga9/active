@@ -41,7 +41,7 @@
 					<h5>Host:</h5>
 					<a href="{{ URL::route('users.show', $activity->instructor->id) }}" class="text-success">{{ $activity->instructor->first_name }} {{ $activity->instructor->last_name }}</a>
 					<h5>Host Rating</h5>
-					@if( $feedback = Feedback::getAverage($activity->instructor) )
+					@if( $feedback = $activity->instructor->userable->getAverageFeedback() )
 						<p>{{ $feedback }}</p>
 					@else
 						<p>No Reviews</p>
@@ -84,7 +84,7 @@
 					</div>
 				</div>
 				<div class="col-md-4">
-					@if( User::isAttending($activity->id) )
+					@if( $activity->isAttending() )
 						@include('_partials.elements.attendingActivity', ['activity' => $activity])
 					@else
 						@if( $activity->isFull() )
@@ -98,7 +98,7 @@
 
 			<div class="row">
 				<div class="col-md-8">
-					@if( Activity::isFavourite($activity) )
+					@if( $activity->isFavourite() )
 						@include('_partials.elements.removeFavourite')
 					@else
 						@include('_partials.elements.addFavourite')

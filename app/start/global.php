@@ -22,6 +22,11 @@ ClassLoader::addDirectories(array(
 
 Instructor::setStripeKey('sk_test_4QR832L2BoSdqhwKsrNwIBt3');
 
+App::bind('MailerInterface', function()
+{
+	return new StripeBiller(App::make('DefaultMailerInterface'));
+});
+
 /*
 |--------------------------------------------------------------------------
 | Application Error Logger

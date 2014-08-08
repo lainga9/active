@@ -59,12 +59,12 @@ class Activity extends \Eloquent {
 		return $this;
 	}
 
-	public function book($user) 
+	public function book($user, $mailer) 
 	{
 		$user->attendingActivities()->attach($this->id);
 		$this->reducePlaces();
 
-		// $mailer->sendMessage($activity->instructor);
+		$mailer->send($this->instructor, 'emails.blank', 'Testing Email');
 
 		return $this;
 	}

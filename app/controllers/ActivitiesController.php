@@ -248,7 +248,7 @@ class ActivitiesController extends \BaseController {
 
 	/**
 	 * Allows an instructor to cancel an activity
-	 * POST /bookActivity
+	 * PUT /cancelActivity
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -262,6 +262,26 @@ class ActivitiesController extends \BaseController {
 		->with(
 			'success',
 			'Activity successfully cancelled'
+		);
+	}
+
+
+	/**
+	 * Allows an instructor to close an activity
+	 * POST /bookActivity
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function close($id)
+	{
+		$activity = $this->activity->find($id);
+		$activity->close();
+
+		return Redirect::back()
+		->with(
+			'success',
+			'Booking has successfully been closed for this activity'
 		);
 	}
 

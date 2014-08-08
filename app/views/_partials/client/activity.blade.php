@@ -28,11 +28,7 @@
 					<p>{{ $activity->description}}</p>
 				</div>
 				<div class="col-md-6">
-					@if( $activity->isAttending() )
-						@include('_partials.elements.attendingActivity', ['activity' => $activity])
-					@else
-						<a href="{{ URL::route('activities.show', $activity->id) }}" class="btn btn-lg btn-success">Book Now</a>
-					@endif
+					@include('_partials.elements.bookActivity', compact('activity'))
 				</div>
 			</div>
 		</div>

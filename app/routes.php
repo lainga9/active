@@ -76,6 +76,11 @@ Route::group(['before' => 'auth'], function() {
 		['as' => 'activity.cancel',
 		'uses' => 'ActivitiesController@cancel']);
 
+	// Instructor close an activity
+	Route::put('closeActivity/{id}',
+		['as' => 'activity.close',
+		'uses' => 'ActivitiesController@close']);
+
 	Route::get('messages', 
 		['as' => 'messages.index', 
 		'uses' => 'MessagesController@index']);

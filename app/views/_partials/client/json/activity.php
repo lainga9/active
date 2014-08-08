@@ -12,11 +12,7 @@
 						<p>{{this.description}}</p>
 					</div>
 					<div class="col-md-6">
-						{{#if this.attending}}	
-							<button class="btn btn success btn-lg" disabled>Attending!</button>
-						{{else}}
-							<a class="btn btn-lg btn-success" href="{{this.routes.showActivity}}">Book Now</a>
-						{{/if}}
+						{{{this.views.bookActivity}}}
 					</div>
 				</div>
 			</div>

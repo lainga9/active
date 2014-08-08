@@ -211,12 +211,15 @@ class Search extends \Eloquent {
 				];
 
 				$activityArr['views']		= [
-					'addFavourite'	=> View::make('_partials.elements.addFavourite')
-										->with(compact('activity'))
-										->render(),
+					'addFavourite'		=> View::make('_partials.elements.addFavourite')
+											->with(compact('activity'))
+											->render(),
 					'removeFavourite'	=> View::make('_partials.elements.removeFavourite')
-										->with(compact('activity'))
-										->render(),
+											->with(compact('activity'))
+											->render(),
+					'bookActivity'		=> View::make('_partials.elements.bookActivity')
+											->with(compact('activity'))
+											->render()
 				];
 				$activitiesArr[]			= $activityArr;
 			}

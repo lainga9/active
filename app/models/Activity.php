@@ -33,6 +33,24 @@ class Activity extends \Eloquent {
 		return $this->places == 0 ? true : false;
 	}
 
+	public function isClosed()
+	{
+		return $this->closed == 1 ? true : false;
+	}
+
+	public function isCancelled()
+	{
+		return $this->cancelled == 1 ? true : false;
+	}
+
+	public function close()
+	{
+		$this->closed = 1;
+		$this->save();
+
+		return $this;
+	}
+
 	public function cancel()
 	{
 		$this->cancelled = 1;
@@ -41,9 +59,9 @@ class Activity extends \Eloquent {
 		return $this;
 	}
 
-	public function isCancelled()
+	public function isBookable()
 	{
-		return $this->cancelled == 1 ? true : false;
+		return !$this->isClosed() && !$this->isFull() && !isAttending();
 	}
 
 	public static function feedbackable($client, $instructor)

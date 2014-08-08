@@ -20,6 +20,22 @@
 		{{ Form::close() }}
 	@endif
 
+	@if( $activity->isClosed() )
+		<div class="alert alert-danger">
+			This activity is closed for bookings
+		</div>
+	@else
+		{{ Form::open(
+			['route' => [
+				'activity.close',
+				$activity->id
+			],
+			'method' => 'PUT']
+		) }}
+			<button type="submit" class="btn btn-info">Close Activity</button>
+		{{ Form::close() }}
+	@endif
+
 	<hr />
 
 	{{ Form::open(

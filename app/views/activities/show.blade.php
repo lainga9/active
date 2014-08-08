@@ -84,15 +84,7 @@
 					</div>
 				</div>
 				<div class="col-md-4">
-					@if( $activity->isAttending() )
-						@include('_partials.elements.attendingActivity', ['activity' => $activity])
-					@else
-						@if( $activity->isFull() )
-							@include('_partials.elements.fullActivity', ['activity' => $activity])
-						@else
-							@include('_partials.elements.bookActivity', ['activity' => $activity])
-						@endif
-					@endif
+					@include('_partials.elements.bookActivity', compact($activity))
 				</div>
 			</div>
 

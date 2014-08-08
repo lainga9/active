@@ -73,7 +73,7 @@ class StripeGateway {
 	 * Subscribe to the plan for the first time.
 	 *
 	 * @param  string  $token
-	 * @param  array  $properties
+	 * @param  array   $properties
 	 * @param  object|null  $customer
 	 * @return void
 	 */
@@ -230,14 +230,15 @@ class StripeGateway {
 	/**
 	 * Get an array of the entity's invoices.
 	 *
-	 * @param  bool  $includePending
+	 * @param  bool   $includePending
+	 * @param  array  $parameters
 	 * @return array
 	 */
-	public function invoices($includePending = false)
+	public function invoices($includePending = false, $parameters = array())
 	{
 		$invoices = [];
 
-		$stripeInvoices = $this->getStripeCustomer()->invoices();
+		$stripeInvoices = $this->getStripeCustomer()->invoices($parameters);
 
 		// Here we will loop through the Stripe invoices and create our own custom Invoice
 		// instances that have more helper methods and are generally more convenient to
@@ -403,6 +404,18 @@ class StripeGateway {
 	}
 
 	/**
+	* Get the current subscription period's end date
+	*
+	* @return \Carbon\Carbon
+	*/
+	public function getSubscriptionEndDate()
+	{
+		$customer = $this->getStripeCustomer();
+
+		return Carbon::createFromTimestamp($this->getSubscriptionEndTimestamp($customer));
+        }
+
+	/**
 	 * Update the credit card attached to the entity.
 	 *
 	 * @param  string  $token
@@ -475,7 +488,7 @@ class StripeGateway {
 	 * Create a new Stripe customer instance.
 	 *
 	 * @param  string  $token
-	 * @param  array  $properties
+	 * @param  array   $properties
 	 * @return string
 	 */
 	public function createStripeCustomer($token, array $properties = array())

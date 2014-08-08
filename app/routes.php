@@ -118,11 +118,6 @@ Route::group(['before' => 'auth'], function() {
 	);
 
 	Route::get('profile',
-		['as' => 'profile.show',
-		'uses' => 'UsersController@profile']);
-
-	// Edit your profile
-	Route::get('profile/edit',
 		['as' => 'profile.edit',
 		'uses' => 'UsersController@edit']);
 
@@ -206,7 +201,7 @@ Route::group(['before' => 'auth'], function() {
 });
 
 // Users
-Route::resource('users', 'UsersController', ['except' => 'edit']);
+Route::resource('users', 'UsersController', ['except' => ['edit', 'show']]);
 
 /*
 |--------------------------------------------------------------------------

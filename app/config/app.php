@@ -123,7 +123,8 @@ return array(
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
 		'Fedeisas\LaravelJsRoutes\LaravelJsRoutesServiceProvider',
-		'Laravel\Cashier\CashierServiceProvider'
+		'Laravel\Cashier\CashierServiceProvider',
+		'Barryvdh\DomPDF\ServiceProvider'
 	),
 
 	/*
@@ -190,7 +191,7 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
-
+		'PDF' => 'Barryvdh\DomPDF\Facade',
 	),
 
 );

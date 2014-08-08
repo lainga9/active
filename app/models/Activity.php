@@ -59,6 +59,16 @@ class Activity extends \Eloquent {
 		return $this;
 	}
 
+	public function book($user) 
+	{
+		$user->attendingActivities()->attach($this->id);
+		$this->reducePlaces();
+
+		// $mailer->sendMessage($activity->instructor);
+
+		return $this;
+	}
+
 	public function isBookable()
 	{
 		return !$this->isClosed() && !$this->isFull() && !isAttending();
@@ -72,7 +82,7 @@ class Activity extends \Eloquent {
 		{
 			if( $activity->instructor->id == $instructor->id)
 			{
-				return static::hasPassed($activity);
+				return $activity->hasPassed();
 			}
 		});
 
@@ -144,30 +154,30 @@ class Activity extends \Eloquent {
 		return $this->user_id == $user->id ? true : false;
 	}
 
-	public static function getStartTime($activity)
+	public function getStartTime()
 	{
-		return strtotime($activity->date . ' ' . $activity->time_from);
+		return strtotime($this->date . ' ' . $this->time_from);
 	}
 
-	public static function getEndTime($activity)
+	public function getEndTime()
 	{
-		return strtotime($activity->date . ' ' . $activity->time_until);
+		return strtotime($this->date . ' ' . $this->time_until);
 	}
 
-	public static function hasPassed($activity)
+	public function hasPassed()
 	{
-		$endTime = static::getEndTime($activity);
+		$endTime = static::getEndTime($this);
 		$currentTime = strtotime("now");
 
 		return $endTime < $currentTime ? true : false;
 	}
 
-	public static function makeAddressURL($activity)
+	public function makeAddressURL()
 	{
-		return urlencode($activity->street_address) . ',' . urlencode($activity->town) . ',' . urlencode($activity->postcode);
+		return urlencode($this->street_address) . ',' . urlencode($this->town) . ',' . urlencode($this->postcode);
 	}
 
-	public static function checkAvailable($activities, $input)
+	public function checkAvailable($activities, $input)
     {
     	// The requested start and finish times for the new activity (in timestmamp form)
     	$requestedStart 	= strtotime($input['date'] . ' ' . $input['time_from']);
@@ -177,8 +187,8 @@ class Activity extends \Eloquent {
     	$activities = $activities->filter(function($activity) use ($requestedStart, $requestedFinish)
     	{
     		// The start and finish times for the current activity in the loop
-    		$start 	= strtotime($activity->date . ' ' . $activity->time_from);
-    		$finish = strtotime($activity->date . ' ' . $activity->time_until);
+    		$start 	= $activity->getStartTime();
+    		$finish = $activity->getEndTime();
     		
     		// Check if the requested activity starts during the current activity
     		if( $requestedStart >= $start && $requestedStart <= $finish )

@@ -11,7 +11,7 @@
 	<div class="row">
 		<div class="col-md-3">
 
-			<iframe width="100%" height="250" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0" src="https://maps.google.com/maps?&amp;q=<?= Activity::makeAddressURL($activity) ?>&amp;output=embed"></iframe>
+			<iframe width="100%" height="250" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0" src="https://maps.google.com/maps?&amp;q=<?= $activity->makeAddressURL() ?>&amp;output=embed"></iframe>
 
 			<h5>Address</h5>
 			{{ $activity->street_address }} <br />

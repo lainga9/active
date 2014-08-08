@@ -237,9 +237,7 @@ class ActivitiesController extends \BaseController {
 			]);
 		}
 
-		$this->user->attendingActivities()->attach($id);
-
-		$activity->reducePlaces();
+		$activity->book($this->user);
 		
 		return Redirect::back()
 		->with('success', 'You have successfully booked this activity');

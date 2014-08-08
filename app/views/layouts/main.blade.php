@@ -5,11 +5,11 @@
 		<!-- The top nav -->
 		@include('_partials.layout.header')
 
-		<div class="row">
+		<!-- Alerts and Errors -->
+		@include('_partials.errors')
+		@include('_partials.alerts')
 
-			<!-- Alerts and Errors -->
-			@include('_partials.errors')
-			@include('_partials.alerts')
+		<div class="row">
 
 			<!-- The sidebar -->
 			<aside class="sidebar {{ Base::sidebarClass() }}">

@@ -28,7 +28,7 @@ class ActivitiesController extends \BaseController {
 		$this->beforeFilter('exists.activity', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending', 'cancel']] );
 
 		// Instructor Only Pages
-		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'timetable', 'cancel']] );
+		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'timetable', 'cancel', 'close']] );
 
 		// Client Only Pages
 		$this->beforeFilter('client', ['only' => ['attending', 'favourites']] );

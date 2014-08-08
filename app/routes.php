@@ -122,6 +122,12 @@ Route::group(['before' => 'auth'], function() {
 		'uses' => 'ActivitiesController@removeFavourite']
 	);
 
+	// Remove all favourites
+	Route::post('user/removeFavourites',
+		['as' => 'user.removeFavourites',
+		'uses' => 'UsersController@removeFavourites']
+	);
+
 	Route::get('profile',
 		['as' => 'profile.edit',
 		'uses' => 'UsersController@edit']);

@@ -139,6 +139,23 @@ class UsersController extends \BaseController {
 	}
 
 	/**
+	 * Removes all favourites for a user
+	 * POST /removeFavourites
+	 *
+	 * @return Response
+	 */
+	public function removeFavourites()
+	{
+		$this->user->removeFavourites();
+
+		return Redirect::back()
+		->with(
+			'success',
+			'All favourites successfully removed'
+		);
+	}
+
+	/**
 	 * Remove the specified resource from storage.
 	 * DELETE /users/{id}
 	 *

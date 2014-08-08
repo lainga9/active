@@ -69,6 +69,19 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->hasMany('Message', 'recipient_id');
 	}
 
+	public function removeFavourites()
+	{
+		$favourites = Auth::user()->favourites;
+
+		if( !$favourites->isEmpty() )
+		{
+			foreach( $favourites as $favourite )
+			{
+				Auth::user()->favourites()->detach($favourite->id);
+			}
+		}
+	}
+
 	// Class types associated to an instructor. It checks all activities listed by an instructor and returns all of the classtypes associated to them.
 	public static function ClassTypes($user)
 	{

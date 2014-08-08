@@ -84,7 +84,7 @@ class ActivitiesController extends \BaseController {
 	{
 		$date = Input::get('date') ? Input::get('date') : null;
 
-		$activities = $this->instructor->makeTimetable($this->user, $date);
+		$activities = $this->user->makeTimetable($this->user, $date);
 		
 		$this->layout->content = View::make('activities.instructor.index')->with(compact('activities'));
 	}

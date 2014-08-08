@@ -10,6 +10,8 @@
 		
 	@if( !$activities->isEmpty() )
 
+		<h3>All Activities</h3>
+
 		@foreach($activities as $activity)
 
 			<h4><a href="{{ URL::route('activities.show', $activity->id) }}" class="text-success">{{ $activity->name }}</a></h4>
@@ -21,6 +23,12 @@
 			<hr>
 
 		@endforeach
+
+		<hr />
+
+		<h3>Timetable</h3>
+
+		@include('_partials.elements.timetable', ['activities' => Auth::user()->makeTimetable()])
 
 	@else
 

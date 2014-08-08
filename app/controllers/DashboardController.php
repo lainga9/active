@@ -4,10 +4,12 @@ class DashboardController extends \BaseController {
 
 	protected $layout = 'layouts.main';
 	protected $activity;
+	protected $user;
 
 	public function __construct(Activity $activity)
 	{
 		$this->activity = $activity;
+		$this->user 	= Auth::user();
 	}
 
 	/**
@@ -18,17 +20,17 @@ class DashboardController extends \BaseController {
 	 */
 	public function index()
 	{
-		if( User::isClient() )
+		if( $this->user->isClient() )
 		{
 			$activities = $this->activity->orderBy('created_at', 'DESC')->paginate(10);
 		}
 
-		if( User::isInstructor() )
+		if( $this->user->isInstructor() )
 		{
-			$activities = Auth::user()->activities;
+			$activities = $this->user->activities;
 		}
 
-		$userType = strtolower(get_class(Auth::user()->userable));
+		$userType = strtolower(get_class($this->user->userable));
 		$this->layout->content = View::make('dashboard.' . $userType)->with(compact('activities'));
 	}
 

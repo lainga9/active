@@ -56,7 +56,7 @@
 			<img src="http://placehold.it/400x300&amp;text=Advertising+Space" alt="" />
 		</div>
 		<div class="col-md-8">
-			@include('_partials.elements.timetable', ['activities' => $user->userable->makeTimetable()])
+			@include('_partials.elements.timetable', ['activities' => $user->makeTimetable($user)])
 			<hr />
 			@include('_partials.instructor.activities', ['activities' => $user->activities])
 		</div>

@@ -5,7 +5,7 @@
 	<div class="col-sm-8">
 		<div class="pull-right">
 			@if( Auth::check() )
-				@include('_partials.elements.top-nav')
+				@include('_partials.elements.topNav')
 				Logged in as: {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
 			@else
 				@include('_partials.elements.login')

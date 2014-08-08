@@ -1,8 +1,11 @@
 <nav class="nav-top">
 	<ul>
-		@if( User::isClient() )
+		@if( Auth::user()->isClient() )
 			<li>
 				<a href="{{ URL::route('favourites') }}">Favourites</a>
+			</li>
+			<li>
+				<a href="{{ URL::route('activities.attending') }}">Attending</a>
 			</li>
 		@endif
 		<li>

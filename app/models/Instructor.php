@@ -30,45 +30,6 @@ class Instructor extends \Eloquent implements BillableInterface {
         return $this->morphOne('User', 'userable');
     }
 
-    public function makeTimetable($user = null, $date = null)
-	{
-		$user = $user ? $user : Auth::user();
-
-		// Initialise empty arrays
-		$dates = [];
-		$activities = [];
-
-		if( !$date )
-		{
-			// Get the closest Monday i.e. the starting date
-			$start = strtotime("Monday this week");
-		}
-		else
-		{
-			$start = strtotime($date);
-		}
-
-		// Convert it to the correct date format for eloquent queries
-		$monday = date( "Y-m-d", $start );
-
-		// Add it to the dates array
-		$dates[] = $monday;
-
-		// Get the next 6 days and store them in the dates array
-		for($i = 1; $i < 7; $i++)
-		{
-			$dates[] = date( "Y-m-d", strtotime("+{$i} day", $start) );
-		}
-
-		// For each date, find the corresponding activities and store them in an array
-		foreach($dates as $date)
-		{
-			$activities[ strtolower( date( 'l', strtotime($date) ) ) ] = Activity::whereUserId($user->id)->whereDate($date)->get();
-		}
-
-		return $activities;
-	}
-
 	public function marketingMaterial($view, $data, $filename)
 	{
 		$pdf = PDF::loadView($view, $data);

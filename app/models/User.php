@@ -82,6 +82,53 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		}
 	}
 
+	public function makeTimetable($user = null, $date = null)
+	{
+		$user = $user ? $user : Auth::user();
+
+		// Initialise empty arrays
+		$dates = [];
+		$activities = [];
+
+		if( !$date )
+		{
+			// Get the closest Monday i.e. the starting date
+			$start = strtotime("Monday this week");
+		}
+		else
+		{
+			$start = strtotime($date);
+		}
+
+		// Convert it to the correct date format for eloquent queries
+		$monday = date( "Y-m-d", $start );
+
+		// Add it to the dates array
+		$dates[] = $monday;
+
+		// Get the next 6 days and store them in the dates array
+		for($i = 1; $i < 7; $i++)
+		{
+			$dates[] = date( "Y-m-d", strtotime("+{$i} day", $start) );
+		}
+
+		// For each date, find the corresponding activities and store them in an array
+		foreach($dates as $date)
+		{
+			if( $user->isInstructor() )
+			{
+				$activities[ strtolower( date( 'l', strtotime($date) ) ) ] = Activity::whereUserId($user->id)->whereDate($date)->get();
+			}
+
+			if( $user->isClient() )
+			{
+				$activities[ strtolower( date( 'l', strtotime($date) ) ) ] = $user->attendingActivities()->whereDate($date)->get();
+			}
+		}
+
+		return $activities;
+	}
+
 	// Class types associated to an instructor. It checks all activities listed by an instructor and returns all of the classtypes associated to them.
 	public static function ClassTypes($user)
 	{
@@ -150,27 +197,23 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	// Check if the user is a client
-	public static function isClient($user = null)
+	public function isClient()
 	{
-		$user = $user ? $user : Auth::user();
-
 		if( !Auth::check() ) return false;
 
-		if( $user->role_id == 3 ) return true;
+		if( $this->role_id == 3 ) return true;
 
-		return $user->role_id == 1 ? true : false;
+		return $this->role_id == 1 ? true : false;
 	}
 
 	// Check if the user is instructor
-	public static function isInstructor($user = null)
+	public function isInstructor()
 	{
-		$user = $user ? $user : Auth::user();
-
 		if( !Auth::check() ) return false;
 
-		if( $user->role_id == 3 ) return true;
+		if( $this->role_id == 3 ) return true;
 
-		return $user->role_id == 2 ? true : false;
+		return $this->role_id == 2 ? true : false;
 	}
 
 	// Check if the user is attending an activity

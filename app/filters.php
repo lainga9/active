@@ -56,7 +56,7 @@ Route::filter('auth.basic', function()
 
 Route::filter('instructor', function()
 {
-	if( !User::isInstructor() )
+	if( !Auth::user()->isInstructor() )
 	{
 		return Redirect::route('dashboard')
 		->with('error', 'Sorry you do not have sufficient permissions to perform that action');
@@ -66,7 +66,7 @@ Route::filter('instructor', function()
 // Checks the user is a client
 Route::filter('client', function()
 {
-	if( !User::isClient() )
+	if( !Auth::user()->isClient() )
 	{
 		return Redirect::route('dashboard')
 		->with('error', 'Sorry, instructors cannot perform that action!');
@@ -86,7 +86,7 @@ Route::filter('activity.hasLength', function($route)
 // Checks that the user is an instructor and that the client isn't already booked in.
 Route::filter('activity.book', function($route)
 {
-	if( User::isInstructor() )
+	if( Auth::user()->isInstructor() )
 	{
 		return Redirect::route('dashboard')
 		->with('error', 'Sorry, instructors cannot book activities');

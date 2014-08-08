@@ -69,6 +69,12 @@ class Instructor extends \Eloquent implements BillableInterface {
 		return $activities;
 	}
 
+	public function marketingMaterial($view, $data, $filename)
+	{
+		$pdf = PDF::loadView($view, $data);
+		return $pdf->download($filename . '.pdf');
+	}
+
     public static function spendCredit($user, $activity)
     {
     	if( !$user->userable->subscribed('pro') )

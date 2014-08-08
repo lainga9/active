@@ -132,6 +132,14 @@ Route::group(['before' => 'auth'], function() {
 		['as' => 'feedback.store', 
 		'uses' => 'FeedbackController@store']);
 
+	Route::get('marketing',
+		['as' => 'marketing.index',
+		'uses' => 'MarketingController@index']);
+
+	Route::get('marketing/download', [
+		'as' => 'marketing.download', 
+		'uses' => 'MarketingController@download']);
+
 	/*
 	|--------------------------------------------------------------------------
 	| Search Routes
@@ -201,7 +209,7 @@ Route::group(['before' => 'auth'], function() {
 });
 
 // Users
-Route::resource('users', 'UsersController', ['except' => ['edit', 'show']]);
+Route::resource('users', 'UsersController', ['except' => ['edit']]);
 
 /*
 |--------------------------------------------------------------------------

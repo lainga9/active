@@ -12,6 +12,8 @@
 
 	<a href="{{ URL::route('feedback.index') }}" class="btn btn-success">Feedback</a>
 
+	<a href="{{ URL::route('marketing.index') }}" class="btn btn-success">Marketing Material</a>
+
 	<a href="{{ URL::route('users.show', Auth::user()->id) }}" class="btn btn-success">My Profile</a>
 
 	<a href="{{ URL::route('profile.edit') }}" class="btn btn-success">Edit Profile</a>

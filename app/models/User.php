@@ -216,6 +216,22 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->role_id == 2 ? true : false;
 	}
 
+	// Check if the user is an individudal
+	public function isIndividual()
+	{
+		if( !Auth::check() ) return false;
+
+		return $this->user_type_id == 1 ? true : false;		
+	}
+
+	// Check if the user is an organisation
+	public function isOrganisation()
+	{
+		if( !Auth::check() ) return false;
+
+		return $this->user_type_id == 1 ? true : false;		
+	}
+
 	// Check if the user is attending an activity
 	public static function isAttending($id)
 	{

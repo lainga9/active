@@ -150,7 +150,7 @@ class Search extends \Eloquent {
 			});
 		}
 
-		// Check if we have changed page in the pagination. If we have then subtract 1 from the page query paramater to get the correct index in the array i.e. page1 is the first page so equals index 0 in the array
+		// Check if we have changed page in the pagination. If we have then subtract 1 from the page query parameter to get the correct index in the array i.e. page1 is the first page so equals index 0 in the array
 		$page = Input::get('page') ? (int) Input::get('page') - 1 : 0;
 
 		if( !$activities->isEmpty() )
@@ -165,11 +165,11 @@ class Search extends \Eloquent {
 			$activities = Paginator::make($activeChunk->all(), count($activities), 10);
 		}
 
-		// Used for the AJAX Search. When the AJAX search is used the JSON response is rendered using a handlebars template. This template does not have access to PHP functions or relationships such as $activity->user so we have to make sure to include all of the information in the JSON response.
+		// Used for the AJAX Search. Rather than returning JSON and having to parse it with a template we simply render the view here and pass back the HTML string
 
 		if( Request::ajax() )
 		{
-			return View::make('test', compact('activities'))->render();
+			return View::make('_partials.ajax.activities', compact('activities'))->render();
 		}
 
 		return $activities;

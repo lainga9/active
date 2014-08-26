@@ -169,69 +169,9 @@ class Search extends \Eloquent {
 
 		if( Request::ajax() )
 		{
-			return static::resultsToJSON($activities);
+			return View::make('test', compact('activities'))->render();
 		}
 
 		return $activities;
-	}
-
-	public static function resultsToJSON($activities)
-	{
-		$activitiesArr = [];
-		$links = '';
-
-		if( count($activities) )
-		{
-			foreach( $activities as $activity )
-			{
-				$attending 					= $activity->isAttending() ? true : false;
-				$favourite 					= $activity->isFavourite() ? true : false;
-
-				// Convert the activity to an array so we can add extra values to it
-				$activityArr 				= $activity->toArray();
-
-				// Get the creator of the activity and add it to the array
-				$instructor 				= $activity->instructor;
-
-				$activityArr['user'] 		= $instructor->toArray();
-
-				// Boolean - is the user attending this activity
-				$activityArr['attending'] 	= $attending;
-
-				// Boolean - is this activity a favourite of the user
-				$activityArr['favourite'] 	= $favourite;
-
-				$activityArr['level']		= $activity->level ? $activity->level->name : 'N/A';
-
-				// Routes for use in the template file
-				$activityArr['routes'] 		= [
-					'book'			=> URL::route('activity.book', $activity->id),
-					'showUser'		=> URL::route('users.show', $activity->instructor->id),
-					'showActivity' 	=> URL::route('activities.show', $activity->id)
-				];
-
-				$activityArr['views']		= [
-					'addFavourite'		=> View::make('_partials.elements.addFavourite')
-											->with(compact('activity'))
-											->render(),
-					'removeFavourite'	=> View::make('_partials.elements.removeFavourite')
-											->with(compact('activity'))
-											->render(),
-					'bookActivity'		=> View::make('_partials.elements.bookActivity')
-											->with(compact('activity'))
-											->render()
-				];
-				$activitiesArr[]			= $activityArr;
-			}
-
-			$links = $activities->links()->render();
-		}
-
-		$return = [
-			'activities' => $activitiesArr,
-			'links'		=> $links
-		];
-
-		return $return;
 	}
 }

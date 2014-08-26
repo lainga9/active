@@ -67,8 +67,4 @@
 	<div class="distance-slider"></div>
 </div>
 
-<script id="search-results-template" type="text/x-handlebars-template">
-	@include('_partials.client.json.activity')
-</script>
-
 {{ HTML::script('js/search.js') }}

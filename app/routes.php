@@ -281,6 +281,7 @@ Route::get(
 	)
 );
 
+// Password Reset
 Route::post(
 	'passwordReset',
 	array(

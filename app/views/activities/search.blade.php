@@ -12,12 +12,11 @@
 
 	<div class="row">
 		<div class="col-md-4">
-			<img src="http://placehold.it/400&text=Advertising+Space" alt="" style="margin-bottom: 20px;" />
-			<img src="http://placehold.it/400&text=Advertising+Space" alt="" />
+			<img src="http://placehold.it/400&amp;text=Advertising+Space" alt="" style="margin-bottom: 20px;" />
+			<img src="http://placehold.it/400&amp;text=Advertising+Space" alt="" />
 		</div>
 		<div class="col-md-8">
 			<div id="activities"></div>
-			<div id="pagination"></div>
 		</div>
 	</div>
 @stop

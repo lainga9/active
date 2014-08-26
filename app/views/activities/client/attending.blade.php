@@ -20,7 +20,7 @@
 			<p>{{ $activity->street_address }}</p>
 			<p>{{ $activity->town }}, {{ $activity->postcode }}</p>
 
-			<hr>
+			<hr />
 
 		@endforeach
 

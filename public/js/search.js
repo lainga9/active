@@ -176,16 +176,7 @@ jQuery(document).ready(function($) {
 				data: "distance=" + $distance + "&day=" + $days + "&class_type_id=" + $classType + "&terms=" + $terms + "&location=" + $location + "&page=" + $page + "&genders=" + $genders + "&time_from=" + $time_from + "&time_until=" + $time_until,
 				url: "/active/public/search/activities"
 			}).done(function(result) {
-				if(result.activities.activities.length > 0) {
-					var source   = $template.html();
-					var template = Handlebars.compile(source);
-					var html = template(result.activities);
-					$activities.html(html);
-				} else {
-					$activities.html('<div class="alert alert-info">No Activities Found</div>');
-				}
-				$pagination.html(result.activities.links);
-				$page = 1;
+				$activities.html(result.activities);
 			});
 		};
 

@@ -12,7 +12,7 @@
 
 	<hr />
 
-	@include('_partials.elements.timetable', ['activities' => Auth::user()->userable->makeTimetable()])
+	@include('_partials.elements.timetable', ['activities' => Auth::user()->makeTimetable()])
 
 	<hr>
 

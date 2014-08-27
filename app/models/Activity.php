@@ -91,21 +91,6 @@ class Activity extends \Eloquent {
 		return !$this->isClosed() && !$this->isFull() && !isAttending();
 	}
 
-	public static function feedbackable($client, $instructor)
-	{
-		$activities = $client->attendingActivities;
-
-		$activities = $activities->filter(function($activity) use ($instructor)
-		{
-			if( $activity->instructor->id == $instructor->id)
-			{
-				return $activity->hasPassed();
-			}
-		});
-
-		return $activities;
-	}
-
 	public function reducePlaces()
 	{
 		if( !$this->isFull() )
@@ -183,8 +168,8 @@ class Activity extends \Eloquent {
 
 	public function hasPassed()
 	{
-		$endTime = static::getEndTime($this);
-		$currentTime = strtotime("now");
+		$endTime 		= static::getEndTime($this);
+		$currentTime 	= strtotime("now");
 
 		return $endTime < $currentTime ? true : false;
 	}

@@ -289,4 +289,22 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		$this->favourites()->attach($instructor->id);
 	}
 
+	// Checks if a client can leave feedback for an instructor
+	public function feedbackable($instructor)
+	{
+		if( $this->isInstructor() ) return null;
+		
+		$activities = $this->attendingActivities;
+
+		$activities = $activities->filter(function($activity) use ($instructor)
+		{
+			if( $activity->instructor->id == $instructor->id)
+			{
+				return $activity->hasPassed();
+			}
+		});
+
+		return $activities;
+	}
+
 }

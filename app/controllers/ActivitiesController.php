@@ -345,7 +345,7 @@ class ActivitiesController extends \BaseController {
 		]);
 	}
 
-	public function getSearch()
+	public function search()
 	{
 		$activities = Search::execute(Input::all());
 
@@ -358,28 +358,6 @@ class ActivitiesController extends \BaseController {
 
 		// Returning the view since we are overriding the layout in the template
 		return View::make('activities.search')->with(compact('activities'));
-	}
-
-	/**
-	 * Searches activities
-	 * POST /search
-	 *
-	 * @return Response
-	 */
-	public function search()
-	{
-		$activities = Search::execute(Input::all());
-
-		if( Request::ajax() )
-		{
-			return Response::json([
-				'activities' => $activities
-			]);
-		}
-		else
-		{
-			$this->layout->content = View::make('activities.client.index')->with(compact('activities'));	
-		}
 	}
 
 	public function api()

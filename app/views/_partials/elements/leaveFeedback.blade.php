@@ -14,7 +14,7 @@
 				</div>
 				<div class="modal-body">
 
-					<?php $feedbackable = Activity::feedbackable(Auth::user(), $instructor); ?>
+					<?php $feedbackable = Auth::user()->feedbackable($instructor); ?>
 				
 					@if(count($feedbackable))
 
@@ -49,7 +49,9 @@
 
 				</div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-success">Leave Feedback</button>
+					@if(count($feedbackable))
+						<button type="submit" class="btn btn-success">Leave Feedback</button>
+					@endif
 				</div>
 			</div>
 		</div>

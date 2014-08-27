@@ -175,12 +175,12 @@ Route::group(['before' => 'auth'], function() {
 		// Show the advanced search page
 		Route::get('/', 
 			['as' => 'search', 
-			'uses' => 'ActivitiesController@getSearch']);
+			'uses' => 'ActivitiesController@search']);
 
 		// Perform the search
 		Route::get('activities', 
 			['as' => 'activities.search', 
-			'uses' => 'ActivitiesController@search']);
+			'uses' => 'SearchController@activities']);
 	});
 
 	/*

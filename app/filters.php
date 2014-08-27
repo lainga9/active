@@ -22,6 +22,8 @@ App::after(function($request, $response)
 	//
 });
 
+View::composer('_partials.search.basic', 'Services\Composers\SearchComposer');
+
 /*
 |--------------------------------------------------------------------------
 | Authentication Filters

@@ -24,35 +24,23 @@
 	<p>
 		{{ ClassType::printFormHTML() }}
 	</p>
-
-	<!-- <div>Day:</div>
-	<p>
-		@if(Base::$days)
-			@foreach(Base::$days as $value => $name)
-				<?php $old = Input::get('day') ? in_array($value, Input::get('day')) : null; ?>
-				<div>
-					{{ Form::checkbox(
-						'day[]', 
-						$value, 
-						$old
-					) }}
-
-					{{ $name }}
-				</div>
-			@endforeach
-		@endif
-	</p>
-
-	<div>Distance:</div>
-	<p>
-		{{ Form::text(
-			'distance',
-			Input::old('distance')
-		) }}
-	</p> -->
 	
 	{{ Form::submit('Search', ['class' => 'btn btn-success']) }}
 
 	<p><a href="{{ URL::route('search'); }}">Click here for Advanced Search</a></p>
 
 {{ Form::close() }}
+
+<script>
+	
+	jQuery(document).ready(function($) {
+
+		var $classTypes = <?= json_encode($activities); ?>;
+
+		$('input[name="terms"]').autocomplete({
+			source: $classTypes
+		});
+
+	});
+
+</script>

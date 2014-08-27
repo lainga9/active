@@ -260,7 +260,7 @@ class ActivitiesController extends \BaseController {
 	public function cancel($id)
 	{
 		$activity = $this->activity->find($id);
-		$activity->cancel();
+		$activity->cancel($this->mailer);
 
 		return Redirect::back()
 		->with(

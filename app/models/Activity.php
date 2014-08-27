@@ -51,8 +51,25 @@ class Activity extends \Eloquent {
 		return $this;
 	}
 
-	public function cancel()
+	public function cancel($mailer)
 	{
+		$attending = $this->clients;
+
+		if( $attending )
+		{
+			foreach( $attending as $user )
+			{
+				$mailer->send($user, 'emails.blank', 'Activity Cancelled');
+			}
+		}
+
+		$instructor = $this->instructor;
+
+		if( $instructor )
+		{
+			$mailer->send($instructor, 'emails.blank', 'Confirmation of cancellation');
+		}
+
 		$this->cancelled = 1;
 		$this->save();
 

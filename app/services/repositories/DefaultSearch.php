@@ -1,9 +1,16 @@
-<?php
+<?php namespace Services\Repositories;
 
-class Search extends \Eloquent {
-	protected $fillable = [];
+use Services\Interfaces\SearchInterface;
+use Input;
+use Activity;
+use ClassType;
+use Paginator;
+use View;
+use Request;
 
-	public static function execute(array $input)
+class DefaultSearch implements SearchInterface {
+
+	public function activities($input)
 	{
 		$activities = new Activity;
 

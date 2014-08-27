@@ -4,10 +4,12 @@ class SearchController extends \BaseController {
 
 	protected $layout = 'layouts.main';
 	protected $activity;
+	protected $search;
 
-	public function __construct(Activity $activity)
+	public function __construct(Activity $activity, Services\Repositories\DefaultSearch $search)
 	{
 		$this->activity = $activity;
+		$this->search 	= $search;
 	}
 
 	/**
@@ -18,7 +20,7 @@ class SearchController extends \BaseController {
 	 */
 	public function activities()
 	{
-		$activities = Search::execute(Input::all());
+		$activities = $this->search->activities(Input::all());
 
 		if( Request::ajax() )
 		{
@@ -30,6 +32,11 @@ class SearchController extends \BaseController {
 		{
 			$this->layout->content = View::make('activities.client.index')->with(compact('activities'));	
 		}
+	}
+
+	public function users()
+	{
+
 	}
 
 }

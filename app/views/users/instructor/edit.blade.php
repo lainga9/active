@@ -21,6 +21,8 @@
 		'method' => 'PUT'
 	]) }}
 
+		<input type="hidden" name="user_type_id" value="{{ $user->user_type_id }}" />
+
 		<div class="row">
 			<div class="col-md-9">
 				<div class="row">
@@ -41,15 +43,33 @@
 							) }}
 						</p>
 
+						<div>Street Address</div>
+						<p>
+							{{ Form::text(
+								'street_address',
+								$user->street_address
+							) }}
+						</p>
+
+						<div>Town</div>		
+						<p>
+							{{ Form::text(
+								'town',
+								$user->town
+							) }}
+						</p>
+
+					</div>
+					<div class="col-md-6">
+
 						<div>Postcode</div>		
 						<p>
 							{{ Form::text(
 								'postcode',
-								$user->userable->postcode
+								$user->postcode
 							) }}
 						</p>
-					</div>
-					<div class="col-md-6">
+
 						<div>Telephone Number</div>		
 						<p>
 							{{ Form::text(

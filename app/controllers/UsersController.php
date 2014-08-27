@@ -127,7 +127,7 @@ class UsersController extends \BaseController {
 			->with('error', 'Sorry, the requested user cannot be found');
 		}
 
-		$userType = strtolower(get_class($user->userable));
+		$userType = get_class($user->userable);
 
 		$typeAttributes = $userType::$typeAttributes;
 

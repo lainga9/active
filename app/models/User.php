@@ -19,7 +19,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'email',
 		'gender',
 		'avatar',
-		'user_type_id'
+		'user_type_id',
+		'street_address',
+		'town',
+		'postcode'
 	];
 
 	/* Relationships */
@@ -111,6 +114,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 				Auth::user()->favourites()->detach($favourite->id);
 			}
 		}
+	}
+
+	public function makeAddressURL()
+	{
+		return urlencode($this->street_address) . ',' . urlencode($this->town) . ',' . urlencode($this->postcode);
 	}
 
 	public function makeTimetable($user = null, $date = null)
@@ -260,7 +268,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		if( !Auth::check() ) return false;
 
-		return $this->user_type_id == 1 ? true : false;		
+		return $this->user_type_id == 2 ? true : false;		
 	}
 
 	// Check if the user is attending an activity

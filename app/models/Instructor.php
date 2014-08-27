@@ -14,7 +14,6 @@ class Instructor extends \Eloquent implements BillableInterface {
 	public static $typeAttributes = [
 		'phone',
 		'mobile',
-		'postcode',
 		'bio',
 		'website',
 		'facebook',

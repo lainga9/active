@@ -9,7 +9,8 @@ class UsersController extends \BaseController {
 	{
 		$this->user = $user;
 		$this->beforeFilter('auth', ['except' => ['create', 'store'] ] );
-		$this->beforeFilter('exists.user', ['only' => ['show', 'edit', 'update'] ] );
+		$this->beforeFilter('exists.user', ['only' => ['show', 'edit', 'update', 'follow'] ] );
+		$this->beforeFilter('user.favourite', ['only' => ['favourite'] ] );
 	}
 
 	/**
@@ -136,6 +137,46 @@ class UsersController extends \BaseController {
 		return Redirect::back()
 		->with('success', 'User updated successfully');
 
+	}
+
+	/**
+	 * Follows a client as a friend
+	 * POST /follow/{id}
+	 *
+	 * @return Response
+	 */
+	public function follow($id)
+	{
+		$user 	= Auth::user();
+		$client = $this->user->find($id);
+
+		$user->followClient($client);
+
+		return Redirect::back()
+		->with(
+			'success',
+			'You are now following ' . $friend->name
+		);
+	}
+
+	/**
+	 * Adds an instructor to favourites
+	 * POST /favourite/{id}
+	 *
+	 * @return Response
+	 */
+	public function favourite($id)
+	{
+		$user 		= Auth::user();
+		$instructor	= $this->user->find($id);
+
+		$user->favouriteInstructor($instructor);
+
+		return Redirect::back()
+		->with(
+			'success',
+			'You have successfully favourited ' . $instructor->name
+		);
 	}
 
 	/**

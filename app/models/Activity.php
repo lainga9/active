@@ -106,9 +106,9 @@ class Activity extends \Eloquent {
 		);
 	}
 
-	public function attachClassTypes()
+	public function attachClassTypes($classTypes)
 	{
-		if( $classTypes = Input::get('class_type_id') )
+		if( $classTypes )
 		{
 			foreach( $classTypes as $classType )
 			{

@@ -249,6 +249,15 @@ Route::filter('activity.belongsTo', function($route)
 
 });
 
+Route::filter('user.favourite', function($route)
+{
+	if( Auth::user()->id == Route::input('id') )
+	{
+		return Redirect::back()
+		->with('error', 'You cannot add yourself to your favourites');
+	}
+});
+
 /*
 |--------------------------------------------------------------------------
 | Guest Filter

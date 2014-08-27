@@ -18,11 +18,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'last_name',
 		'email',
 		'gender',
-		'avatar'
+		'avatar',
+		'user_type_id'
 	];
 
 	/* Relationships */
 
+	// Credits spent by an instructor	
 	public function CreditHistory()
 	{
 		return $this->hasMany('Credit', 'instructor_id');
@@ -45,10 +47,39 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->belongsToMany('Activity');
 	}
 
-	// Clients favourite activities
+	// Clients favourite instructors
 	public function Favourites()
 	{
-		return $this->belongsToMany('Activity', 'activity_favourite');
+		return $this->belongsToMany('User', 'favourite_instructors', 'user_id', 'instructor_id');
+	}
+
+	public function FavouriteActivities()
+	{
+		$return = [];
+
+		$instructors = $this->favourites;
+
+		if( !$instructors ) return null;
+
+		foreach( $instructors as $instructor )
+		{
+			$activities = $instructor->activities;
+
+			if( !$activities ) return null;
+
+			foreach( $activities as $activity )
+			{
+				$return[] = $activity;
+			}
+		}
+
+		return Illuminate\Database\Eloquent\Collection::make($return);
+	}
+
+	// Clients friends - people they're following
+	public function Friends()
+	{
+		return $this->belongsToMany('User', 'follow_clients', 'user_id', 'client_id');
 	}
 
 	// Feedback an instructor has received
@@ -236,6 +267,18 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public static function isAttending($id)
 	{
 		return Auth::user()->attendingActivities->contains($id) ? true : false;
+	}
+
+	// Follow a client
+	public function followClient($client)
+	{
+		$this->friends()->associate($client->id);
+	}
+
+	// Follow an instructor
+	public function favouriteInstructor($instructor)
+	{
+		$this->favourites()->attach($instructor->id);
 	}
 
 }

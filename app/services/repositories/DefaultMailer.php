@@ -2,7 +2,7 @@
 
 use Services\Interfaces\MailerInterface;
 
-class DefaultMailerRepository implements MailerInterface {
+class DefaultMailer implements MailerInterface {
 
 	public function send(\User $recipient, $view, $subject, array $data = null)
 	{

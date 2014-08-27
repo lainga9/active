@@ -116,6 +116,18 @@ Route::group(['before' => 'auth'], function() {
 		'uses' => 'ActivitiesController@addFavourite']
 	);
 
+	// Follow a friend
+	Route::post('follow/{id}', [
+		'as'	=> 'user.follow',
+		'uses'	=> 'UsersController@follow'
+	]);
+
+	// Favourite an activity
+	Route::post('favourite/{id}', [
+		'as'	=> 'user.favourite',
+		'uses'	=> 'UsersController@favourite'
+	]);
+
 	// Remove a favourite
 	Route::post('activity/removeFavourite/{id}',
 		['as' => 'activity.removeFavourite',

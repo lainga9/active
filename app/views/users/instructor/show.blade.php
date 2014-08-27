@@ -10,6 +10,9 @@
 				<h5>Telephone: {{ $user->userable->phone }}</h5>
 				<h5>Mobile: {{ $user->userable->mobile }}</h5>
 				@include('_partials.elements.sendMessage', ['instructor' => $user])
+				{{ Form::open(['route' => ['user.favourite', $user->id]]) }}
+					<button type="submit" class="btn btn-success">Add to Favourites</button>
+				{{ Form::close() }}
 			</div>
 			<div class="col-md-8">
 				<div class="row">

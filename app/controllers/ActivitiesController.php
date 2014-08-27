@@ -18,7 +18,7 @@ class ActivitiesController extends \BaseController {
 		Instructor $instructor,
 		Client $client,
 		User $user,
-		DefaultMailerRepository $mailer 
+		Services\Repositories\DefaultMailer $mailer 
 	)
 	{
 		$this->activity 	= $activity;
@@ -65,7 +65,7 @@ class ActivitiesController extends \BaseController {
 	{
 		$activities = $this->activity->orderBy('created_at', 'DESC')->paginate(10);
 
-		if( User::isInstructor() )
+		if( $this->user->isInstructor() )
 		{
 			$activities = $this->user->activities;
 		}
@@ -134,7 +134,7 @@ class ActivitiesController extends \BaseController {
 
 		$activity = $this->activity->create(Input::except('class_type_id'));
 
-		$activity->attachClassTypes();
+		$activity->attachClassTypes(Input::get('class_type_id'));
 		
 		$this->instructor->spendCredit($this->user, $activity);
 
@@ -297,7 +297,9 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function favourites()
 	{
-		$activities = $this->user->favourites()->paginate(10);
+		$activities = $this->user->favouriteActivities();
+		$activities = Paginator::make($activities->all(), count($activities), 10);
+
 		$this->layout->content = View::make('activities.client.index')->with(compact('activities'));
 	}
 

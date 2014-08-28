@@ -4,7 +4,7 @@
 	{{ Form::open([
 		'route' => [
 			'messages.send',
-			$instructor->id
+			$user->id
 		]
 	]) }}
 		<div class="modal-dialog">

@@ -5,11 +5,13 @@ class SearchController extends \BaseController {
 	protected $layout = 'layouts.main';
 	protected $activity;
 	protected $search;
+	protected $user;
 
-	public function __construct(Activity $activity, Services\Repositories\DefaultSearch $search)
+	public function __construct(Activity $activity, Services\Repositories\DefaultSearch $search, User $user)
 	{
 		$this->activity = $activity;
 		$this->search 	= $search;
+		$this->user 	= $user;
 	}
 
 	/**
@@ -36,7 +38,9 @@ class SearchController extends \BaseController {
 
 	public function users()
 	{
+		$users = $this->search->users(Input::all());
 
+		$this->layout->content = View::make('users.search')->with(compact('users'));
 	}
 
 }

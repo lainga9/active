@@ -1,5 +1,21 @@
 <p>Find a class, instructor or venue in my area</p>
 
+<h3>People</h3>
+
+{{ Form::open(['route' => 'users.search', 'method' => 'GET']) }}
+
+	<div>Name</div>
+	{{ Form::text('name', Input::get('name')) }}
+
+	<div>Email</div>
+	{{ Form::text('email', Input::get('email')) }}
+
+	{{ Form::submit('Search', ['class' => 'btn btn-success']) }}
+
+{{ Form::close() }}
+
+<h3>Activities</h3>
+
 {{ Form::open(['route' => 'activities.search', 'method' => 'GET']) }}
 
 	<div>Postcode/Area</div>

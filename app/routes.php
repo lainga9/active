@@ -31,10 +31,24 @@ Route::get('/',
 
 Route::group(['before' => 'auth'], function() {
 
+	/*
+	|--------------------------------------------------------------------------
+	| Misc Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
+
 	// Dashboard
 	Route::get('dashboard', 
 		['as' => 'dashboard', 
 		'uses' => 'DashboardController@index']);
+
+	/*
+	|--------------------------------------------------------------------------
+	| Account Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
 
 	// My Account
 	Route::get('account', 
@@ -59,11 +73,54 @@ Route::group(['before' => 'auth'], function() {
 	// Handles failed payments - http://laravel.com/docs/billing#handling-failed-payments
 	Route::post('stripe/webhook', 'Laravel\Cashier\WebhookController@handleWebhook');
 
-	// Activities
-	Route::resource('activities', 'ActivitiesController');
+	/*
+	|--------------------------------------------------------------------------
+	| Activity Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
 
-	// Class Types
-	Route::resource('classTypes', 'ClassTypesController');
+	// Activities index
+	Route::get('activities', [
+		'as'	=> 'activities.index',
+		'uses'	=> 'ActivitiesController@index'
+	]);
+
+	// Single Activity
+	Route::get('activities/{id}', [
+		'as'	=> 'activities.show',
+		'uses'	=> 'ActivitiesController@show'
+	]);
+
+	// Add Activity
+	Route::get('activities/create', [
+		'as'	=> 'activities.create',
+		'uses'	=> 'ActivitiesController@create'
+	]);
+
+	// Store Activity
+	Route::post('activities', [
+		'as'	=> 'activities.store',
+		'uses'	=> 'ActivitiesController@store'
+	]);
+
+	// Edit Activity
+	Route::get('activities/{id}/edit', [
+		'as'	=> 'activities.edit',
+		'uses'	=> 'ActivitiesController@edit'
+	]);
+
+	// Update Activity
+	Route::put('activities/{id}', [
+		'as'	=> 'activities.update',
+		'uses'	=> 'ActivitiesController@update'
+	]);
+
+	// Activities a user is attending
+	Route::get('attending',
+		['as' => 'activities.attending',
+		'uses' => 'ActivitiesController@attending']);
+
 
 	// Book an Activity
 	Route::post('bookActivity/{id}', 
@@ -81,6 +138,24 @@ Route::group(['before' => 'auth'], function() {
 		['as' => 'activity.close',
 		'uses' => 'ActivitiesController@close']);
 
+	/*
+	|--------------------------------------------------------------------------
+	| Class Type Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
+
+	// Class Types
+	Route::resource('classTypes', 'ClassTypesController');
+
+	/*
+	|--------------------------------------------------------------------------
+	| Message Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
+
+	// Message inbox
 	Route::get('messages', 
 		['as' => 'messages.index', 
 		'uses' => 'MessagesController@index']);
@@ -100,10 +175,13 @@ Route::group(['before' => 'auth'], function() {
 		['as' => 'activities.timetable',
 		'uses' => 'ActivitiesController@timetable']);
 
-	// Activities a user is attending
-	Route::get('attending',
-		['as' => 'activities.attending',
-		'uses' => 'ActivitiesController@attending']);
+
+	/*
+	|--------------------------------------------------------------------------
+	| Social Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
 
 	// User Favourites
 	Route::get('activity/favourites', 
@@ -140,9 +218,42 @@ Route::group(['before' => 'auth'], function() {
 		'uses' => 'UsersController@removeFavourites']
 	);
 
+	/*
+	|--------------------------------------------------------------------------
+	| User Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
+
+	// Edit user
 	Route::get('profile',
 		['as' => 'profile.edit',
 		'uses' => 'UsersController@edit']);
+
+	// Users index
+	Route::get('users', [
+		'as'	=> 'users.index',
+		'uses'	=> 'UsersController@index'
+	]);
+
+	// Single User
+	Route::get('users/{id}', [
+		'as'	=> 'users.show',
+		'uses'	=> 'UsersController@show'
+	]);
+
+	// Store User
+	Route::post('users', [
+		'as'	=> 'users.store',
+		'uses'	=> 'UsersController@store'
+	]);
+
+	/*
+	|--------------------------------------------------------------------------
+	| Feedback Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
 
 	// Feedback Index
 	Route::get('feedback/{id?}', 
@@ -154,6 +265,13 @@ Route::group(['before' => 'auth'], function() {
 	Route::post('feedback/{instructorId?}', 
 		['as' => 'feedback.store', 
 		'uses' => 'FeedbackController@store']);
+
+	/*
+	|--------------------------------------------------------------------------
+	| Marketing Routes
+	|--------------------------------------------------------------------------
+	|
+	*/
 
 	Route::get('marketing',
 		['as' => 'marketing.index',
@@ -177,10 +295,15 @@ Route::group(['before' => 'auth'], function() {
 			['as' => 'search', 
 			'uses' => 'ActivitiesController@search']);
 
-		// Perform the search
+		// Perform activities search
 		Route::get('activities', 
 			['as' => 'activities.search', 
 			'uses' => 'SearchController@activities']);
+
+		// Perform activities search
+		Route::get('users', 
+			['as' => 'users.search', 
+			'uses' => 'SearchController@users']);
 	});
 
 	/*
@@ -231,8 +354,24 @@ Route::group(['before' => 'auth'], function() {
 	});
 });
 
-// Users
-Route::resource('users', 'UsersController', ['except' => ['edit']]);
+/*
+|--------------------------------------------------------------------------
+| Unprotected User Routes
+|--------------------------------------------------------------------------
+|
+*/
+
+// Add User
+Route::get('users/create', [
+	'as'	=> 'users.create',
+	'uses'	=> 'UsersController@create'
+]);
+
+// Update User
+Route::put('users/{id}', [
+	'as'	=> 'users.update',
+	'uses'	=> 'UsersController@update'
+]);
 
 /*
 |--------------------------------------------------------------------------

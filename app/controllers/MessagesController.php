@@ -11,11 +11,18 @@ class MessagesController extends \BaseController {
 	public function __construct(
 		User $user, 
 		Activity $activity, 
-		Message $message)
+		Message $message,
+		Services\Validators\Message $validator
+	)
 	{
-		$this->user 	= $user;
-		$this->activity = $activity;
-		$this->message 	= $message;
+		$this->user 		= $user;
+		$this->activity 	= $activity;
+		$this->message 		= $message;
+		$this->validator 	= $validator;
+
+		// Filters
+		$this->beforeFilter('user.exists', ['only' => ['send', 'apiSend'] ] );
+		$this->beforeFilter('user.notSelf', ['only' => ['send', 'apiSend'] ] );
 	}
 
 	public function index()
@@ -28,32 +35,12 @@ class MessagesController extends \BaseController {
 	public function send($id)
 	{
 		$recipient = $this->user->find($id);
-		
-		if( !$recipient )
-		{
-			return Redirect::back()
-			->with(
-				'error',
-				'Sorry, this user cannot be found'
-			);
-		}
 
-		if( $recipient->id == Auth::user()->id )
-		{
-			return Redirect::back()
-			->with(
-				'error',
-				'Sorry, you cannot send messages to yourself'
-			);	
-		}
-
-		$validation = new Services\Validators\Message;
-
-		if( !$validation->passes() )
+		if( !$this->validator->passes() )
 		{
 			return Redirect::back()
 			->withInput()
-			->withErrors($validation->errors);
+			->withErrors($this->validator->errors);
 		}
 
 		$input = Input::all();
@@ -111,26 +98,10 @@ class MessagesController extends \BaseController {
 	{
 		$recipient = $this->user->find($id);
 
-		if( !$recipient )
+		if( !$this->validator->passes() )
 		{
 			return Response::json([
-				'errors' => [['Sorry, this user cannot be found']]
-			]);
-		}
-
-		if( $recipient->id == Auth::user()->id )
-		{
-			return Response::json([
-				'errors' => [['Sorry, you cannot send messages to yourself']]
-			]);
-		}
-
-		$validation = new Services\Validators\Message;
-
-		if( !$validation->passes() )
-		{
-			return Response::json([
-				'errors' => $validation->errors
+				'errors' => $this->validator->errors
 			]);
 		}
 

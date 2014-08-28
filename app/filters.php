@@ -113,14 +113,33 @@ Route::filter('activity.book', function($route)
 });
 
 // Checks to see if the user exists
-Route::filter('exists.user', function($route)
+Route::filter('user.exists', function($route)
 {
-	$id = Route::input('users');
+	$id = Route::input('id');
 
-	if( !$id )
+	if($id)
 	{
-		$id = Route::input('id');
+		$user = User::find($id);
+
+		if( !$user )
+		{
+			if( Request::ajax() )
+			{
+				return Response::json([
+					'errors' => [['Sorry, this user cannot be found']]
+				]);
+			}
+
+			return Redirect::route('dashboard')
+			->with('error', 'Sorry, the user you requested cannot be found');	
+		}
 	}
+});
+
+// Checks to see if the user exists
+Route::filter('user.notSelf', function($route)
+{
+	$id = Route::input('id');
 
 	if($id)
 	{
@@ -131,18 +150,26 @@ Route::filter('exists.user', function($route)
 			return Redirect::route('dashboard')
 			->with('error', 'Sorry, the user you requested cannot be found');	
 		}
+
+		if( $user->id == Auth::user()->id )
+		{
+			if( Request::ajax() )
+			{
+				return Response::json([
+					'errors' => [['Sorry, an error has occurred']]
+				]);
+			}
+
+			return Redirect::route('dashboard')
+			->with('error', 'An error has occurred');	
+		}
 	}
 });
 
 // Check to see if the activity exists
-Route::filter('exists.activity', function($route)
+Route::filter('activity.exists', function($route)
 {
-	$id = Route::input('activities');
-
-	if(!$id)
-	{
-		$id = Route::input('activityId');
-	}
+	$id = Route::input('id');
 	
 	if($id)
 	{

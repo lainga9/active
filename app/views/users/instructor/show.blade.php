@@ -12,7 +12,7 @@
 				@if( $user->isOrganisation() )
 					<iframe width="100%" height="250" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0" src="https://maps.google.com/maps?&amp;q=<?= $user->makeAddressURL() ?>&amp;output=embed"></iframe>
 				@endif
-				@include('_partials.elements.sendMessage', ['instructor' => $user])
+				@include('_partials.elements.sendMessage', compact('user'))
 				{{ Form::open(['route' => ['user.favourite', $user->id]]) }}
 					<button type="submit" class="btn btn-success">Add to Favourites</button>
 				{{ Form::close() }}

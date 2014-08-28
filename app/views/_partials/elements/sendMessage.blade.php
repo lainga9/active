@@ -1,4 +1,4 @@
-<a class="text-success" href="#" data-toggle="modal" data-target=".modal-message">Send a Message</a>
+<a class="btn btn-info" href="#" data-toggle="modal" data-target=".modal-message">Send a Message</a>
 
 <div class="modal fade modal-message">
 	{{ Form::open([

@@ -3,7 +3,14 @@
 class Client extends \Eloquent {
 	protected $guarded = [];
 
-	public static $typeAttributes = [];
+	public static $typeAttributes = [
+		'twitter',
+		'youtube',
+		'facebook',
+		'website',
+		'instagram',
+		'bio'
+	];
 
 	protected $table = "users_clients";
 

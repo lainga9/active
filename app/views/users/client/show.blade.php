@@ -6,6 +6,11 @@
 
 	<div class="row">
 		<div class="col-sm-4">
+			@if($user->avatar)
+				<a href="{{ URL::route('users.show', $user->id) }}"><img src="{{ URL::asset($user->avatar) }}" alt="" /></a>
+			@else
+				<img src="http://placehold.it/150" alt="" />
+			@endif
 			<h3>{{ $user->first_name }} {{ $user->last_name }}</h3>
 			<a href="{{ URL::route('user.follow', $user->id) }}" class="btn btn-success">Follow</a>
 			@include('_partials.elements.sendMessage', compact('user'))

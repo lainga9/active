@@ -18,7 +18,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'last_name',
 		'email',
 		'gender',
-		'avatar',
 		'user_type_id',
 		'street_address',
 		'town',
@@ -319,4 +318,23 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $activities;
 	}
 
+	// Updates a user's avatar
+	public function updateAvatar($input)
+	{
+		$path 		= 'uploads/' . str_random(20);
+		$filename 	= $input->getClientOriginalName();
+		$avatar 	= $input->move($path, $filename);
+
+		if($avatar)
+		{
+			$this->avatar = $path . '/' . $filename;
+			$this->save();
+
+			return $this;
+		}
+		else
+		{
+			throw new Exception('Problem Uploading File');
+		}
+	}
 }

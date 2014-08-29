@@ -261,6 +261,12 @@ Route::group(['before' => 'auth'], function() {
 		'uses'	=> 'UsersController@show'
 	]);
 
+	// Update profile pic
+	Route::put('users/avatar/{id}', [
+		'as'	=> 'user.avatar',
+		'uses'	=> 'UsersController@avatar'
+	]);
+
 	/*
 	|--------------------------------------------------------------------------
 	| Feedback Routes

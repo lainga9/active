@@ -15,7 +15,7 @@ class UsersController extends \BaseController {
 
 		// Filter
 		$this->beforeFilter('auth', ['except' => ['create', 'store'] ] );
-		$this->beforeFilter('exists.user', ['only' => ['show', 'edit', 'update', 'follow'] ] );
+		$this->beforeFilter('exists.user', ['only' => ['show', 'edit', 'update', 'follow', 'avatar'] ] );
 		$this->beforeFilter('user.favourite', ['only' => ['favourite'] ] );
 		$this->beforeFilter('user.notSelf', ['only' => ['favourite', 'follow'] ] );
 	}
@@ -173,7 +173,36 @@ class UsersController extends \BaseController {
 
 		return Redirect::back()
 		->with('success', 'User updated successfully');
+	}
 
+	/**
+	 * Update the users profile pic
+	 * PUT /users/{id}
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function avatar($id)
+	{
+		if( !Input::hasFile('avatar') ) 
+		{
+			return Redirect::back()
+			->with('error', 'Please select an image to upload');
+		}
+
+		try
+		{
+			$user = $this->user->find($id);
+			$user->updateAvatar(Input::file('avatar'));
+
+			return Redirect::back()
+			->with('success', 'Profile picture successfully updated!');
+		}
+		catch(Exception $e)
+		{
+			return Redirect::back()
+			->with('error', $e->getMessage());
+		}
 	}
 
 	/**

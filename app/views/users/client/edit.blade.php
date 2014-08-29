@@ -6,6 +6,26 @@
 
 	<hr>
 
+	<h4>Profile Picture</h4>
+
+	@if( $user->avatar )
+		<img src="{{ URL::asset($user->avatar) }}" alt="" />
+	@endif
+
+	{{ Form::open([
+		'route' 	=> ['user.avatar', $user->id],
+		'method' 	=> 'PUT',
+		'files'		=> true
+	]) }}
+
+		<p>{{ Form::file('avatar') }}</p>
+
+		{{ Form::submit('Update Profile Pic', ['class' => 'btn btn-success']) }}
+
+	{{ Form::close() }}
+
+	<hr>
+
 	<h4>Update your details using the form below</h4>
 
 	<hr>

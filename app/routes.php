@@ -218,6 +218,18 @@ Route::group(['before' => 'auth'], function() {
 		'uses' => 'UsersController@removeFavourites']
 	);
 
+	// People a user is following
+	Route::get('user/following/{id?}', [
+		'as'	=> 'user.following',
+		'uses'	=> 'UsersController@following'
+	]);
+
+	// People a user is followed by
+	Route::get('user/followers/{id?}', [
+		'as'	=> 'user.followers',
+		'uses'	=> 'UsersController@followers'
+	]);
+
 	/*
 	|--------------------------------------------------------------------------
 	| User Routes
@@ -247,12 +259,6 @@ Route::group(['before' => 'auth'], function() {
 	Route::get('users/{id}', [
 		'as'	=> 'users.show',
 		'uses'	=> 'UsersController@show'
-	]);
-
-	// Store User
-	Route::post('users', [
-		'as'	=> 'users.store',
-		'uses'	=> 'UsersController@store'
 	]);
 
 	/*
@@ -378,6 +384,12 @@ Route::get('users/create', [
 Route::put('users/{id}', [
 	'as'	=> 'users.update',
 	'uses'	=> 'UsersController@update'
+]);
+
+// Store User
+Route::post('users', [
+	'as'	=> 'users.store',
+	'uses'	=> 'UsersController@store'
 ]);
 
 /*

@@ -50,10 +50,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->belongsToMany('Activity');
 	}
 
-	// Actions involving this user
+	// Actions performed this user
 	public function Actions()
 	{
-		return $this->hasMany('Action');
+		return $this->hasMany('Action')->orderBy('created_at', 'DESC');
 	}
 
 	// Clients favourite instructors

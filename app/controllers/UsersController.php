@@ -28,7 +28,37 @@ class UsersController extends \BaseController {
 	 */
 	public function index()
 	{
-		//
+		$users = $this->user->all();
+
+		$this->layout->content = View::make('users.index', compact('users'));
+	}
+
+	/**
+	 * Shows all people a user is following
+	 * GET /user/following/{id}
+	 *
+	 * @return Response
+	 */
+	public function following($id = null)
+	{
+		$user 		= $id ? $this->user->find($id) : Auth::user();
+		$following 	= $user->following;
+
+		$this->layout->content = View::make('users.index', ['users' => $following]);
+	}
+
+	/**
+	 * Shows all people a user is followed by
+	 * GET /user/following/{id}
+	 *
+	 * @return Response
+	 */
+	public function followers($id = null)
+	{
+		$user 		= $id ? $this->user->find($id) : Auth::user();
+		$followers 	= $user->followers;
+
+		$this->layout->content = View::make('users.index', ['users' => $followers]);
 	}
 
 	/**

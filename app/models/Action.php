@@ -33,6 +33,20 @@ class Action extends \Eloquent {
 		];
 	}
 
+	// Returns the object of the action. So if the action is someone booked into an activity, this will return the activity. If someone follows a user, this will return the user.
+	public function getObject()
+	{
+		$type 	= $this->actionObject->object;
+		$object = $type::find($this->actionObject->actionChange->actor_id);
+
+		return $object;
+	}
+
+	public function getObjectType()
+	{
+		return strtolower(get_class(self::getObject()));
+	}
+
 	public function getSubjectName()
 	{
 		return $this->user->first_name . ' ' . $this->user->last_name;
@@ -50,10 +64,9 @@ class Action extends \Eloquent {
 
 	public function getObjectName()
 	{
-		$type 	= $this->actionObject->object;
-		$object = $type::find($this->actionObject->actionChange->actor_id);
+		$object = self::getObject();
 
-		switch($type)
+		switch(get_class($object))
 		{
 			case('User') :
 				$name = $object->first_name . ' ' . $object->last_name;
@@ -69,10 +82,9 @@ class Action extends \Eloquent {
 
 	public function getObjectLink()
 	{
-		$type 	= $this->actionObject->object;
-		$object = $type::find($this->actionObject->actionChange->actor_id);
+		$object = self::getObject();
 
-		switch($type)
+		switch(get_class($object))
 		{
 			case('User') :
 				$link = URL::route('users.show', $object->id);
@@ -84,5 +96,23 @@ class Action extends \Eloquent {
 		}
 
 		return $link;
+	}
+
+	public function getTemplate()
+	{
+		$object = self::getObject();
+
+		switch(get_class($object)) 
+		{
+			case('User') :
+				$template = '_partials.users.excerpt';
+				break;
+
+			case('Activity') :
+				$template = '_partials.client.activity';
+				break;
+		}
+
+		return $template;
 	}
 }

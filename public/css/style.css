@@ -11,3 +11,9 @@ th,td {
 article.message-excerpt {
 	cursor: pointer;
 }
+
+article.action {
+	padding-bottom: 20px;
+	border-bottom: 2px solid #EEE;
+	margin-bottom: 30px;
+}

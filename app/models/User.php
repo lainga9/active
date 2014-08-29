@@ -50,6 +50,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->belongsToMany('Activity');
 	}
 
+	// Actions involving this user
+	public function Actions()
+	{
+		return $this->hasMany('Action');
+	}
+
 	// Clients favourite instructors
 	public function Favourites()
 	{
@@ -80,9 +86,15 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	// Clients friends - people they're following
-	public function Friends()
+	public function Following()
 	{
 		return $this->belongsToMany('User', 'follow_clients', 'user_id', 'client_id');
+	}
+
+	// Clients friends - people they're following
+	public function Followers()
+	{
+		return $this->belongsToMany('User', 'follow_clients', 'client_id', 'user_id');
 	}
 
 	// Feedback an instructor has received
@@ -280,7 +292,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	// Follow a client
 	public function followClient($client)
 	{
-		$this->friends()->associate($client->id);
+		$this->following()->attach($client->id);
 	}
 
 	// Follow an instructor

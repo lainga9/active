@@ -4,13 +4,20 @@
 
 @section('content')
 
+
+	@foreach( $user->actions as $action )
+
+		<p>@include('_partials.elements.action')</p>
+
+	@endforeach
+
 	<div class="row">
 		<div class="col-sm-4">
 			<h3>{{ $user->first_name }} {{ $user->last_name }}</h3>
 			<a href="{{ URL::route('user.follow', $user->id) }}" class="btn btn-success">Follow</a>
 			@include('_partials.elements.sendMessage', compact('user'))
-			<p>Followers: </p>
-			<p>Following: <span class="text-info">{{ count($user->friends) }}</span></p>
+			<p>Followers: <span class="text-info">{{ count($user->followers) }}</span></p>
+			<p>Following: <span class="text-info">{{ count($user->following) }}</span></p>
 			<hr />
 			@if( $website = $user->userable->website )
 				<p><a href="{{ $website }}">{{ $website }}</a></p>

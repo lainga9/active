@@ -1,16 +1,23 @@
 <?php
 
+use Services\Repositories\ActionRepository;
+
 class UsersController extends \BaseController {
 
 	protected $layout = 'layouts.main';
 	protected $user;
+	protected $action;
 
-	public function __construct(User $user)
+	public function __construct(User $user, ActionRepository $action)
 	{
-		$this->user = $user;
+		$this->user 	= $user;
+		$this->action 	= $action;
+
+		// Filter
 		$this->beforeFilter('auth', ['except' => ['create', 'store'] ] );
 		$this->beforeFilter('exists.user', ['only' => ['show', 'edit', 'update', 'follow'] ] );
 		$this->beforeFilter('user.favourite', ['only' => ['favourite'] ] );
+		$this->beforeFilter('user.notSelf', ['only' => ['favourite', 'follow'] ] );
 	}
 
 	/**
@@ -69,9 +76,9 @@ class UsersController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
+	public function show($id = null)
 	{
-		$user = $this->user->find($id);
+		$user = $id ? $this->user->find($id) : Auth::user();
 	
 		$userType = strtolower(get_class($user->userable));
 
@@ -141,7 +148,7 @@ class UsersController extends \BaseController {
 
 	/**
 	 * Follows a client as a friend
-	 * POST /follow/{id}
+	 * GET /follow/{id}
 	 *
 	 * @return Response
 	 */
@@ -150,18 +157,22 @@ class UsersController extends \BaseController {
 		$user 	= Auth::user();
 		$client = $this->user->find($id);
 
+		// Follow the user
 		$user->followClient($client);
+
+		// Store the action
+		$action = $this->action->create($user, 'followed', $client, 'User');
 
 		return Redirect::back()
 		->with(
 			'success',
-			'You are now following ' . $friend->name
+			'You are now following ' . $client->first_name . ' ' . $client->last_name
 		);
 	}
 
 	/**
 	 * Adds an instructor to favourites
-	 * POST /favourite/{id}
+	 * GET /favourite/{id}
 	 *
 	 * @return Response
 	 */

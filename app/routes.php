@@ -195,7 +195,7 @@ Route::group(['before' => 'auth'], function() {
 	);
 
 	// Follow a friend
-	Route::post('follow/{id}', [
+	Route::get('follow/{id}', [
 		'as'	=> 'user.follow',
 		'uses'	=> 'UsersController@follow'
 	]);
@@ -225,10 +225,17 @@ Route::group(['before' => 'auth'], function() {
 	|
 	*/
 
-	// Edit user
-	Route::get('profile',
-		['as' => 'profile.edit',
-		'uses' => 'UsersController@edit']);
+	// View Profile
+	Route::get('profile', [
+		'as' => 'profile',
+		'uses' => 'UsersController@show'
+	]);
+
+	// Edit profile
+	Route::get('profile/edit', [
+		'as' => 'profile.edit',
+		'uses' => 'UsersController@edit'
+	]);
 
 	// Users index
 	Route::get('users', [

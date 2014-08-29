@@ -1,7 +1,7 @@
 <?php
 
-use Services\Repositories\DefaultMailerRepository;
-
+use Services\Repositories\DefaultMailer;
+use Services\Repositories\ActionRepository;
 
 class ActivitiesController extends \BaseController {
 
@@ -10,6 +10,7 @@ class ActivitiesController extends \BaseController {
 	protected $classType;	
 	protected $instructor;
 	protected $client;
+	protected $action;
 	protected $mailer;
 
 	public function __construct(
@@ -18,7 +19,8 @@ class ActivitiesController extends \BaseController {
 		Instructor $instructor,
 		Client $client,
 		User $user,
-		Services\Repositories\DefaultMailer $mailer 
+		DefaultMailer $mailer,
+		ActionRepository $action
 	)
 	{
 		$this->activity 	= $activity;
@@ -26,6 +28,7 @@ class ActivitiesController extends \BaseController {
 		$this->instructor 	= $instructor;
 		$this->client 		= $client;
 		$this->mailer 		= $mailer;
+		$this->action 		= $action;
 		$this->user 		= Auth::user();
 
 		/*-------- FILTERS -------*/
@@ -244,6 +247,8 @@ class ActivitiesController extends \BaseController {
 		}
 
 		$activity->book($this->user, $this->mailer);
+
+		$action = $this->action->create($this->user, 'booked into', $activity, 'Activity');
 		
 		return Redirect::back()
 		->with('success', 'You have successfully booked this activity');

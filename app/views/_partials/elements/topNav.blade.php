@@ -9,7 +9,10 @@
 			</li>
 		@endif
 		<li>
-			<a href="{{ URL::route('profile.edit') }}">Profile</a>
+			<a href="{{ URL::route('profile') }}">Profile</a>
+		</li>
+		<li>
+			<a href="{{ URL::route('profile.edit') }}">Edit Profile</a>
 		</li>
 		<li>
 			<a href="{{ URL::route('getLogout') }}">Logout</a>

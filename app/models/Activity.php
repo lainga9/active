@@ -100,12 +100,10 @@ class Activity extends \Eloquent {
 
 			return $this;
 		}
-
-		return Redirect::back()
-		->with(
-			'status',
-			'Sorry this class is fully booked!'
-		);
+		else
+		{
+			throw new Exception('Sorry, this class is fully booked!');
+		}
 	}
 
 	public function attachClassTypes($classTypes)

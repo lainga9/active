@@ -61,9 +61,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->hasMany('ActionChange', 'actor_id');
 	}
 
+	// Creates a stream of a users actions and mentions
 	public function Stream()
 	{
 		$stream 	= [];
+
 		$actions 	= $this->actions;
 		$mentions 	= $this->mentions;
 		
@@ -89,7 +91,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	// Clients favourite instructors
 	public function Favourites()
 	{
-		return $this->belongsToMany('User', 'favourite_instructors', 'user_id', 'instructor_id');
+		return $this->belongsToMany('User', 'follow_clients', 'user_id', 'client_id')->whereRoleId(2);
 	}
 
 	public function FavouriteActivities()
@@ -168,7 +170,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		$user = $user ? $user : Auth::user();
 
 		// Initialise empty arrays
-		$dates = [];
+		$dates 		= [];
 		$activities = [];
 
 		if( !$date )
@@ -182,10 +184,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		}
 
 		// Convert it to the correct date format for eloquent queries
-		$monday = date( "Y-m-d", $start );
+		$monday 	= date( "Y-m-d", $start );
 
 		// Add it to the dates array
-		$dates[] = $monday;
+		$dates[] 	= $monday;
 
 		// Get the next 6 days and store them in the dates array
 		for($i = 1; $i < 7; $i++)

@@ -86,16 +86,16 @@ Route::group(['before' => 'auth'], function() {
 		'uses'	=> 'ActivitiesController@index'
 	]);
 
-	// Single Activity
-	Route::get('activities/{id}', [
-		'as'	=> 'activities.show',
-		'uses'	=> 'ActivitiesController@show'
-	]);
-
 	// Add Activity
 	Route::get('activities/create', [
 		'as'	=> 'activities.create',
 		'uses'	=> 'ActivitiesController@create'
+	]);
+
+	// Single Activity
+	Route::get('activities/{id}', [
+		'as'	=> 'activities.show',
+		'uses'	=> 'ActivitiesController@show'
 	]);
 
 	// Store Activity

@@ -30,7 +30,7 @@
 
 			<hr />
 
-			@include('_partials.elements.sendMessage', ['instructor' => $activity->instructor])
+			@include('_partials.elements.sendMessage', ['user' => $activity->instructor])
 
 		</div>
 		<div class="col-md-9">

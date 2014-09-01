@@ -4,68 +4,54 @@
 
 @section('content')
 
+	@foreach( $user->actions as $action )
+		{{ var_dump($action->getComponents()) }}
+	@endforeach
+
 	<article class="instructor">
 		<div class="row">
 			<div class="col-md-4">
-				<h5>Telephone: {{ $user->userable->phone }}</h5>
-				<h5>Mobile: {{ $user->userable->mobile }}</h5>
-				@if( $user->isOrganisation() )
-					<iframe width="100%" height="250" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0" src="https://maps.google.com/maps?&amp;q=<?= $user->makeAddressURL() ?>&amp;output=embed"></iframe>
-				@endif
-				@include('_partials.elements.sendMessage', compact('user'))
-				{{ Form::open(['route' => ['user.favourite', $user->id]]) }}
-					<button type="submit" class="btn btn-success">Add to Favourites</button>
-				{{ Form::close() }}
+				@include('_partials.users.profile', compact('user'))
 			</div>
 			<div class="col-md-8">
-				<div class="row">
-					<div class="col-md-3">
-						<img src="http://placehold.it/200x200" alt="" />
-						<h5>Average Rating</h5>
-						@include('_partials.elements.leaveFeedback', ['instructor' => $user])
-					</div>
-					<div class="col-md-9">
-						<h3 class="text-success">{{ $user->first_name }} {{ $user->last_name }}</h3>
+
+				<ul class="nav nav-tabs" role="tablist">
+					<li class="active"><a href="#activities" role="tab" data-toggle="tab">Activities</a></li>
+					<li><a href="#following" role="tab" data-toggle="tab">Following</a></li>
+					<li><a href="#followers" role="tab" data-toggle="tab">Followers</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="activities">
+						@include('_partials.elements.timetable', ['activities' => $user->makeTimetable($user)])
 						<hr />
-						<h4>Class Types</h4>
-						@if( $classTypes = User::classTypes($user) )
-							@foreach( $classTypes as $classType)
-								{{ $classType->name }}, 
+						@include('_partials.instructor.activities', ['activities' => $user->activities])
+					</div>
+					<div class="tab-pane" id="following">
+						@if( !$user->following->isEmpty() )
+							@foreach( $user->following as $following)
+								@include('_partials.users.excerpt', ['user' => $following])
 							@endforeach
 						@else
-							<p>No class types</p>
+							<div class="alert alert-info">
+								{{ $user->first_name }} is not yet following anyone!
+							</div>
 						@endif
-
-						<h4>Bio:</h4>
-						<p>{{ $user->userable->bio }}</p>
-						<div class="row">
-							<div class="col-md-4">
-								<a href="{{ $user->userable->facebook }}">{{ $user->userable->facebook }}</a>
+					</div>
+					<div class="tab-pane" id="followers">
+						@if( !$user->followers->isEmpty() )
+							@foreach( $user->followers as $follower)
+								@include('_partials.users.excerpt', ['user' => $follower])
+							@endforeach
+						@else
+							<div class="alert alert-info">
+								{{ $user->first_name }} does not yet have any followers!
 							</div>
-							<div class="col-md-4">
-								<a href="{{ $user->userable->twitter }}">{{ $user->userable->twitter }}</a>
-							</div>
-							<div class="col-md-4">
-								<a href="{{ $user->userable->youtube }}">{{ $user->userable->youtube }}</a>
-							</div>
-						</div>
+						@endif
 					</div>
 				</div>
+
 			</div>
 		</div>
 	</article>
-
-	<div class="row">
-		<div class="col-md-4">
-			@include('_partials.search.basic')
-			<hr >
-			<img src="http://placehold.it/400x300&amp;text=Advertising+Space" alt="" />
-		</div>
-		<div class="col-md-8">
-			@include('_partials.elements.timetable', ['activities' => $user->makeTimetable($user)])
-			<hr />
-			@include('_partials.instructor.activities', ['activities' => $user->activities])
-		</div>
-	</div>
 
 @stop

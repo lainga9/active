@@ -34,7 +34,7 @@ class ActivitiesController extends \BaseController {
 		/*-------- FILTERS -------*/
 
 		// Checks that the activity exists
-		$this->beforeFilter('exists.activity', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending', 'cancel']] );
+		$this->beforeFilter('activity.exists', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending', 'cancel']] );
 
 		// Instructor Only Pages
 		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'timetable', 'cancel', 'close']] );
@@ -141,6 +141,16 @@ class ActivitiesController extends \BaseController {
 		
 		$this->instructor->spendCredit($this->user, $activity);
 
+		try
+		{
+			$action = $this->action->create($activity->instructor, 'created', $activity, 'Activity');
+		}
+		catch(Exception $e)
+		{
+			return Redirect::back()
+			->with('error', $e->getMessage());
+		}
+
 		return Redirect::back()
 		->with('success', 'Activity added successfully');
 	}
@@ -246,7 +256,14 @@ class ActivitiesController extends \BaseController {
 			]);
 		}
 
-		$activity->book($this->user, $this->mailer);
+		try
+		{
+			$activity->book($this->user, $this->mailer);
+		}
+		catch(Exception $e)
+		{
+			return Redirect::back()->with('error', $e->getMessage());
+		}
 
 		$action = $this->action->create($this->user, 'booked into', $activity, 'Activity');
 		

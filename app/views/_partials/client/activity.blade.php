@@ -16,11 +16,7 @@
 				</strong>
 				<span class="pull-right">
 					Host Rating:
-					@if( $rating = $activity->instructor->userable->getAverageFeedback() )
-						{{ $rating }}
-					@else
-						No Reviews
-					@endif
+					@include('_partials.elements.averageRating', ['instructor' => $activity->instructor])
 				</span>
 			</h5>
 			<div class="row">

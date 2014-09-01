@@ -121,7 +121,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		$stream = Illuminate\Database\Eloquent\Collection::make($stream);
 		$stream = $stream->sortByDesc('created_at');
 
-		return $stream;
+		$paginator = Paginator::make($stream->all(), count($stream->all()), 2);
+
+		return $paginator;
 	}
 
 	// Clients favourite instructors

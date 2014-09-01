@@ -18,18 +18,6 @@ class SearchComposer {
 	{
 		$return = [];
 
-		// $classTypes = $this->classType->all();
-
-		// if( $classTypes )
-		// {
-		// 	foreach($classTypes as $classType)
-		// 	{
-		// 		$return[] = $classType->name;
-		// 	}
-		// }
-
-		// $view->with('classTypes', $return);
-
 		$activities = $this->activity->all();
 
 		if( $activities )

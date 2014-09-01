@@ -2,6 +2,8 @@
 
 use Services\Repositories\DefaultMailer;
 use Services\Repositories\ActionRepository;
+use Services\Repositories\DefaultSearch;
+use Services\Repositories\ActivityRepository;
 
 class ActivitiesController extends \BaseController {
 
@@ -12,6 +14,8 @@ class ActivitiesController extends \BaseController {
 	protected $client;
 	protected $action;
 	protected $mailer;
+	protected $search;
+	protected $activityRepo;
 
 	public function __construct(
 		Activity $activity, 
@@ -20,15 +24,19 @@ class ActivitiesController extends \BaseController {
 		Client $client,
 		User $user,
 		DefaultMailer $mailer,
-		ActionRepository $action
+		ActionRepository $action,
+		DefaultSearch $search,
+		ActivityRepository $activityRepo
 	)
 	{
 		$this->activity 	= $activity;
+		$this->activityRepo	= $activityRepo;
 		$this->classType 	= $classType;
 		$this->instructor 	= $instructor;
 		$this->client 		= $client;
 		$this->mailer 		= $mailer;
 		$this->action 		= $action;
+		$this->search 		= $search;
 		$this->user 		= Auth::user();
 
 		/*-------- FILTERS -------*/
@@ -270,7 +278,11 @@ class ActivitiesController extends \BaseController {
 			return Redirect::back()->with('error', $e->getMessage());
 		}
 
-		$action = $this->action->create($this->user, 'booked into', $activity, 'Activity');
+		$action 	= $this->action->create($this->user, 'booked into', $activity, 'Activity');
+
+		$email 		= $this->mailer->send($activity->instructor, 'emails.blank', 'Testing Email');
+
+		$reminder 	= $this->mailer->scheduleReminder($activity, $this->user);
 		
 		return Redirect::back()
 		->with('success', 'You have successfully booked this activity');
@@ -374,7 +386,7 @@ class ActivitiesController extends \BaseController {
 
 	public function search()
 	{
-		$activities = Search::execute(Input::all());
+		$activities = $this->search->activities(Input::all());
 
 		if( Request::ajax() )
 		{
@@ -389,7 +401,7 @@ class ActivitiesController extends \BaseController {
 
 	public function api()
 	{
-		$activities = Search::execute(Input::all());
+		$activities = $this->search->activities(Input::all());
 
 		return $activities;
 	}

@@ -22,10 +22,13 @@ ClassLoader::addDirectories(array(
 
 Instructor::setStripeKey('sk_test_4QR832L2BoSdqhwKsrNwIBt3');
 
-App::bind('MailerInterface', function()
-{
-	return new StripeBiller(App::make('DefaultMailerInterface'));
-});
+App::bind('Services\Interfaces\MailerInterface', 'Services\Repositories\DefaultMailer');
+App::bind('Services\Interfaces\SearchInterface', 'Services\Repositories\DefaultSearch');
+
+// App::bind('MailerInterface', function()
+// {
+// 	return new StripeBiller(App::make('DefaultMailerInterface'));
+// });
 
 /*
 |--------------------------------------------------------------------------

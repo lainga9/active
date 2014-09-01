@@ -16,6 +16,20 @@ Validator::extend('future', function($attribute, $value, $parameters)
 
 /*
 |--------------------------------------------------------------------------
+| Iron.io queue
+|--------------------------------------------------------------------------
+|
+| Required for queuing mail using Iron.io
+|
+*/
+
+Route::post('queue/receive', function()
+{
+    return Queue::marshal();
+});
+
+/*
+|--------------------------------------------------------------------------
 | Application Routes
 |--------------------------------------------------------------------------
 |

@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
 
 	var $ajaxSearch = (function() {
 
-		var $activities = $('#activities'),
+		var $activities = $('#activitiesWrapper'),
 			$pagination = $('#pagination'),
 			$template = $("#search-results-template"),
 			$_location = $('input[name="location"]'),

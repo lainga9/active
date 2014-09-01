@@ -7,7 +7,7 @@ class SearchController extends \BaseController {
 	protected $search;
 	protected $user;
 
-	public function __construct(Activity $activity, Services\Repositories\DefaultSearch $search, User $user)
+	public function __construct(Activity $activity, Services\Interfaces\SearchInterface $search, User $user)
 	{
 		$this->activity = $activity;
 		$this->search 	= $search;

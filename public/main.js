@@ -1,5 +1,25 @@
 jQuery(document).ready(function($) {
 
+	var $infinite = (function() {
+
+		var $container = $('#activities'),
+
+		init = function() {
+			$container.infinitescroll({
+				navSelector: "ul.pagination",
+				nextSelector: "ul.pagination li.active + li a",
+				itemSelector: "#activities article.activity",
+				loadingText: 'Loading more activities...',
+				doneText: 'No more activities!'
+			});
+		};
+
+		return {init: init};
+
+	})();
+
+	// $infinite.init();
+
 	$(document).on('click', 'a.remove-favourite, a.add-favourite', function(e) {
 		$this = $(this);
 		e.preventDefault();

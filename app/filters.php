@@ -23,6 +23,7 @@ App::after(function($request, $response)
 });
 
 View::composer('_partials.search.basic', 'Services\Composers\SearchComposer');
+View::composer('activities.client.index', 'Services\Composers\SocialComposer');
 
 /*
 |--------------------------------------------------------------------------
@@ -253,7 +254,7 @@ Route::filter('feedback.store', function($route)
 {
 	$instructor = User::find(Route::input('instructorId'));
 	
-	if( !Activity::feedbackable(Auth::user(), $instructor) )
+	if( !Auth::user()->feedbackable($instructor) )
 	{
 		return Redirect::back()
 		->with(

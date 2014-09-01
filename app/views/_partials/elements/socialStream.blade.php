@@ -1,4 +1,4 @@
-@if( $user->socialStream() )
+@if( !$user->socialStream()->isEmpty() )
 
 	@foreach( $user->socialStream() as $action )
 
@@ -7,3 +7,5 @@
 	@endforeach
 
 @endif
+
+{{ $user->socialStream()->links() }}

@@ -22,7 +22,7 @@
 			@endif
 		</div>
 		<div class="tab-pane" id="network">
-			@include('_partials.elements.socialStream', compact('user'))
+			@include('_partials.elements.socialStream', compact('user')) 
 		</div>
 	</div>
 

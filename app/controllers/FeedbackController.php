@@ -1,5 +1,7 @@
 <?php
 
+use Services\Interfaces\MailerInterface;
+
 class FeedbackController extends \BaseController {
 
 	protected $layout = 'layouts.main';
@@ -7,22 +9,27 @@ class FeedbackController extends \BaseController {
 	protected $feedbackValue;
 	protected $instructor;
 	protected $user;
+	protected $mailer;
 
 	public function __construct(
 		Feedback $feedback,
 		FeedbackValue $feedbackValue,
 		Instructor $instructor,
 		Activity $activity,
-		User $user)
+		User $user,
+		MailerInterface $mailer
+	)
 	{
 		$this->feedback 		= $feedback;
 		$this->feedbackValue 	= $feedbackValue;
 		$this->instructor 		= $instructor;
 		$this->user 			= $user;
 		$this->activity 		= $activity;
+		$this->mailer 			= $mailer;
+
 		// Filters
 		$this->beforeFilter('exists.user', ['only' => ['index']]);
-		$this->beforeFilter('exists.activity', ['only' => ['store']]);
+		$this->beforeFilter('activity.exists', ['only' => ['store']]);
 		$this->beforeFilter('client', ['only' => ['store']]);
 		$this->beforeFilter('instructor', ['only' => ['index']]);
 		$this->beforeFilter('feedback.store', ['only' => ['store']]);
@@ -72,16 +79,12 @@ class FeedbackController extends \BaseController {
 
 		$activity = $this->activity->find(Input::get('activity_id'));
 
-		if($activity)
-		{
-			$this->feedback->store($this->feedback, $this->feedbackValue, $activity, $instructor, Auth::user(), Input::get());
+		$feedback = $this->feedback->store($this->feedback, $this->feedbackValue, $activity, $instructor, Auth::user(), Input::get());
 
-			return Redirect::back()
-			->with('success', 'Thanks for leaving feedback!');
-		}
+		$this->mailer->send($instructor, 'emails.instructor.feedback', 'New feedback left', ['feedback' => $feedback->toArray()]);
 
 		return Redirect::back()
-		->with('error', 'Error finding activity');
+		->with('success', 'Thanks for leaving feedback!');
 	}
 
 	/**

@@ -9,13 +9,23 @@
 			@include('_partials.users.profile', compact('user'))
 		</div>
 		<div class="col-sm-8">
-			
-			@foreach( $user->socialStream() as $action )
 
-				@include('_partials.elements.action')
-
-			@endforeach
-
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="active"><a href="#recent" role="tab" data-toggle="tab">Recent Activity</a></li>
+				<li><a href="#following" role="tab" data-toggle="tab">Following</a></li>
+				<li><a href="#followers" role="tab" data-toggle="tab">Followers</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="recent">
+					@include('_partials.elements.recentActivity', compact('user'))
+				</div>
+				<div class="tab-pane" id="following">
+					@include('_partials.elements.following', compact('user'))
+				</div>
+				<div class="tab-pane" id="followers">
+					@include('_partials.elements.followers', compact('user'))
+				</div>
+			</div>
 		</div>
 	</div>
 

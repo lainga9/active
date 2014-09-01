@@ -1,9 +1,9 @@
-@if( $user->socialStream() )
+@if( !$user->stream()->isEmpty() )
 
-	@foreach( $user->socialStream() as $action )
+	@foreach( $user->stream() as $action )
 
 		@include('_partials.elements.action', compact('action'))
-		
+
 	@endforeach
 
 @endif

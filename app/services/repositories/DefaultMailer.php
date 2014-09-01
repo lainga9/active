@@ -47,7 +47,7 @@ class DefaultMailer implements MailerInterface {
 
 		$scheduledTime	= $startTime - $now + 3600;
 
-		$reminder = $this->send($scheduledTime, $recipient, 'emails.client.reminder', 'Reminder for ' . $activity->name, ['activity' => $activity->toArray()]);
+		$reminder = $this->later($scheduledTime, $recipient, 'emails.client.reminder', 'Reminder for ' . $activity->name, ['activity' => $activity->toArray()]);
 	}
 
 } 

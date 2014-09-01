@@ -334,15 +334,20 @@ Route::group(['before' => 'auth'], function() {
 			['as' => 'search', 
 			'uses' => 'ActivitiesController@search']);
 
-		// Perform activities search
+		// Perform activity search
 		Route::get('activities', 
 			['as' => 'activities.search', 
 			'uses' => 'SearchController@activities']);
 
-		// Perform activities search
+		// Perform user search
 		Route::get('users', 
 			['as' => 'users.search', 
 			'uses' => 'SearchController@users']);
+
+		// Perform organisations search
+		Route::get('organisations', 
+			['as' => 'organisations.search', 
+			'uses' => 'SearchController@organisations']);
 	});
 
 	/*

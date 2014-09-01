@@ -95,6 +95,15 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		$stream = [];
 
+		// Uncomment if you would like to include users own actions in their social stream
+		// if( !$this->stream()->isEmpty() )
+		// {
+		// 	foreach($this->stream() as $action)
+		// 	{
+		// 		$stream[] = $action;
+		// 	}
+		// }
+
 		if( !$this->following->isEmpty() )
 		{
 			foreach( $this->following as $following )
@@ -103,10 +112,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 				{
 					foreach( $following->stream() as $action )
 					{
-						// Don't include friends following people - not interesting
+						// Don't include friends following other people - not interesting
 						if( $action->getObjectType() == 'user' )
 						{
-							if( $action->user_id != $this->id && $action->getActor()->id != $this->id)
+							if( $action->user_id == $this->id)
 							{
 								continue;
 							}	
@@ -121,9 +130,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		$stream = Illuminate\Database\Eloquent\Collection::make($stream);
 		$stream = $stream->sortByDesc('created_at');
 
-		$paginator = Paginator::make($stream->all(), count($stream->all()), 2);
-
-		return $paginator;
+		return $stream;
 	}
 
 	// Clients favourite instructors
@@ -353,12 +360,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->user_type_id == 2 ? true : false;		
 	}
 
-	// Check if the user is attending an activity
-	public static function isAttending($id)
-	{
-		return Auth::user()->attendingActivities->contains($id) ? true : false;
-	}
-
 	// Follow a client
 	public function follow($user)
 	{
@@ -420,4 +421,38 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		return $this->following->contains($user->id);
 	}
+
+	// Checks if a class clashes with other booked classes
+	public function checkAvailable($activity)
+    {
+    	$activities = $this->attendingActivities;
+
+    	// The requested start and finish times for the new activity (in timestmamp form)
+    	$requestedStart 	= strtotime($activity->date . ' ' . $activity->time_from);
+    	$requestedFinish 	= strtotime($activity->date . ' ' . $activity->time_until);
+
+    	// Check for a date clash
+    	$activities = $activities->filter(function($activity) use ($requestedStart, $requestedFinish)
+    	{
+    		// The start and finish times for the current activity in the loop
+    		$start 	= strtotime($activity->date . ' ' . $activity->time_from);
+    		$finish = strtotime($activity->date . ' ' . $activity->time_until);
+    		
+    		// Check if the requested activity starts during the current activity
+    		if( $requestedStart >= $start && $requestedStart <= $finish )
+    		{
+    			return true;
+    		}
+
+    		// Check if the current activity starts during the requested activity
+    		if( $start >= $requestedStart && $start <= $requestedFinish )
+    		{
+    			return true;
+    		}
+
+    		return false;
+    	});
+
+    	return $activities;
+    }
 }

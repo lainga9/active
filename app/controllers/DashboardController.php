@@ -23,15 +23,22 @@ class DashboardController extends \BaseController {
 		if( $this->user->isClient() )
 		{
 			$activities = $this->activity->orderBy('created_at', 'DESC')->paginate(10);
+			$this->layout->content =  View::make('activities.client.index', compact('activities'));
 		}
 
 		if( $this->user->isInstructor() )
 		{
 			$activities = $this->user->activities;
+			$data = [
+				'user'			=> $this->user,
+				'activities'	=> $activities
+			];
+			
+			return View::make('users.instructor.show', $data);
 		}
 
-		$userType = strtolower(get_class($this->user->userable));
-		$this->layout->content = View::make('dashboard.' . $userType)->with(compact('activities'));
+		// $userType = strtolower(get_class($this->user->userable));
+		// $this->layout->content = View::make('dashboard.' . $userType)->with(compact('activities'));
 	}
 
 	/**

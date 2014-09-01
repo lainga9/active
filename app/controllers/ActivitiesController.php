@@ -258,7 +258,7 @@ class ActivitiesController extends \BaseController {
 	{
 		$activity = $this->activity->find($id);
 
-		$clashes = $this->client->checkAvailable($this->user, $activity);
+		$clashes = $this->user->checkAvailable($activity);
 
 		if( !$clashes->isEmpty() )
 		{

@@ -7,5 +7,3 @@
 	@endforeach
 
 @endif
-
-{{ $user->socialStream()->links() }}

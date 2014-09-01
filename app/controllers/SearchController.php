@@ -36,11 +36,30 @@ class SearchController extends \BaseController {
 		}
 	}
 
+	/**
+	 * Searches users
+	 * get /search/users
+	 *
+	 * @return Response
+	 */
 	public function users()
 	{
 		$users = $this->search->users(Input::all());
 
 		$this->layout->content = View::make('users.search')->with(compact('users'));
+	}
+
+	/**
+	 * Searches organisations
+	 * get /search/organisations
+	 *
+	 * @return Response
+	 */
+	public function organisations()
+	{
+		$organisations = $this->search->organisations(Input::all());
+
+		$this->layout->content = View::make('users.search')->with(['users' => $organisations]);
 	}
 
 }

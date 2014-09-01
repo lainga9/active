@@ -21,6 +21,35 @@ class DefaultSearch implements SearchInterface {
 		$this->classType 	= $classType;	
 	}
 
+	public function organisations($input)
+	{
+		$organisations = $this->user;
+		
+		// Name Search
+		if( isset($input['name']) )
+		{
+			$name = $input['name'];
+
+			if($name)
+			{
+				$searchTerms = explode(' ', $name);
+
+			    foreach($searchTerms as $term)
+			    {
+			        $organisations = $organisations->where('first_name', 'LIKE', '%' . $term .'%')
+			       			->orWhere('last_name', 'LIKE', '%' . $term .'%');
+			    }
+			}
+		}
+
+		$organisations = $organisations
+						->orderBy('created_at', 'DESC')
+						->whereUserTypeId(2)
+						->get();
+
+		return $organisations;
+	}
+
 	public function users($input)
 	{
 		$users = $this->user;

@@ -18,6 +18,8 @@ class UsersController extends \BaseController {
 		$this->beforeFilter('exists.user', ['only' => ['show', 'edit', 'update', 'follow', 'avatar'] ] );
 		$this->beforeFilter('user.favourite', ['only' => ['favourite'] ] );
 		$this->beforeFilter('user.notSelf', ['only' => ['favourite', 'follow'] ] );
+		$this->beforeFilter('user.follow', ['only' => ['follow'] ] );
+		$this->beforeFilter('user.unfollow', ['only' => ['unfollow'] ] );
 	}
 
 	/**
@@ -217,7 +219,7 @@ class UsersController extends \BaseController {
 		$client = $this->user->find($id);
 
 		// Follow the user
-		$user->followClient($client);
+		$user->follow($client);
 
 		// Store the action
 		$action = $this->action->create($user, 'followed', $client, 'User');
@@ -226,6 +228,27 @@ class UsersController extends \BaseController {
 		->with(
 			'success',
 			'You are now following ' . $client->first_name . ' ' . $client->last_name
+		);
+	}
+
+	/**
+	 * Unfollows a client 
+	 * GET /unfollow/{id}
+	 *
+	 * @return Response
+	 */
+	public function unfollow($id)
+	{
+		$user 	= Auth::user();
+		$client = $this->user->find($id);
+
+		// Follow the user
+		$user->unfollow($client);
+
+		return Redirect::back()
+		->with(
+			'success',
+			'You are no longer following ' . $client->first_name . ' ' . $client->last_name
 		);
 	}
 

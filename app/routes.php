@@ -200,6 +200,12 @@ Route::group(['before' => 'auth'], function() {
 		'uses'	=> 'UsersController@follow'
 	]);
 
+	// Unfollow a friend
+	Route::get('unfollow/{id}', [
+		'as'	=> 'user.unfollow',
+		'uses'	=> 'UsersController@unfollow'
+	]);
+
 	// Favourite an activity
 	Route::post('favourite/{id}', [
 		'as'	=> 'user.favourite',

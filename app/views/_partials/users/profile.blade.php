@@ -4,7 +4,11 @@
 	<img src="http://placehold.it/150" alt="" />
 @endif
 <h3>{{ $user->first_name }} {{ $user->last_name }}</h3>
-<a href="{{ URL::route('user.follow', $user->id) }}" class="btn btn-success">Follow</a>
+@if( Auth::user()->isFollowing($user) )
+	<a href="{{ URL::route('user.unfollow', $user->id) }}" class="btn btn-danger">Unfollow</a>
+@else
+	<a href="{{ URL::route('user.follow', $user->id) }}" class="btn btn-success">Follow</a>
+@endif
 @include('_partials.elements.sendMessage', compact('user'))
 @if( $user->isInstructor() )
 	<p>
@@ -12,7 +16,7 @@
 		@include('_partials.elements.averageRating', ['instructor' => $user])
 	</p>
 @endif
-<p>Followers: 
+<p>Followers:
 	<span class="text-info">
 		<a href="{{ URL::route('user.followers', $user->id) }}">{{ count($user->followers) }}</a>
 	</span>

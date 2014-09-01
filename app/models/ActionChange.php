@@ -7,4 +7,9 @@ class ActionChange extends \Eloquent {
 	{
 		return $this->belongsTo('ActionObject');
 	}
+
+	public function User()
+	{
+		return $this->belongsTo('User', 'actor_id');
+	}
 }

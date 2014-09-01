@@ -73,7 +73,12 @@ class ActivitiesController extends \BaseController {
 			$activities = $this->user->activities;
 		}
 
-		$this->layout->content = View::make('activities.' . strtolower(get_class($this->user->userable)) . '.index')->with(compact('activities'));
+		$data = [
+			'activities' 	=> $activities,
+			'user'			=> $this->user
+		];
+
+		$this->layout->content = View::make('activities.' . strtolower(get_class($this->user->userable)) . '.index')->with($data);
 	}
 
 	public function attending()

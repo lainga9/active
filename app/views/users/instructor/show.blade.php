@@ -4,10 +4,6 @@
 
 @section('content')
 
-	@foreach( $user->actions as $action )
-		{{ var_dump($action->getComponents()) }}
-	@endforeach
-
 	<article class="instructor">
 		<div class="row">
 			<div class="col-md-4">

@@ -85,7 +85,43 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			}
 		}
 
-		return Illuminate\Database\Eloquent\Collection::make($stream);
+		$stream = Illuminate\Database\Eloquent\Collection::make($stream);
+		$stream = $stream->sortByDesc('created_at');
+
+		return $stream;
+	}
+
+	public function SocialStream()
+	{
+		$stream = [];
+
+		if( !$this->following->isEmpty() )
+		{
+			foreach( $this->following as $following )
+			{
+				if( !$following->stream()->isEmpty() )
+				{
+					foreach( $following->stream() as $action )
+					{
+						// Don't include friends following people - not interesting
+						if( $action->getObjectType() == 'user' )
+						{
+							if( $action->user_id != $this->id && $action->getActor()->id != $this->id)
+							{
+								continue;
+							}	
+						} 
+
+						$stream[] = $action;
+					}
+				}
+			}
+		}
+
+		$stream = Illuminate\Database\Eloquent\Collection::make($stream);
+		$stream = $stream->sortByDesc('created_at');
+
+		return $stream;
 	}
 
 	// Clients favourite instructors
@@ -322,9 +358,15 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	// Follow a client
-	public function followClient($client)
+	public function follow($user)
 	{
-		$this->following()->attach($client->id);
+		$this->following()->attach($user->id);
+	}
+
+	// Follow a client
+	public function unfollow($user)
+	{
+		$this->following()->detach($user->id);
 	}
 
 	// Follow an instructor
@@ -369,5 +411,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		{
 			throw new Exception('Problem Uploading File');
 		}
+	}
+
+	// Checks if a user is following someone
+	public function isFollowing($user)
+	{
+		return $this->following->contains($user->id);
 	}
 }

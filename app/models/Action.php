@@ -49,6 +49,8 @@ class Action extends \Eloquent {
 
 	public function getSubjectName()
 	{
+		if( $this->user->id == Auth::user()->id ) return 'You';
+
 		return $this->user->first_name . ' ' . $this->user->last_name;
 	}
 
@@ -69,7 +71,14 @@ class Action extends \Eloquent {
 		switch(get_class($object))
 		{
 			case('User') :
-				$name = $object->first_name . ' ' . $object->last_name;
+				if( $object->id == Auth::user()->id )
+				{
+					$name = 'You';
+				}
+				else
+				{
+					$name = $object->first_name . ' ' . $object->last_name;
+				}
 				break;
 
 			case('Activity') :
@@ -78,6 +87,11 @@ class Action extends \Eloquent {
 		}
 
 		return $name;
+	}
+
+	public function getActor()
+	{
+		return $this->actionObject->actionChange->user;
 	}
 
 	public function getObjectLink()

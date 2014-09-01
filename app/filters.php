@@ -287,6 +287,28 @@ Route::filter('user.favourite', function($route)
 	}
 });
 
+Route::filter('user.follow', function($route)
+{
+	$user = User::find(Route::input('id'));
+
+	if( Auth::user()->following->contains($user->id) )
+	{
+		return Redirect::back()
+		->with('error', 'You are already following ' . $user->first_name);	
+	}
+});
+
+Route::filter('user.unfollow', function($route)
+{
+	$user = User::find(Route::input('id'));
+
+	if( !Auth::user()->following->contains($user->id) )
+	{
+		return Redirect::back()
+		->with('error', 'You aren\'t following ' . $user->first_name);	
+	}
+});
+
 /*
 |--------------------------------------------------------------------------
 | Guest Filter

@@ -7,4 +7,9 @@ class ActionObject extends \Eloquent {
 	{
 		return $this->hasOne('ActionChange');
 	}
+
+	public function Action()
+	{
+		return $this->belongsTo('Action');
+	}
 }

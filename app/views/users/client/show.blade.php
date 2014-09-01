@@ -50,7 +50,7 @@
 		</div>
 		<div class="col-sm-8">
 			
-			@foreach( $user->actions as $action )
+			@foreach( $user->stream() as $action )
 
 				@include('_partials.elements.action')
 

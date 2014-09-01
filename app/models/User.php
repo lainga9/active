@@ -55,6 +55,37 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->hasMany('Action')->orderBy('created_at', 'DESC');
 	}
 
+	// Actions where the user is mentioned i.e. someone has followed them
+	public function Mentions()
+	{
+		return $this->hasMany('ActionChange', 'actor_id');
+	}
+
+	public function Stream()
+	{
+		$stream 	= [];
+		$actions 	= $this->actions;
+		$mentions 	= $this->mentions;
+		
+		if($actions)
+		{
+			foreach($actions as $action)
+			{
+				$stream[] = $action;
+			}
+		}
+
+		if($mentions)
+		{
+			foreach($mentions as $mention)
+			{
+				$stream[] = $mention->actionObject->action;
+			}
+		}
+
+		return Illuminate\Database\Eloquent\Collection::make($stream);
+	}
+
 	// Clients favourite instructors
 	public function Favourites()
 	{

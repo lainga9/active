@@ -65,7 +65,7 @@ class DefaultSearch implements SearchInterface {
 
 			    foreach($searchTerms as $term)
 			    {
-			        $query = $users->where('first_name', 'LIKE', '%' . $term .'%')
+			        $users = $users->where('first_name', 'LIKE', '%' . $term .'%')
 			       			 ->orWhere('last_name', 'LIKE', '%' . $term .'%');
 			    }
 			}
@@ -78,11 +78,31 @@ class DefaultSearch implements SearchInterface {
 
 			if($email)
 			{
-				$query = $users->whereEmail($email);
+				$users = $users->where('email', 'LIKE', '%' . $email .'%');
 			}
 		}
 		
-		$users = $query->orderBy('created_at', 'DESC')->get();
+		$users = $users->orderBy('created_at', 'DESC')->get();
+
+		// Check if we have changed page in the pagination. If we have then subtract 1 from the page query parameter to get the correct index in the array i.e. page1 is the first page so equals index 0 in the array
+		$page = isset($input['page']) ? (int) $input['page'] - 1 : 0;
+
+		if( !$users->isEmpty() )
+		{
+			// Split the users into chunks of 10
+			$chunk = $users->chunk(10);
+
+			// Find the correct chunk depending on the page
+			$activeChunk = $chunk->get($page);
+
+			// Create the pagination
+			$users = Paginator::make($activeChunk->all(), count($users), 10);
+		}
+
+		if( Request::ajax() )
+		{
+			return View::make('_partials.ajax.users', compact('users'))->render();
+		}
 
 		return $users;
 	}

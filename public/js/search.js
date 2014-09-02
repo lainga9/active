@@ -2,7 +2,11 @@ jQuery(document).ready(function($) {
 
 	var $ajaxSearch = (function() {
 
-		var $activities = $('#activitiesWrapper'),
+		var $searchSelect = $('.search-select'),
+			$activitySearch = $('.activity-search'),
+			$userSearch = $('.user-search'),
+			$organisationSearch = $('.organisation-search'),
+			$activities = $('#activitiesWrapper'),
 			$pagination = $('#pagination'),
 			$template = $("#search-results-template"),
 			$_location = $('input[name="location"]'),
@@ -13,9 +17,13 @@ jQuery(document).ready(function($) {
 			$_genders = $('input[name="genders[]"]'),
 			$_time_from = $('input[name="time_from"]'),
 			$_time_until = $('input[name="time_until"]'),
+			$_name = $('input[name="name"]'),
+			$_email = $('input[name="email"]'),
 			$location = '',
 			$distance = 20,
 			$days = '',
+			$name = '',
+			$email = '',
 			$classType = '',
 			$terms = '',
 			$genders = '',
@@ -46,10 +54,20 @@ jQuery(document).ready(function($) {
 				$('.refine').slideDown();
 			}
 
+			searchSelect();
+
 			initEvents();
 
 			timepicker();
 
+			performSearch();
+		},
+
+		searchSelect = function() {
+			$page = 1;
+			$('div[class*="-search"]').fadeOut();
+			var $type = $searchSelect.find('option:selected').data('type');
+			$('.' + $type + '-search').fadeIn();
 			performSearch();
 		},
 
@@ -68,6 +86,8 @@ jQuery(document).ready(function($) {
 		},
 
 		initEvents = function() {
+
+			$searchSelect.on('change', searchSelect);
 
 			$(document).on('click', 'ul.pagination a', function(e) {
 				e.preventDefault();
@@ -161,6 +181,16 @@ jQuery(document).ready(function($) {
 				$terms = $(this).val();
 				performSearch();
 			});
+
+			$_name.on('keyup', function() {
+				$name = $(this).val();
+				performSearch();
+			});
+
+			$_email.on('keyup', function() {
+				$email = $(this).val();
+				performSearch();
+			});
 		},
 
 		getParameterByName = function(name, link) {
@@ -170,13 +200,31 @@ jQuery(document).ready(function($) {
     		return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 		},
 
+		getQuery = function() {
+			var $type = $searchSelect.find('option:selected').data('type');
+			var $query = '';
+
+			if($type == 'activity') {
+				$query = "distance=" + $distance + "&day=" + $days + "&class_type_id=" + $classType + "&terms=" + $terms + "&location=" + $location + "&page=" + $page + "&genders=" + $genders + "&time_from=" + $time_from + "&time_until=" + $time_until;
+			}
+
+			if($type == 'user') {
+				$query = "name=" + $name + "&email=" + $email + "&page=" + $page;
+			}
+
+			return $query;
+		},
+
 		performSearch = function() {
+			var $route = $searchSelect.find('option:selected').val();
+
 			$.ajax({
 				type: "GET",
-				data: "distance=" + $distance + "&day=" + $days + "&class_type_id=" + $classType + "&terms=" + $terms + "&location=" + $location + "&page=" + $page + "&genders=" + $genders + "&time_from=" + $time_from + "&time_until=" + $time_until,
-				url: "/active/public/search/activities"
+				data: getQuery(),
+				url: $route
 			}).done(function(result) {
-				$activities.html(result.activities);
+				console.log(result);
+				$activities.html(result.results);
 			});
 		};
 

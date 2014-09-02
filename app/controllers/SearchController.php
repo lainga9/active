@@ -27,7 +27,7 @@ class SearchController extends \BaseController {
 		if( Request::ajax() )
 		{
 			return Response::json([
-				'activities' => $activities
+				'results' => $activities
 			]);
 		}
 		else
@@ -45,6 +45,13 @@ class SearchController extends \BaseController {
 	public function users()
 	{
 		$users = $this->search->users(Input::all());
+
+		if( Request::ajax() )
+		{
+			return Response::json([
+				'results'	=> $users
+			]);
+		}
 
 		$this->layout->content = View::make('users.search')->with(compact('users'));
 	}

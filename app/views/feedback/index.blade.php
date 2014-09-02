@@ -1,3 +1,5 @@
+@section('title', 'Your Feedback')
+
 @section('content')
 
 	@if( !$feedback->isEmpty() )

@@ -28,7 +28,14 @@ class SearchComposer {
 			}
 		}
 
-		$view->with('activities', $return);
+		$classTypes = $this->classType->all();
+
+		$data = [
+			'activities' 	=> $return,
+			'classTypes'	=> $classTypes
+		];
+
+		$view->with($data);
 	}
 
 }

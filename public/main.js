@@ -1,5 +1,7 @@
 jQuery(document).ready(function($) {
 
+	$('select').chosen();
+
 	var $infinite = (function() {
 
 		var $container = $('#activities'),

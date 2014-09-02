@@ -8,7 +8,7 @@ jQuery(document).ready(function($) {
 			$_location = $('input[name="location"]'),
 			$_slider = $('.distance-slider'),
 			$_days = $('input[name="day[]"]'),
-			$_classType = $('input[name="class_type_id[]"]'),
+			$_classType = $('select.class-types'),
 			$_terms = $('input[name="terms"]'),
 			$_genders = $('input[name="genders[]"]'),
 			$_time_from = $('input[name="time_from"]'),
@@ -141,19 +141,19 @@ jQuery(document).ready(function($) {
 			});
 
 			// Class Types
-			$_classType.on('click', function() {
+			$_classType.on('change', function(e, p) {
+
+				var $values = $(this).chosen().val();
 
 				$classType = '';
 
-				$_classType.each(function() {
-					if( $(this).is(":checked") )
-					{
-						$classType += $(this).val() + ',';
-					}
+				$.each($values, function(i,v) {
+					$classType += v + ','
 				});
 
 				// Remove the trailing comma
 				$classType = $classType.replace(/,(?=[^,]*$)/, '');
+
 				performSearch();
 			});
 

@@ -48,9 +48,7 @@
 	</p>
 
 	<div>Type:</div>
-	<p>
-		{{ ClassType::printFormHTML() }}
-	</p>
+	<p>@include('_partials.forms.classTypes', compact('classTypes'))</p>
 	
 	{{ Form::submit('Search', ['class' => 'btn btn-success']) }}
 

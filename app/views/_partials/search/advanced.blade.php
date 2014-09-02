@@ -34,7 +34,7 @@
 	<div class="col-md-4">
 		<div>Type:</div>
 		<p>
-			{{ ClassType::printFormHTML() }}
+			@include('_partials.forms.classTypes', compact('classTypes'))
 		</p>		
 	</div>
 	<div class="col-md-4">

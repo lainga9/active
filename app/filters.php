@@ -33,6 +33,7 @@ App::after(function($request, $response)
 
 // Makes sure the activities list is available for auto predict in the basic search
 View::composer('_partials.search.basic', 'Services\Composers\SearchComposer');
+View::composer('_partials.search.advanced', 'Services\Composers\SearchComposer');
 
 // Make sure the user is always available for the social stream on activities page
 View::composer('activities.client.index', 'Services\Composers\SocialComposer');

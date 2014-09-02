@@ -132,7 +132,7 @@ class DefaultSearch implements SearchInterface {
 					foreach($classTypeIds as $classTypeId)
 					{
 						$classType 	= $this->classType->find($classTypeId);
-						$children 	= $this->classType->findChildren($classType);
+						$children 	= $this->classType->children;
 
 						if( $activity->classTypes->contains($classTypeId) )
 						{

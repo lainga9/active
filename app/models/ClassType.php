@@ -13,9 +13,25 @@ class ClassType extends \Eloquent {
 		return null;
 	}
 
-	public static function findChildren($classType)
+	public function Children()
 	{
-		return ClassType::whereParentId($classType->id)->get();
+		return $this->hasMany('ClassType', 'parent_id');
+	}
+
+	public function isSelected()
+	{
+		if( isset($_GET['class_type_id']) )
+		{
+			foreach( $_GET['class_type_id'] as $id )
+			{
+				if( $id == $this->id )
+				{
+					return 'selected';
+				}
+			}
+		}
+
+		return '';
 	}
 
 	public static function printHTML($classTypes)

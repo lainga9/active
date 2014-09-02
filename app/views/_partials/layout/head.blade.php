@@ -8,6 +8,7 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css" />
+	{{ HTML::style('css/chosen.min.css') }}
 	{{ HTML::style('css/jquery.datetimepicker.css') }}
 	{{ HTML::style('css/style.css') }}
 	{{ HTML::script('handlebars-v1.3.0.js') }}

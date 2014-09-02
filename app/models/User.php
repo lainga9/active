@@ -477,13 +477,17 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     	return $activities;
     }
 
-    // Increases a users pageviews
+    // Increases a users pageviews. Stores a cookie which lasts for a week and doesn't increment if this cookie is found. Should prevent people from refreshing the page to increase profile views
     public function incrementPageView()
     {
     	if( $this->isClient() || $this->isAdmin() ) return $this;
 
+    	if( Cookie::get('_gma_user_' . $this->id) ) return $this;
+
     	$this->userable->page_views = (int) $this->userable->page_views + 1;
     	$this->userable->save();
+
+    	Cookie::queue('_gma_user_' . $this->id, 'true', 24*60*7);
 
     	return $this;
     }

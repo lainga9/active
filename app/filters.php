@@ -44,6 +44,9 @@ View::composer('_partials.search.advanced', 'Services\Composers\SearchComposer')
 // Make sure the user is always available for the social stream on activities page
 View::composer('activities.client.index', 'Services\Composers\SocialComposer');
 
+// Sends links to the admin sidebar
+View::composer('_partials.admin.sidebar', 'Services\Composers\AdminSidebarComposer');
+
 /*
 |--------------------------------------------------------------------------
 | Authentication Filters

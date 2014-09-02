@@ -19,3 +19,9 @@
 	@endif
 
 @stop
+
+@section('sidebar')
+
+	@include('_partials.admin.sidebar')
+
+@stop

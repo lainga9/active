@@ -44,7 +44,7 @@
 	</div>
 </div>
 
-<div class="activity-search" style="display: none;">
+<div class="activity-search">
 	<h3>Activities</h3>
 	<div class="row">
 		<div class="col-md-4">

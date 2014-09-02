@@ -15,6 +15,27 @@ class SearchController extends \BaseController {
 	}
 
 	/**
+	 * Shows search form
+	 * get /search
+	 *
+	 * @return Response
+	 */
+	public function get()
+	{
+		$activities = $this->search->activities(Input::all());
+
+		if( Request::ajax() )
+		{
+			return Response::json([
+				'activities' => $activities
+			]);
+		}
+
+		// Returning the view since we are overriding the layout in the template
+		return View::make('activities.search')->with(compact('activities'));
+	}
+
+	/**
 	 * Searches activities
 	 * get /search/activities
 	 *

@@ -332,7 +332,7 @@ Route::group(['before' => 'auth'], function() {
 		// Show the advanced search page
 		Route::get('/', 
 			['as' => 'search', 
-			'uses' => 'ActivitiesController@search']);
+			'uses' => 'SearchController@get']);
 
 		// Perform activity search
 		Route::get('activities', 

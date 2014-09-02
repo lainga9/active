@@ -16,7 +16,7 @@
 			<img src="http://placehold.it/400&amp;text=Advertising+Space" alt="" />
 		</div>
 		<div class="col-md-8">
-			<div id="activitiesWrapper"></div>
+			<div id="results"></div>
 		</div>
 	</div>
 @stop

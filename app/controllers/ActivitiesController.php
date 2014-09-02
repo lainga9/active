@@ -386,21 +386,6 @@ class ActivitiesController extends \BaseController {
 		]);
 	}
 
-	public function search()
-	{
-		$activities = $this->search->activities(Input::all());
-
-		if( Request::ajax() )
-		{
-			return Response::json([
-				'activities' => $activities
-			]);
-		}
-
-		// Returning the view since we are overriding the layout in the template
-		return View::make('activities.search')->with(compact('activities'));
-	}
-
 	public function api()
 	{
 		$activities = $this->search->activities(Input::all());

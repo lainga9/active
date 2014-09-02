@@ -29,6 +29,7 @@ return array(
     'AddRememeberTokenToUsersTable' => $baseDir . '/app/database/migrations/2014_06_30_150241_add_rememeber_token_to_users_table.php',
     'AddSocialColumnsToUsersClientsTable' => $baseDir . '/app/database/migrations/2014_08_28_144255_add_social_columns_to_users_clients_table.php',
     'AddStripeTokenAndPurchasedColumnsToCreditsTable' => $baseDir . '/app/database/migrations/2014_07_18_134556_add_stripe_token_and_purchased_columns_to_credits_table.php',
+    'AddSuspendedColumnToUsersTable' => $baseDir . '/app/database/migrations/2014_09_02_125202_add_suspended_column_to_users_table.php',
     'AddUserTypeIdColumnToUsersTable' => $baseDir . '/app/database/migrations/2014_08_26_140827_add_user_type_id_column_to_users_table.php',
     'Admin' => $baseDir . '/app/models/Admin.php',
     'Adobe_Font_Metrics' => $vendorDir . '/phenx/php-font-lib/classes/Adobe_Font_Metrics.php',

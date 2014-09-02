@@ -276,7 +276,7 @@ Route::group(['before' => 'auth'], function() {
 	]);
 
 	// Single User
-	Route::get('users/{id}', [
+	Route::get('users/show/{id}', [
 		'as'	=> 'users.show',
 		'uses'	=> 'UsersController@show'
 	]);
@@ -285,6 +285,23 @@ Route::group(['before' => 'auth'], function() {
 	Route::put('users/avatar/{id}', [
 		'as'	=> 'user.avatar',
 		'uses'	=> 'UsersController@avatar'
+	]);
+
+	// Suspends a user
+	Route::get('users/suspend/{id}', [
+		'as'	=> 'user.suspend',
+		'uses'	=> 'UsersController@suspend'
+	]);
+
+	// Unsuspends a user
+	Route::get('users/unsuspend/{id}', [
+		'as'	=> 'user.unsuspend',
+		'uses'	=> 'UsersController@unsuspend'
+	]);
+
+	Route::get('users/suspended', [
+		'as'	=> 'users.suspended',
+		'uses'	=> 'UsersController@suspended'
 	]);
 
 	/*

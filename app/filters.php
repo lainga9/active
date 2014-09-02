@@ -13,7 +13,13 @@
 
 App::before(function($request)
 {
-	//
+	if( Auth::check() )
+	{
+		if( Auth::user()->isSuspended() )
+		{
+			return View::make('auth.suspended');
+		}
+	}
 });
 
 
@@ -68,6 +74,14 @@ Route::filter('auth', function()
 Route::filter('auth.basic', function()
 {
 	return Auth::basic();
+});
+
+Route::filter('admin', function()
+{
+	if( !Auth::user()->isAdmin() )
+	{
+		return Redirect::route('dashboard');
+	}
 });
 
 Route::filter('instructor', function()

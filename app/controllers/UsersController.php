@@ -15,11 +15,12 @@ class UsersController extends \BaseController {
 
 		// Filter
 		$this->beforeFilter('auth', ['except' => ['create', 'store'] ] );
-		$this->beforeFilter('exists.user', ['only' => ['show', 'edit', 'update', 'follow', 'avatar'] ] );
+		$this->beforeFilter('exists.user', ['only' => ['show', 'edit', 'update', 'follow', 'avatar', 'suspend', 'unsuspend'] ] );
 		$this->beforeFilter('user.favourite', ['only' => ['favourite'] ] );
 		$this->beforeFilter('user.notSelf', ['only' => ['favourite', 'follow'] ] );
 		$this->beforeFilter('user.follow', ['only' => ['follow'] ] );
 		$this->beforeFilter('user.unfollow', ['only' => ['unfollow'] ] );
+		$this->beforeFilter('admin', ['only' => ['suspend', 'unsuspend', 'suspended'] ] );
 	}
 
 	/**
@@ -247,23 +248,51 @@ class UsersController extends \BaseController {
 	}
 
 	/**
-	 * Adds an instructor to favourites
-	 * GET /favourite/{id}
+	 * Suspends a user
+	 * GET /users/suspend/{id}
 	 *
 	 * @return Response
 	 */
-	public function favourite($id)
+	public function suspend($id)
 	{
-		$user 		= Auth::user();
-		$instructor	= $this->user->find($id);
-
-		$user->favouriteInstructor($instructor);
+		$user = $this->user->find($id);
+		$user = $user->suspend();
 
 		return Redirect::back()
 		->with(
 			'success',
-			'You have successfully favourited ' . $instructor->name
+			'You have successfully suspended ' . $user->first_name
 		);
+	}
+
+	/**
+	 * Unsuspends a user
+	 * GET /users/unsuspend/{id}
+	 *
+	 * @return Response
+	 */
+	public function unsuspend($id)
+	{
+		$user = $this->user->find($id);
+		$user = $user->unsuspend();
+
+		return Redirect::back()
+		->with(
+			'success',
+			'You have successfully unsuspended ' . $user->first_name
+		);
+	}
+
+	/**
+	 * Show all suspended users
+	 * GET /users/suspended
+	 *
+	 * @return Response
+	 */
+	public function suspended()
+	{
+		$users = $this->user->suspended();
+		$this->layout->content = View::make('users.suspended', compact('users'));
 	}
 
 	/**

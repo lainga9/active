@@ -4,6 +4,10 @@
 
 @section('content')
 
+	@if( Auth::user()->isAdmin() )
+		<a href="{{ URL::route('user.suspend', $user->id) }}" class="btn btn-danger">Suspend</a>
+	@endif
+
 	<article class="instructor">
 		<div class="row">
 			<div class="col-md-4">

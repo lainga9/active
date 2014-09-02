@@ -139,11 +139,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->belongsToMany('User', 'follow_clients', 'user_id', 'client_id')->whereRoleId(2);
 	}
 
+	// Activities belonging to a users favourite instructors
 	public function FavouriteActivities()
 	{
 		$return = [];
 
-		$instructors = $this->following;
+		$instructors = $this->favourites;
 
 		if( !$instructors ) return null;
 
@@ -190,6 +191,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function receivedMessages()
 	{
 		return $this->hasMany('Message', 'recipient_id');
+	}
+
+	// Shows only suspended users
+	public function scopeSuspended($query)
+	{
+		return $query->whereSuspended(1)->get();
 	}
 
 	public function removeFavourites()
@@ -324,6 +331,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	    }
 	}
 
+	// Checks if the user is admin
+	public function isAdmin()
+	{
+		if( !Auth::check() ) return false;
+
+		return $this->role_id == 3 ? true : false;
+	}
+
 	// Check if the user is a client
 	public function isClient()
 	{
@@ -342,6 +357,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		if( $this->role_id == 3 ) return true;
 
 		return $this->role_id == 2 ? true : false;
+	}
+
+	// Check is user is suspended
+	public function isSuspended()
+	{
+		return $this->suspended == 1 ? true : false;
 	}
 
 	// Check if the user is an individudal
@@ -456,12 +477,31 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     	return $activities;
     }
 
+    // Increases a users pageviews
     public function incrementPageView()
     {
-    	if( $this->isClient() ) return $this;
+    	if( $this->isClient() || $this->isAdmin() ) return $this;
 
     	$this->userable->page_views = (int) $this->userable->page_views + 1;
     	$this->userable->save();
+
+    	return $this;
+    }
+
+    // Suspends a user
+    public function suspend()
+    {
+    	$this->suspended = 1;
+    	$this->save();
+
+    	return $this;
+    }
+
+    // Unsuspends a user
+    public function unsuspend()
+    {
+    	$this->suspended = 0;
+    	$this->save();
 
     	return $this;
     }

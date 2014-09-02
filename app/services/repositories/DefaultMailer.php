@@ -50,4 +50,24 @@ class DefaultMailer implements MailerInterface {
 		$reminder = $this->later($scheduledTime, $recipient, 'emails.client.reminder', 'Reminder for ' . $activity->name, ['activity' => $activity->toArray()]);
 	}
 
+	public function cancelActivity($activity)
+	{
+		$attending = $activity->clients;
+
+		if( $attending )
+		{
+			foreach( $attending as $user )
+			{
+				$this->send($user, 'emails.blank', 'Activity Cancelled');
+			}
+		}
+
+		$instructor = $activity->instructor;
+
+		if( $instructor )
+		{
+			$this->send($instructor, 'emails.blank', 'Confirmation of cancellation');
+		}
+	}
+
 } 

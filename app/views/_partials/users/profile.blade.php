@@ -27,7 +27,7 @@
 	</span>
 </p>
 @if( $user->isInstructor() )
-	profile views
+	Profile Views: {{ $user->userable->page_views }}
 	<hr />
 	@include('_partials.elements.leaveFeedback', ['instructor' => $user])
 @endif

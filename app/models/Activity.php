@@ -51,25 +51,8 @@ class Activity extends \Eloquent {
 		return $this;
 	}
 
-	public function cancel($mailer)
+	public function cancel()
 	{
-		$attending = $this->clients;
-
-		if( $attending )
-		{
-			foreach( $attending as $user )
-			{
-				$mailer->send($user, 'emails.blank', 'Activity Cancelled');
-			}
-		}
-
-		$instructor = $this->instructor;
-
-		if( $instructor )
-		{
-			$mailer->send($instructor, 'emails.blank', 'Confirmation of cancellation');
-		}
-
 		$this->cancelled = 1;
 		$this->save();
 
@@ -150,6 +133,11 @@ class Activity extends \Eloquent {
 		$user = $user ? $user : Auth::user();
 
 		return $this->user_id == $user->id ? true : false;
+	}
+
+	public function isOwn()
+	{
+		return $this->createdBy();
 	}
 
 	public function getStartTime()

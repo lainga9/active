@@ -8,6 +8,16 @@
 		</div>
 	@endif
 
+	@if( $activity->isCancelled() )
+		<div class="alert alert-danger">
+			This class has been cancelled!
+		</div>
+	@endif
+
+	@if( $activity->isOwn() )
+		<a href="{{ URL::route('activities.edit', $activity->id) }}" class="btn btn-info">Edit Activity</a>
+	@endif
+
 	<div class="row">
 		<div class="col-md-3">
 

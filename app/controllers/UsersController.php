@@ -111,21 +111,15 @@ class UsersController extends \BaseController {
 	public function show($id = null)
 	{
 		$user = $id ? $this->user->find($id) : Auth::user();
+
+		$user = $user->incrementPageView();
 	
 		$userType = strtolower(get_class($user->userable));
 
-		// Returning a View instead of using the layout since we need a full screen layout
+		// Returning a View instead of using the controller layout since we need a full screen layout
 		return View::make('users.' . $userType . '.show')->with(compact('user'));
 	}
 
-	public function profile()
-	{
-		$user = Auth::user();
-
-		$userType = strtolower(get_class($user->userable));
-
-		$this->layout->content = View::make('users.' . $userType . '.show')->with(compact('user'));
-	}
 
 	/**
 	 * Show the form for editing the specified resource.

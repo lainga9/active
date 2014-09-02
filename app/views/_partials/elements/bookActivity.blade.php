@@ -1,9 +1,11 @@
-@if( $activity->isAttending() )
-	@include('_partials.elements.attendingActivity')
-@elseif( $activity->isFull() )
+@if( $activity->isFull() )
 	@include('_partials.elements.fullActivity')
 @elseif( $activity->isClosed() )
 	@include('_partials.elements.closedActivity')
+@elseif( $activity->isCancelled() )
+	@include('_partials.elements.cancelledActivity')
+@elseif( $activity->isAttending() )
+	@include('_partials.elements.attendingActivity')
 @else
 	{{ Form::open(
 	['route' => 

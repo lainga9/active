@@ -22,7 +22,19 @@ App::after(function($request, $response)
 	//
 });
 
+/*
+|--------------------------------------------------------------------------
+| View Composers
+|--------------------------------------------------------------------------
+| 
+| Makes sure certain data is always available to specific views.
+|
+*/
+
+// Makes sure the activities list is available for auto predict in the basic search
 View::composer('_partials.search.basic', 'Services\Composers\SearchComposer');
+
+// Make sure the user is always available for the social stream on activities page
 View::composer('activities.client.index', 'Services\Composers\SocialComposer');
 
 /*
@@ -266,7 +278,7 @@ Route::filter('feedback.store', function($route)
 
 Route::filter('activity.belongsTo', function($route)
 {
-	$activity = Activity::find(Route::input('activities'));
+	$activity = Activity::find(Route::input('id'));
 
 	if($activity->user_id != Auth::user()->id)
 	{

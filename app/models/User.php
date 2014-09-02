@@ -143,7 +143,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		$return = [];
 
-		$instructors = $this->favourites;
+		$instructors = $this->following;
 
 		if( !$instructors ) return null;
 
@@ -454,5 +454,15 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     	});
 
     	return $activities;
+    }
+
+    public function incrementPageView()
+    {
+    	if( $this->isClient() ) return $this;
+
+    	$this->userable->page_views = (int) $this->userable->page_views + 1;
+    	$this->userable->save();
+
+    	return $this;
     }
 }

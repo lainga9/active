@@ -24,6 +24,7 @@ Instructor::setStripeKey('sk_test_4QR832L2BoSdqhwKsrNwIBt3');
 
 App::bind('Services\Interfaces\MailerInterface', 'Services\Repositories\DefaultMailer');
 App::bind('Services\Interfaces\SearchInterface', 'Services\Repositories\DefaultSearch');
+App::bind('Services\Interfaces\UploadInterface', 'Services\Repositories\DefaultUpload');
 
 // App::bind('MailerInterface', function()
 // {

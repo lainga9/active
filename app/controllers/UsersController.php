@@ -1,17 +1,20 @@
 <?php
 
 use Services\Repositories\ActionRepository;
+use Services\Interfaces\UploadInterface;
 
 class UsersController extends \BaseController {
 
 	protected $layout = 'layouts.main';
 	protected $user;
 	protected $action;
+	protected $upload;
 
-	public function __construct(User $user, ActionRepository $action)
+	public function __construct(User $user, ActionRepository $action, UploadInterface $upload)
 	{
 		$this->user 	= $user;
 		$this->action 	= $action;
+		$this->upload 	= $upload;
 
 		// Filter
 		$this->beforeFilter('auth', ['except' => ['create', 'store'] ] );
@@ -72,7 +75,7 @@ class UsersController extends \BaseController {
 	 */
 	public function create()
 	{
-		$this->layout->content = View::make('users.create');
+		$this->layout->content = View::make('users.client.create');
 	}
 
 	/**
@@ -189,8 +192,10 @@ class UsersController extends \BaseController {
 
 		try
 		{
-			$user = $this->user->find($id);
-			$user->updateAvatar(Input::file('avatar'));
+			$user 			= $this->user->find($id);
+			$path 			= $this->upload->fire(Input::file('avatar'));
+			$user->avatar 	= $path;
+			$user->save();
 
 			return Redirect::back()
 			->with('success', 'Profile picture successfully updated!');

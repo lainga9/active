@@ -98,17 +98,6 @@
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-sm-2">
-			<span>Individual:</span>
-			{{ Form::radio('user_type_id', 1, true) }}
-		</div>
-		<div class="col-sm-2">
-			<span>Organisation:</span>
-			{{ Form::radio('user_type_id', 2, false) }}
-		</div>
-	</div>	
-
 	{{ Form::submit(
 		'Get Active', 
 		['class' => 'btn btn-success']

@@ -47,6 +47,9 @@ View::composer('activities.client.index', 'Services\Composers\SocialComposer');
 // Sends links to the admin sidebar
 View::composer('_partials.admin.sidebar', 'Services\Composers\AdminSidebarComposer');
 
+// Sends all class types to class types form
+View::composer('_partials.form.classTypes', 'Services\Composers\ClassTypeFormComposer');
+
 /*
 |--------------------------------------------------------------------------
 | Authentication Filters

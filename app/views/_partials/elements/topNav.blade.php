@@ -8,6 +8,11 @@
 				<a href="{{ URL::route('activities.attending') }}">Attending</a>
 			</li>
 		@endif
+		@if( Auth::user()->isInstructor() )
+			<li>
+				<a href="{{ URL::route('activities.create') }}">Add Activity</a>
+			</li>
+		@endif
 		<li>
 			<a href="{{ URL::route('profile') }}">Profile</a>
 		</li>

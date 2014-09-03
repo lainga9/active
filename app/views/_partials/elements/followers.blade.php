@@ -6,4 +6,8 @@
 
 	@endforeach
 
+@else
+
+	<div class="alert alert-info">No one is following {{ $user->getName() }} yet</div>
+
 @endif

@@ -21,9 +21,6 @@
 				<a class="text-success" href="{{ URL::route('activities.edit', $activity->id) }}">Edit Activity</a>
 				<a class="text-success" href="{{ URL::route('activities.create', $activity->toArray()) }}">Create Similar Activity</a>
 			</div>
-			<div class="pull-right">
-				<a href="#" class="text-danger">Delete this activity</a>
-			</div>
 		</div>
 	@endif
 </article>

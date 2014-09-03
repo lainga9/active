@@ -6,4 +6,8 @@
 
 	@endforeach
 
+@else
+
+	<div class="alert alert-info">{{ $user->getName() }} {{ $user->getIs() }} not yet following anyone</div>
+
 @endif

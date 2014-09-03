@@ -27,26 +27,10 @@
 						@include('_partials.instructor.activities', ['activities' => $user->activities])
 					</div>
 					<div class="tab-pane" id="following">
-						@if( !$user->following->isEmpty() )
-							@foreach( $user->following as $following)
-								@include('_partials.users.excerpt', ['user' => $following])
-							@endforeach
-						@else
-							<div class="alert alert-info">
-								{{ $user->first_name }} is not yet following anyone!
-							</div>
-						@endif
+						@include('_partials.elements.following', compact('user'))
 					</div>
 					<div class="tab-pane" id="followers">
-						@if( !$user->followers->isEmpty() )
-							@foreach( $user->followers as $follower)
-								@include('_partials.users.excerpt', ['user' => $follower])
-							@endforeach
-						@else
-							<div class="alert alert-info">
-								{{ $user->first_name }} does not yet have any followers!
-							</div>
-						@endif
+						@include('_partials.elements.followers', compact('user'))
 					</div>
 				</div>
 

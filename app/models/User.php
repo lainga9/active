@@ -24,6 +24,34 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'postcode'
 	];
 
+	// Returns a user's name
+	public function getName()
+	{
+		if( Auth::check() )
+		{
+			if( Auth::user()->id == $this->id )
+			{
+				return 'You';
+			}
+		}
+
+		return $this->first_name . ' ' . $this->last_name;
+	}
+
+	// Returns the correct form of the verb to be
+	public function getIs()
+	{
+		if( Auth::check() )
+		{
+			if( Auth::user()->id == $this->id )
+			{
+				return 'are';
+			}
+		}
+
+		return 'is';
+	}
+
 	/* Relationships */
 
 	// Credits spent by an instructor	

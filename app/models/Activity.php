@@ -96,6 +96,8 @@ class Activity extends \Eloquent {
 				$this->classTypes()->attach($classType);
 			}
 		}
+
+		return $this;
 	}
 
 	public function isFavourite()

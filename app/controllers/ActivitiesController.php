@@ -228,9 +228,7 @@ class ActivitiesController extends \BaseController {
 
 		$activity = $this->activity->find($id);
 
-		$activity = $activity->update(Input::except('class_type_id'));
-
-		$clashes = $this->instructor->checkAvailable($this->user, Input::all());
+		$clashes = $this->instructor->checkAvailable($this->user, Input::all(), $activity);
 
 		if( !$clashes->isEmpty() )
 		{
@@ -242,10 +240,20 @@ class ActivitiesController extends \BaseController {
 			]);
 		}
 
-		$activity->attachClassTypes();
+		$update = $activity->update(Input::except('class_type_id', 'avatar'));
+
+		$upload = $this->upload->fire(Input::file('avatar'));
+
+		if($upload)
+		{
+			$activity->avatar = $upload;
+			$activity->save();
+		}
+
+		$activity->attachClassTypes(Input::get('class_type_id'));
 
 		return Redirect::back()
-		->with('success', 'Activity added successfully');
+		->with('success', 'Activity updated successfully');
 	}
 
 	/**

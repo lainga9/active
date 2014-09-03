@@ -48,7 +48,7 @@ View::composer('activities.client.index', 'Services\Composers\SocialComposer');
 View::composer('_partials.admin.sidebar', 'Services\Composers\AdminSidebarComposer');
 
 // Sends all class types to class types form
-View::composer('_partials.form.classTypes', 'Services\Composers\ClassTypeFormComposer');
+View::composer('_partials.forms.classTypes', 'Services\Composers\ClassTypeFormComposer');
 
 /*
 |--------------------------------------------------------------------------

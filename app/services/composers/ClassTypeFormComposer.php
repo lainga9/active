@@ -1,4 +1,4 @@
-<?php namespace Services\Composer;
+<?php namespace Services\Composers;
 
 use ClassType;
 

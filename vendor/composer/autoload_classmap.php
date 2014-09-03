@@ -172,6 +172,7 @@ return array(
     'RolesTableSeeder' => $baseDir . '/app/database/seeds/RolesTableSeeder.php',
     'SearchController' => $baseDir . '/app/controllers/SearchController.php',
     'Services\\Composers\\AdminSidebarComposer' => $baseDir . '/app/services/composers/AdminSidebarComposer.php',
+    'Services\\Composers\\ClassTypeFormComposer' => $baseDir . '/app/services/composers/ClassTypeFormComposer.php',
     'Services\\Composers\\SearchComposer' => $baseDir . '/app/services/composers/SearchComposer.php',
     'Services\\Composers\\SocialComposer' => $baseDir . '/app/services/composers/SocialComposer.php',
     'Services\\Interfaces\\MailerInterface' => $baseDir . '/app/services/interfaces/MailerInterface.php',

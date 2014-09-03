@@ -30,8 +30,8 @@
 				'activity.close',
 				$activity->id
 			],
-			'method' => 'PUT']
-		) }}
+			'method' => 'PUT'
+		]) }}
 			<button type="submit" class="btn btn-info">Close Activity</button>
 		{{ Form::close() }}
 	@endif
@@ -44,11 +44,14 @@
 				'activities.update',
 				$activity->id
 			],
-			'method' => 'PUT'
+			'method' => 'PUT',
+			'files'	=> true
 		]
 	) }}
 
-		{{ Form::hidden('user_id', Auth::user()->id) }}
+		@if( $activity->avatar )
+			<img src="/active/public/{{ $activity->avatar }}" alt="" />
+		@endif
 
 		<div>Name</div>
 		<p>
@@ -133,10 +136,15 @@
 			) }}
 		</p>
 
+		<div>Display Pic</div>
+		<p>
+			{{ Form::file('avatar')}}
+		</p>
+
 		<hr />
 
 		<h4>Class Type</h4>
-		{{ ClassType::printFormHTML($activity) }}
+		@include('_partials.forms.classTypes')
 
 		<hr />
 

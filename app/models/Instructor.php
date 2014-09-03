@@ -54,9 +54,24 @@ class Instructor extends \Eloquent implements BillableInterface {
     	return (int) $value;
     }
 
-    public static function checkAvailable($user, $input)
+    /**
+    * Checks if a time slot is available when an instructor is listing an activity
+    *
+    * @param User $user
+    * @param array $input
+    * @param Activity $ignore // when updating an activity ignore it so it doesn't clash with itself
+    *
+    */
+    public static function checkAvailable($user, $input, $ignore = null)
     {
-    	$activities = $user->activities;
+    	if( $ignore )
+    	{
+    		$activities = $user->activities()->where('id', '!=', $ignore->id)->get();
+    	}
+    	else
+    	{
+    		$activities = $user->activities;
+    	}
 
     	// The requested start and finish times for the new activity (in timestmamp form)
     	$requestedStart 	= strtotime($input['date'] . ' ' . $input['time_from']);

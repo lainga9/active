@@ -1,37 +1,49 @@
-@if($user->avatar)
-	<a href="{{ URL::route('users.show', $user->id) }}"><img src="{{ URL::asset($user->avatar) }}" alt="" /></a>
-@else
-	<img src="http://placehold.it/150" alt="" />
-@endif
+<!-- User Avatar -->
+@include('_partials.users.avatar', compact('user'))
+
+<!-- Name -->
 <h3>{{ $user->first_name }} {{ $user->last_name }}</h3>
-@if( Auth::user()->isFollowing($user) )
-	<a href="{{ URL::route('user.unfollow', $user->id) }}" class="btn btn-danger">Unfollow</a>
-@else
-	<a href="{{ URL::route('user.follow', $user->id) }}" class="btn btn-success">Follow</a>
-@endif
+
+<!-- Follow Button -->
+@include('_partials.elements.followButton', compact('user'))
+
+<!-- Send Message -->
 @include('_partials.elements.sendMessage', compact('user'))
+
+<!-- Average Rating -->
 @if( $user->isInstructor() )
 	<p>
 		Average Rating:
 		@include('_partials.elements.averageRating', ['instructor' => $user])
 	</p>
 @endif
+
+<!-- Followers -->
 <p>Followers:
 	<span class="text-info">
 		<a href="{{ URL::route('user.followers', $user->id) }}">{{ count($user->followers) }}</a>
 	</span>
 </p>
+
+<!-- Following -->
 <p>Following: 
 	<span class="text-info">
 		<a href="{{ URL::route('user.following', $user->id) }}">{{ count($user->following) }}</a>
 	</span>
 </p>
+
+<!-- Profile Views -->
 @if( $user->isInstructor() )
 	Profile Views: {{ $user->userable->page_views }}
 	<hr />
+
+	<!-- Leave Feedback -->
 	@include('_partials.elements.leaveFeedback', ['instructor' => $user])
 @endif
+
 <hr />
+
+<!-- Social -->
 @if( $website = $user->userable->website )
 	<p><a href="{{ $website }}">{{ $website }}</a></p>
 @endif
@@ -48,8 +60,12 @@
 	<p><a href="{{ $instagram }}">{{ $instagram }}</a></p>
 @endif
 <hr />
+
+<!-- Activities -->
 <h4>Activities</h4>
 <hr />
+
+<!-- Bio -->
 @if( $bio = $user->userable->bio )
 	<h4>Bio</h4>
 	{{ $bio }}

@@ -195,4 +195,63 @@ class Activity extends \Eloquent {
 
     	return $activities;
     }
+
+    /* Accessors */
+
+    public function getName()
+    {
+    	return $this->name;
+    }
+
+    public function getLevel()
+    {
+    	return $this->level ? $this->level->name : 'N/A';
+    }
+
+    public function getPlacesLeft()
+    {
+    	$places 	= $this->places;
+    	$attending 	= count($this->attending);
+
+    	return $places - $attending;
+    }
+
+    public function getPrice()
+    {
+    	return '&pound;' . number_format($this->cost, 2);
+    }
+
+    public function getAddress()
+    {
+    	return $this->street_address . ', ' . $this->town . ', ' . $this->postcode;
+    }
+
+    public function getDate()
+    {
+    	return $this->date;
+    }
+
+    public function getTime()
+    {
+    	return $this->time_from . ' - ' . $this->time_until;
+    }
+
+    public function getTypes()
+    {
+    	if( $this->classTypes->isEmpty() ) return 'N/A';
+
+    	$names = [];
+
+    	foreach( $this->classTypes as $classType )
+    	{
+    		$names[] = $classType->name;
+    	}
+
+    	return implode(', ', $names);
+    }
+
+    public function getDescription()
+    {
+    	return $this->description;
+    } 
 }

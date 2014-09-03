@@ -18,7 +18,8 @@ class ClassType extends \Eloquent {
 		return $this->hasMany('ClassType', 'parent_id');
 	}
 
-	public function isSelected()
+	// Checks if the classtype is selected when using jQuery chosen multiselect. Activity variable used for when editing an activity
+	public function isSelected($activity = null)
 	{
 		if( isset($_GET['class_type_id']) )
 		{
@@ -27,6 +28,20 @@ class ClassType extends \Eloquent {
 				if( $id == $this->id )
 				{
 					return 'selected';
+				}
+			}
+		}
+
+		if( $activity )
+		{
+			if( $activity->classTypes )
+			{
+				foreach( $activity->classTypes as $classType )
+				{
+					if( $classType->id == $this->id)
+					{
+						return 'selected';
+					}
 				}
 			}
 		}
@@ -66,52 +81,5 @@ class ClassType extends \Eloquent {
 		$html .= '</ul>';
 
 		return $html;
-	}
-
-	public static function printFormHTML(Activity $activity = null)
-	{
-		$classTypes = ClassType::all();
-		if(!$classTypes)
-		{
-			return 'No Classes';
-		}
-
-		$html = '';
-
-		foreach( $classTypes as $classType )
-		{
-			if( $classType->parent_id == 0)
-			{
-				$html .= '<h5>' . $classType->name . '</h5>';
-				$children = ClassType::whereParentId($classType->id)->get();
-				if( count($children) )
-				{
-					foreach( $children as $child )
-					{
-						$checked = false;
-
-						if($activity)
-						{
-							$checked = $activity->classTypes->contains($child->id) ? true : false;
-						}
-						else
-						{
-							$checked = Input::get('class_type_id') ? in_array($child->id, Input::get('class_type_id')) : null;
-						}
-				
-						$html .= '<label>' . $child->name . '</label>';
-						$html .= Form::checkbox('class_type_id[]', $child->id, $checked);
- 					}
-				}
-				else
-				{
-					$html .= '<p>There are no classes in this category.</p>';
-				}
-			}
-		}
-
-		$html .= '</ul>';
-
-		return $html;	
 	}
 }

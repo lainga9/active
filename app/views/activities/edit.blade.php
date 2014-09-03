@@ -144,7 +144,7 @@
 		<hr />
 
 		<h4>Class Type</h4>
-		@include('_partials.forms.classTypes')
+		@include('_partials.forms.classTypes', compact('activity'))
 
 		<hr />
 

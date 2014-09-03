@@ -52,6 +52,28 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return 'is';
 	}
 
+	public function getAddress()
+	{
+		if( $this->isIndividual() ) return null;
+
+		return $this->street_address . ', ' . $this->town . ', ' . $this->postcode;
+	}
+
+	public function getWebsite()
+	{
+		return $this->userable->website;
+	}
+
+	public function getPhone()
+	{
+		return $this->userable->phone;
+	}
+
+	public function getMobile()
+	{
+		return $this->userable->mobile;
+	}
+
 	/* Relationships */
 
 	// Credits spent by an instructor	

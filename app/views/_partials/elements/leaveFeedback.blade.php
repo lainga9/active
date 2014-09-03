@@ -1,4 +1,4 @@
-<a class="text-success" href="#" data-toggle="modal" data-target=".modal-feedback">Leave Feedback</a>
+<a class="btn btn-primary" href="#" data-toggle="modal" data-target=".modal-feedback">Leave Feedback</a>
 
 <div class="modal fade modal-feedback">
 

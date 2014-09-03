@@ -14,107 +14,100 @@
 		</div>
 	@endif
 
-	@if( $activity->isOwn() )
-		<a href="{{ URL::route('activities.edit', $activity->id) }}" class="btn btn-info">Edit Activity</a>
-	@endif
-
 	<div class="row">
-		<div class="col-md-3">
 
+		<div class="col-sm-3">
+			<!-- Avatar -->
+			@if( $activity->avatar )
+				<img src="/active/public/{{ $activity->avatar }}" alt="{{ $activity->name }}" />
+			@else
+				<img src="http://placehold.it/200x200" alt="{{ $activity->name }}" />
+			@endif
+
+			<!-- Name -->
+			<h3 class="text-success">{{ $activity->getName() }}</h3>
+
+			<!-- Average Rating of Instructor -->
+			@include('_partials.elements.averageRating', ['instructor' => $activity->instructor])
+
+			<!-- Difficult Level -->
+			<p>{{ $activity->getLevel() }}</p>
+
+			<!-- Places Left -->
+			<p>Places left: {{ $activity->getPlacesLeft() }}</p>
+
+			<!-- Price -->
+			<p>Price: {{ $activity->getPrice() }}</p>
+
+			<!-- Edit activity if yours -->
+			@if( $activity->isOwn() )
+				<a href="{{ URL::route('activities.edit', $activity->id) }}" class="btn btn-info">Edit Activity</a>
+			@else
+				<!-- Book Button -->
+				@include('_partials.elements.bookActivity', compact($activity))
+			@endif
+		</div>
+
+		<div class="col-sm-6">
+			<!-- Map -->
 			<iframe width="100%" height="250" frameborder="0" scrolling="no"  marginheight="0" marginwidth="0" src="https://maps.google.com/maps?&amp;q=<?= $activity->makeAddressURL() ?>&amp;output=embed"></iframe>
 
-			<h5>Address</h5>
-			{{ $activity->street_address }} <br />
-			{{ $activity->town }} <br />
-			{{ $activity->postcode }}
+			<!-- Address -->
+			<p><i class="fa fa-map-marker"></i> Address: {{ $activity->getAddress() }}</p>
 
+			<!-- Date and Time -->
+			<p>Date: {{ $activity->getDate() }} Time: {{ $activity->getTime() }}</p>
+
+			<!-- Type -->
+			<p>Activity Type: {{ $activity->getTypes() }}</p>
+
+			<!-- Description -->
+			<p>{{ $activity->getDescription() }}</p>
+			<p></p>
+		</div>
+
+		<div class="col-sm-3">
+
+			<!-- Instructor Bio -->
+			<div class="row">
+				<div class="col-sm-4">
+
+					<!-- Avatar -->
+					@include('_partials.users.avatar', ['user' => $activity->instructor])
+				</div>
+				<div class="col-sm-8">
+
+					<!-- Name and Address -->
+					<p>Activity Host</p>
+					<h4><a href="{{ URL::route('users.show', $activity->instructor->id) }}">{{ $activity->instructor->getName() }}</a></h4>
+					{{ $activity->instructor->getAddress() }}
+				</div>
+			</div>
+
+			<!-- Website -->
+			@if( $website = $activity->instructor->getWebsite() )
+				<a href="{{ $website }}">{{ $website }}</a>
+			@endif
 			<hr />
 
-			<h5>Telephone</h5>
-			{{ $activity->instructor->userable->phone }}
+			<!-- Phone -->
+			@if( $phone = $activity->instructor->getPhone() )
+				<p>Tel: {{ $phone }}</p>
+			@endif
 
-			<hr >
+			<!-- Mobile -->
+			@if( $mobile = $activity->instructor->getMobile() )
+				<p>Mob: {{ $mobile }}</p>
+			@endif
 
-			<h5>Mobile</h5>
-			{{ $activity->instructor->userable->mobile }}
-
-			<hr />
-
+			<!-- Send Message -->
 			@include('_partials.elements.sendMessage', ['user' => $activity->instructor])
 
-		</div>
-		<div class="col-md-9">
+			<!-- Follow Button -->
+			@include('_partials.elements.followButton', ['user' => $activity->instructor])
 
-			<div class="row">
-				<div class="col-md-3">
-					@if( $activity->avatar )
-						<img src="/active/public/{{ $activity->avatar }}" alt="{{ $activity->name }}" />
-					@else
-						<img src="http://placehold.it/200x200" alt="{{ $activity->name }}" />
-					@endif
-					<h5>Host:</h5>
-					<a href="{{ URL::route('users.show', $activity->instructor->id) }}" class="text-success">{{ $activity->instructor->first_name }} {{ $activity->instructor->last_name }}</a>
-					<h5>Host Rating</h5>
-					@if( $feedback = $activity->instructor->userable->getAverageFeedback() )
-						<p>{{ $feedback }}</p>
-					@else
-						<p>No Reviews</p>
-					@endif
-					<hr />
-					@include('_partials.elements.leaveFeedback', ['instructor' => $activity->instructor])
-				</div>
-				<div class="col-md-9">
-					<h3>{{ $activity->name }}</h3>
-					<hr />
-					<h5>Class Type</h5>
-					@if( $classTypes = $activity->classTypes )
-						@foreach( $classTypes as $classType )
-							{{ $classType->name }}
-						@endforeach
-					@endif
-
-					<h5>Suitable for</h5>
-
-					<h5>Places Available</h5>
-					{{ $activity->places }}
-
-					<h5>Information</h5>
-					{{ $activity->description }}
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-8">
-					<div class="row">
-						<div class="col-md-4">
-							{{ $activity->time_from }} - {{ $activity->time_until }}
-						</div>
-						<div class="col-md-4">
-							{{ date('l', strtotime($activity->date)) }} {{ $activity->date }}
-						</div>
-						<div class="col-md-4">
-							&pound;{{ $activity->cost }}
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					@include('_partials.elements.bookActivity', compact($activity))
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-8">
-					@if( $activity->isFavourite() )
-						@include('_partials.elements.removeFavourite')
-					@else
-						@include('_partials.elements.addFavourite')
-					@endif
-				</div>
-				<div class="col-md-4">
-					
-				</div>
-			</div>
-
+			<!-- Leave Feedback -->
+			@include('_partials.elements.leaveFeedback', ['instructor' => $activity->instructor])
 		</div>
 	</div>
 	

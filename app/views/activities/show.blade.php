@@ -47,7 +47,11 @@
 
 			<div class="row">
 				<div class="col-md-3">
-					<img src="http://placehold.it/200x200" alt="{{ $activity->instructor->first_name }}" />
+					@if( $activity->avatar )
+						<img src="/active/public/{{ $activity->avatar }}" alt="{{ $activity->name }}" />
+					@else
+						<img src="http://placehold.it/200x200" alt="{{ $activity->name }}" />
+					@endif
 					<h5>Host:</h5>
 					<a href="{{ URL::route('users.show', $activity->instructor->id) }}" class="text-success">{{ $activity->instructor->first_name }} {{ $activity->instructor->last_name }}</a>
 					<h5>Host Rating</h5>

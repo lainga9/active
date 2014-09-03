@@ -1,8 +1,9 @@
 <?php
 
-use Services\Repositories\DefaultMailer;
+use Services\Interfaces\MailerInterface;
+use Services\Interfaces\SearchInterface;
+use Services\Interfaces\UploadInterface;
 use Services\Repositories\ActionRepository;
-use Services\Repositories\DefaultSearch;
 use Services\Repositories\ActivityRepository;
 
 class ActivitiesController extends \BaseController {
@@ -16,6 +17,8 @@ class ActivitiesController extends \BaseController {
 	protected $mailer;
 	protected $search;
 	protected $activityRepo;
+	protected $upload;
+	protected $validator;
 
 	public function __construct(
 		Activity $activity, 
@@ -23,13 +26,16 @@ class ActivitiesController extends \BaseController {
 		Instructor $instructor,
 		Client $client,
 		User $user,
-		DefaultMailer $mailer,
+		MailerInterface $mailer,
 		ActionRepository $action,
-		DefaultSearch $search,
-		ActivityRepository $activityRepo
+		SearchInterface $search,
+		ActivityRepository $activityRepo,
+		UploadInterface $upload,
+		Services\Validators\Activity $validator
 	)
 	{
 		$this->activity 	= $activity;
+		$this->validator 	= $validator;
 		$this->activityRepo	= $activityRepo;
 		$this->classType 	= $classType;
 		$this->instructor 	= $instructor;
@@ -37,6 +43,7 @@ class ActivitiesController extends \BaseController {
 		$this->mailer 		= $mailer;
 		$this->action 		= $action;
 		$this->search 		= $search;
+		$this->upload 		= $upload;
 		$this->user 		= Auth::user();
 
 		/*-------- FILTERS -------*/
@@ -127,12 +134,10 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function store()
 	{
-		$validation = new Services\Validators\Activity;
-
-		if( !$validation->passes() )
+		if( !$this->validator->passes() )
 		{
 			return Redirect::back()
-			->withErrors($validation->errors)
+			->withErrors($this->validator->errors)
 			->withInput();
 		}
 
@@ -149,6 +154,14 @@ class ActivitiesController extends \BaseController {
 		}
 
 		$activity = $this->activity->create(Input::except('class_type_id'));
+
+		$upload = $this->upload->fire(Input::file('avatar'));
+
+		if($upload)
+		{
+			$activity->avatar = $upload;
+			$activity->save();
+		}
 
 		$activity->attachClassTypes(Input::get('class_type_id'));
 		
@@ -269,16 +282,17 @@ class ActivitiesController extends \BaseController {
 			]);
 		}
 
+		$activity->book($this->user);
+	
 		try
 		{
-			$activity->book($this->user, $this->mailer);
+			$action 	= $this->action->create($this->user, 'booked into', $activity, 'Activity');
 		}
 		catch(Exception $e)
 		{
-			return Redirect::back()->with('error', $e->getMessage());
+			return Redirect::back()
+			->with('error', $e->getMessage());
 		}
-
-		$action 	= $this->action->create($this->user, 'booked into', $activity, 'Activity');
 
 		$email 		= $this->mailer->send($activity->instructor, 'emails.blank', 'Testing Email');
 

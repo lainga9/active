@@ -5,7 +5,7 @@
 	<h4>Add an Activity</h4>
 
 	{{ Form::open(
-		['route' => 'activities.store']
+		['route' => 'activities.store', 'files' => true]
 	) }}
 
 		{{ Form::hidden('user_id', Auth::user()->id) }}
@@ -93,10 +93,15 @@
 			) }}
 		</p>
 
+		<div>Display Picture</div>
+		<p>
+			{{ Form::file('avatar') }}
+		</p>
+
 		<hr />
 
 		<h4>Class Type</h4>
-		{{ ClassType::printFormHTML() }}
+		@include('_partials.forms.classTypes', compact('classTypes'))
 
 		<hr />
 

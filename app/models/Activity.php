@@ -87,13 +87,21 @@ class Activity extends \Eloquent {
 		}
 	}
 
-	public function attachClassTypes($classTypes)
+	public function attachClassTypes($ids)
 	{
-		if( $classTypes )
+		if( $this->classTypes )
 		{
-			foreach( $classTypes as $classType )
+			foreach($this->classTypes as $classType)
 			{
-				$this->classTypes()->attach($classType);
+				$this->classTypes()->detach($classType->id);
+			}
+		}
+
+		if( $ids )
+		{
+			foreach( $ids as $id )
+			{
+				$this->classTypes()->attach($id);
 			}
 		}
 

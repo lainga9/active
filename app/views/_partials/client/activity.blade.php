@@ -1,19 +1,12 @@
 <article class="activity activity-excerpt">
 	<div class="row">
 		<div class="col-sm-3">
-			<img src="http://placehold.it/150x150" alt="Avatar" />
+			@include('_partials.activities.avatar', compact('activity'))
 		</div>
 		<div class="col-sm-9">
-			<h4><a href="{{ URL::route('activities.show', $activity->id) }}">{{ $activity->name }}</a></h4>
+			<h4><a href="{{ URL::route('activities.show', $activity->id) }}">{{ $activity->getName() }}</a></h4>
 			<h5>
-				Suitable for: 
-				<strong>
-					@if($activity->level)
-						{{ $activity->level->name }}
-					@else
-						N/A
-					@endif
-				</strong>
+				Suitable for: <strong>{{ $activity->getLevel() }}</strong>
 				<span class="pull-right">
 					Host Rating:
 					@include('_partials.elements.averageRating', ['instructor' => $activity->instructor])
@@ -21,7 +14,7 @@
 			</h5>
 			<div class="row">
 				<div class="col-md-6">
-					<p>{{ $activity->description}}</p>
+					<p>{{ $activity->getDescription() }}</p>
 				</div>
 				<div class="col-md-6">
 					@include('_partials.elements.bookActivity', compact('activity'))
@@ -31,7 +24,7 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12">
-			<p>Time: {{ $activity->time_from}} - {{ $activity->time_until}} Date: {{ $activity->date }} Address: {{ $activity->street_address }}</p>
+			<p>Time: {{ $activity->getTime() }} Date: {{ $activity->getDate() }}</p>
 		</div>
 	</div>
 	<div class="row">
@@ -40,15 +33,7 @@
 				Tweet Share on Facebook
 			</p>
 			<p class="pull-left">
-				@if($activity->isFavourite())
-					@include('_partials.elements.removeFavourite', ['activity' => $activity])
-				@else
-					@include('_partials.elements.addFavourite', ['activity' => $activity])
-				@endif
-				<a href="{{ URL::route('users.show', $activity->instructor->id) }}">
-					{{ $activity->instructor->first_name }}
-					{{ $activity->instructor->last_name }}
-				</a>
+				<a href="{{ URL::route('users.show', $activity->instructor->id) }}">{{ $activity->instructor->getName() }}</a>
 			</p>
 		</div>
 	</div>

@@ -18,11 +18,7 @@
 
 		<div class="col-sm-3">
 			<!-- Avatar -->
-			@if( $activity->avatar )
-				<img src="/active/public/{{ $activity->avatar }}" alt="{{ $activity->name }}" />
-			@else
-				<img src="http://placehold.it/200x200" alt="{{ $activity->name }}" />
-			@endif
+			@include('_partials.activities.avatar', compact('activity'))
 
 			<!-- Name -->
 			<h3 class="text-success">{{ $activity->getName() }}</h3>

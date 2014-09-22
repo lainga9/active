@@ -87,6 +87,14 @@ class SearchController extends \BaseController {
 	{
 		$organisations = $this->search->organisations(Input::all());
 
+
+		if( Request::ajax() )
+		{
+			return Response::json([
+				'results'	=> $organisations
+			]);
+		}
+
 		$this->layout->content = View::make('users.search')->with(['users' => $organisations]);
 	}
 

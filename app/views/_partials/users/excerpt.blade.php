@@ -1,6 +1,6 @@
 <article class="user-excerpt">
 	@include('_partials.users.avatar', compact('user'))
-	<h3>{{ $user->first_name }} {{ $user->last_name }}</h3>
+	<h3><a href="{{ $user->getLink() }}">{{ $user->first_name }} {{ $user->last_name }}</a></h3>
 	<h4>{{ $user->email }}</h4>
 	<a href="{{ URL::route('users.show', $user->id) }}" class="btn btn-success">View</a>
 	@if( Auth::user()->isAdmin() )

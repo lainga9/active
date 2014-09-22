@@ -23,7 +23,7 @@ class Base extends \Eloquent {
 
 		$collection = $collection->toArray();
 
-		$output = array();
+		$output = [];
 
 		if($default)
 		{

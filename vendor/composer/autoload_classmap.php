@@ -168,6 +168,7 @@ return array(
     'Positioner' => $vendorDir . '/dompdf/dompdf/include/positioner.cls.php',
     'RemindersController' => $baseDir . '/app/controllers/RemindersController.php',
     'Renderer' => $vendorDir . '/dompdf/dompdf/include/renderer.cls.php',
+    'ReplenishCreditsCommand' => $baseDir . '/app/commands/ReplenishCredits.php',
     'Role' => $baseDir . '/app/models/Role.php',
     'RolesTableSeeder' => $baseDir . '/app/database/seeds/RolesTableSeeder.php',
     'SearchController' => $baseDir . '/app/controllers/SearchController.php',

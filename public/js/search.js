@@ -16,11 +16,13 @@ jQuery(document).ready(function($) {
 			$_time_from = $('input[name="time_from"]'),
 			$_time_until = $('input[name="time_until"]'),
 			$_name = $('input[name="name"]'),
+			$_orgName = $('input[name="orgName"]'),
 			$_email = $('input[name="email"]'),
 			$location = '',
 			$distance = 20,
 			$days = '',
 			$name = '',
+			$orgName = '',
 			$email = '',
 			$classType = '',
 			$terms = '',
@@ -89,6 +91,7 @@ jQuery(document).ready(function($) {
 			});
 
 			$_time_from.on('change', function() {
+				$page = 1;
 				$time_from = $(this).val();
 				
 				if( $.trim( $(this).val() ) != '' && $.trim( $time_until ) != '' ) {
@@ -97,6 +100,7 @@ jQuery(document).ready(function($) {
 			});
 
 			$_time_until.on('change', function() {
+				$page = 1;
 				$time_until = $(this).val();
 
 				if( $.trim( $(this).val() ) != '' && $.trim( $time_from ) != '' ) {
@@ -105,6 +109,7 @@ jQuery(document).ready(function($) {
 			});
 
 			$_location.on('blur', function() {
+				$page = 1;
 				if( $.trim( $(this).val() ) != '' ) {
 					$('.refine').slideDown();
 					$location = encodeURI($(this).val()).replace(/%20/g,'+');
@@ -116,12 +121,13 @@ jQuery(document).ready(function($) {
 
 			// Location Search
 			$_location.on('change', function() {
+				$page = 1;
 				$location = $(this).val();
 			});
 
 			// Days of the week
 			$_days.on('click', function() {
-
+				$page = 1;
 				$days = '';
 
 				$_days.each(function() {
@@ -138,7 +144,7 @@ jQuery(document).ready(function($) {
 
 			// Gender
 			$_genders.on('click', function() {
-
+				$page = 1;
 				$genders = '';
 
 				$_genders.each(function() {
@@ -155,7 +161,7 @@ jQuery(document).ready(function($) {
 
 			// Class Types
 			$_classType.on('change', function(e, p) {
-
+				$page = 1;
 				var $values = $(this).chosen().val();
 
 				$classType = '';
@@ -171,17 +177,26 @@ jQuery(document).ready(function($) {
 			});
 
 			$_terms.on('keyup', throttle(function() {
+				$page = 1;
 				$terms = $(this).val();
 
 				performSearch();
 			}));
 
 			$_name.on('keyup', throttle(function() {
+				$page = 1;
 				$name = $(this).val();
 				performSearch();
 			}));
 
+			$_orgName.on('keyup', throttle(function() {
+				$page = 1;
+				$orgName = $(this).val();
+				performSearch();
+			}));
+
 			$_email.on('keyup', throttle(function() {
+				$page = 1;
 				$email = $(this).val();
 				performSearch();
 			}));
@@ -210,12 +225,16 @@ jQuery(document).ready(function($) {
 			var $type = $searchSelect.find('option:selected').data('type');
 			var $query = '';
 
-			if($type == 'activity') {
+			if($type === 'activity') {
 				$query = "distance=" + $distance + "&day=" + $days + "&class_type_id=" + $classType + "&terms=" + $terms + "&location=" + $location + "&page=" + $page + "&genders=" + $genders + "&time_from=" + $time_from + "&time_until=" + $time_until;
 			}
 
-			if($type == 'user') {
+			if($type === 'user') {
 				$query = "name=" + $name + "&email=" + $email + "&page=" + $page;
+			}
+
+			if($type === 'organisation') {
+				$query = "orgName=" + $orgName + "&page=" + $page;
 			}
 
 			return $query;

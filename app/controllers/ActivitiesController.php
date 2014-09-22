@@ -98,7 +98,7 @@ class ActivitiesController extends \BaseController {
 
 	public function attending()
 	{
-		$activities = $this->user->attendingActivities;
+		$activities = $this->user->clientActivities();
 
 		$this->layout->content = View::make('activities.client.attending', compact('activities'));
 	}
@@ -177,7 +177,7 @@ class ActivitiesController extends \BaseController {
 			->with('error', $e->getMessage());
 		}
 
-		return Redirect::back()
+		return Redirect::route('dashboard')
 		->with('success', 'Activity added successfully');
 	}
 

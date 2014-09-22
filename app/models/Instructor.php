@@ -126,4 +126,13 @@ class Instructor extends \Eloquent implements BillableInterface {
 
     	return null;
     }
+
+    // Replenishes a users credit to 3
+    public function replenishCredits()
+    {
+    	$this->credits = 3;
+    	$this->save();
+
+    	return $this;
+    }
 }

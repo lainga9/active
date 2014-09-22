@@ -4,7 +4,7 @@
 			@include('_partials.activities.avatar', compact('activity'))
 		</div>
 		<div class="col-sm-9">
-			<h4><a href="{{ URL::route('activities.show', $activity->id) }}">{{ $activity->getName() }}</a></h4>
+			<h4><a href="{{ $activity->getLink() }}">{{ $activity->getName() }}</a></h4>
 			<h5>
 				Suitable for: <strong>{{ $activity->getLevel() }}</strong>
 				<span class="pull-right">

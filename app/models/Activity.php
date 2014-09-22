@@ -211,9 +211,19 @@ class Activity extends \Eloquent {
     	return $this->name;
     }
 
+    public function getDescription() 
+    {
+    	return $this->description;
+    }
+
     public function getLevel()
     {
     	return $this->level ? $this->level->name : 'N/A';
+    }
+
+    public function getPlaces()
+    {
+    	return $this->places;
     }
 
     public function getPlacesLeft()
@@ -258,8 +268,46 @@ class Activity extends \Eloquent {
     	return implode(', ', $names);
     }
 
-    public function getDescription()
+    public function getClassTypeIds()
     {
-    	return $this->description;
-    } 
+    	$ids = [];
+
+    	if( !$this->classTypes->isEmpty() )
+    	{
+    		foreach( $this->classTypes as $classType )
+    		{
+    			$ids[] = $classType->id;
+    		}
+    	}
+
+    	return $ids;
+    }
+
+    public function getLink()
+    {
+    	return URL::route('activities.show', $this->id);
+    }
+
+    public function getLevelId()
+    {
+    	return $this->level ? $this->level->id : null;
+    }
+
+    public function createSimilarString()
+    {
+    	return [
+    		'name'			=> $this->getName(),
+    		'description'	=> $this->getDescription(),
+    		'places'		=> $this->getPlaces(),
+    		'street_address'=> $this->street_address,
+    		'town'			=> $this->town,
+    		'postcode'		=> $this->postcode,
+    		'date'			=> $this->getDate(),
+    		'time_from'		=> $this->time_from,
+    		'time_until'	=> $this->time_until,
+    		'cost'			=> $this->cost,
+    		'class_type_id'	=> $this->getClassTypeIds(),
+    		'level_id'		=> $this->getLevelId()
+    	];
+    }
 }

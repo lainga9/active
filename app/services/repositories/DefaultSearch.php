@@ -26,9 +26,9 @@ class DefaultSearch implements SearchInterface {
 		$organisations = $this->user;
 		
 		// Name Search
-		if( isset($input['name']) )
+		if( isset($input['orgName']) )
 		{
-			$name = $input['name'];
+			$name = $input['orgName'];
 
 			if($name)
 			{
@@ -46,6 +46,26 @@ class DefaultSearch implements SearchInterface {
 						->orderBy('created_at', 'DESC')
 						->whereUserTypeId(2)
 						->get();
+
+		// Check if we have changed page in the pagination. If we have then subtract 1 from the page query parameter to get the correct index in the array i.e. page1 is the first page so equals index 0 in the array
+		$page = isset($input['page']) ? (int) $input['page'] - 1 : 0;
+
+		if( !$organisations->isEmpty() )
+		{
+			// Split the organisations into chunks of 10
+			$chunk = $organisations->chunk(10);
+
+			// Find the correct chunk depending on the page
+			$activeChunk = $chunk->get($page);
+
+			// Create the pagination
+			$organisations = Paginator::make($activeChunk->all(), count($organisations), 10);
+		}
+
+		if( Request::ajax() )
+		{
+			return View::make('_partials.ajax.users', ['users' => $organisations])->render();
+		}
 
 		return $organisations;
 	}

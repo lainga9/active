@@ -12,6 +12,14 @@
 
 <div class="organisation-search" style="display: none;">
 	<h3>Organisations</h3>
+	<div>Name</div>
+	<p>
+		{{ Form::text(
+			'orgName',
+			Input::get('orgName'),
+			['placeholder' => 'Name']
+		) }}
+	</p>
 </div>
 
 <div class="user-search" style="display: none;">

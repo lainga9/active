@@ -24,7 +24,7 @@
 					<div class="tab-pane active" id="activities">
 						@include('_partials.elements.timetable', ['activities' => $user->makeTimetable($user)])
 						<hr />
-						@include('_partials.instructor.activities', ['activities' => $user->activities])
+						@include('_partials.instructor.activities', ['activities' => $user->instructorActivities()])
 					</div>
 					<div class="tab-pane" id="following">
 						@include('_partials.elements.following', compact('user'))

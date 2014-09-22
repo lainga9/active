@@ -93,10 +93,34 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->hasMany('Activity');
 	}
 
+	public function instructorActivities()
+	{
+		$activities = $this->activities()->get();
+
+		$activities = $activities->filter(function($activity) 
+		{
+			return !$activity->hasPassed();
+		});
+
+		return $activities;
+	}
+
 	// Classes that client is attending
 	public function AttendingActivities() 
 	{
 		return $this->belongsToMany('Activity');
+	}
+
+	public function clientActivities()
+	{
+		$activities = $this->attendingActivities()->get();
+
+		$activities = $activities->filter(function($activity) 
+		{
+			return !$activity->hasPassed();
+		});
+
+		return $activities;
 	}
 
 	// Actions performed this user
@@ -138,7 +162,17 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		$stream = Illuminate\Database\Eloquent\Collection::make($stream);
 		$stream = $stream->sortByDesc('created_at');
 
-		return $stream;
+		$page = Input::get('page') ? (int) Input::get('page') - 1 : 0;
+
+		// Split the users into chunks of 10
+		$chunk = $stream->chunk(5);
+
+		// Find the correct chunk depending on the page
+		$activeChunk = $chunk->get($page);
+
+		$paginator = Paginator::make($activeChunk->all(), count($stream), 5);
+
+		return $paginator;
 	}
 
 	public function SocialStream()
@@ -558,5 +592,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     	$this->save();
 
     	return $this;
+    }
+
+    // Get the link to a user
+    public function getLink()
+    {
+    	return URL::route('users.show', $this->id);
     }
 }

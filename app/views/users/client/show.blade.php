@@ -30,3 +30,35 @@
 	</div>
 
 @stop
+
+@section('scripts')
+
+	<script>
+
+	jQuery(document).ready(function($) {
+
+		var $stream = (function() {
+
+		var $container = $('#recent'),
+
+			init = function() {
+				$container.infinitescroll({
+					navSelector: "ul.pagination",
+					nextSelector: "ul.pagination li.active + li a",
+					itemSelector: "#recent article",
+					loadingText: 'Loading more activity...',
+					doneText: 'No more activity!'
+				});
+			};
+
+			return {init: init};
+
+		})();
+
+		$stream.init();
+
+	});
+
+	</script>
+
+@stop

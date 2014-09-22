@@ -6,4 +6,6 @@
 
 	@endforeach
 
+	{{ $user->stream()->links() }}
+
 @endif

@@ -16,6 +16,41 @@ Validator::extend('future', function($attribute, $value, $parameters)
 
 /*
 |--------------------------------------------------------------------------
+| Handling Stripe Errors
+|--------------------------------------------------------------------------
+|
+| The future rule checks to see if the activity being added is in the future.
+|
+*/
+
+App::error(function(Stripe_InvalidRequestError  $exception, $code, $fromConsole)
+{
+	return Redirect::route('dashboard')->with('error', $exception->getMessage());
+});
+
+App::error(function(Stripe_CardError  $exception, $code, $fromConsole)
+{
+	return Redirect::route('dashboard')->with('error', $exception->getMessage());
+});
+
+App::error(function(Stripe_AuthenticationError  $exception, $code, $fromConsole)
+{
+	// Authentication with Stripe's API failed // (maybe you changed API keys recently) 
+});
+
+App::error(function(Stripe_ApiConnectionError  $exception, $code, $fromConsole)
+{
+	// Network communication with Stripe failed 
+});
+
+App::error(function(Stripe_Error  $exception, $code, $fromConsole)
+{
+	// Display a very generic error to the user, and maybe send // yourself an email 
+});
+
+
+/*
+|--------------------------------------------------------------------------
 | Iron.io queue
 |--------------------------------------------------------------------------
 |
@@ -68,6 +103,11 @@ Route::group(['before' => 'auth'], function() {
 	Route::get('account', 
 		['as' => 'account', 
 		'uses' => 'AccountController@index']);
+
+	// My Account
+	Route::get('account/addCard', 
+		['as' => 'account.addCard', 
+		'uses' => 'AccountController@addCard']);
 
 	// Upgrade to Pro Plan
 	Route::post('account/goPro', 
@@ -140,6 +180,18 @@ Route::group(['before' => 'auth'], function() {
 	Route::post('bookActivity/{id}', 
 		['as' => 'activity.book',
 		'uses' => 'ActivitiesController@book']
+	);
+
+	// Show payment form for activity
+	Route::get('activity/pay/{id}', 
+		['as' => 'activity.pay',
+		'uses' => 'ActivitiesController@pay']
+	);
+
+	// Process payment for activity
+	Route::post('activity/pay/{id}', 
+		['as' => 'activity.pay',
+		'uses' => 'ActivitiesController@pay']
 	);
 
 	// Instructor cancel an activity

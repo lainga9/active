@@ -12,7 +12,10 @@ class Account extends \Eloquent {
 				throw new Exception( 'You are already subscribed to this plan!' );
 			}
 
-			$user->subscription('pro')->create($token);
+			$user->subscription('pro')->create($token, [
+				'email'			=> $user->email
+			]);
+			
 			return $user;
 		} 
 		catch(Stripe_CardError $e) 
@@ -23,11 +26,11 @@ class Account extends \Eloquent {
 
 	public static function cancelPro($user)
 	{
-		$user->userable->subscription('pro')->cancel();
+		$user->subscription('pro')->cancel();
 	}
 
 	public static function resumePro($user)
 	{
-		$user->userable->subscription('pro')->resume();
+		$user->subscription('pro')->resume();
 	}
 }

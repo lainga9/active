@@ -1,15 +1,8 @@
 <?php
 
-use Laravel\Cashier\BillableTrait;
-use Laravel\Cashier\BillableInterface;
-
-class Instructor extends \Eloquent implements BillableInterface {
-
-	use BillableTrait;
+class Instructor extends \Eloquent {
 
 	protected $guarded = [];
-
-	protected $dates = ['trial_ends_at', 'subscription_ends_at'];
 
 	public static $typeAttributes = [
 		'phone',

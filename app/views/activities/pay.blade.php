@@ -1,4 +1,4 @@
-@section('title', 'My Account')
+@section('title', 'Make a payment for ' . $activity->name)
 
 @section('head')
 
@@ -13,44 +13,11 @@
 
 @section('content')
 
-	<h2>My Account</h2>
+	<h4>Pay for {{ $activity->name }}</h4>
 
-	<hr />
+	@if( !Auth::user()->hasStripeCard() )
 
-	<h3>My Plan</h3>
-
-	@if( $user->subscribed('pro') )
-
-		<div class="alert alert-success">
-			{{ ucwords($user->stripe_plan) }}
-		</div>
-
-	@else
-	
-		<div class="alert alert-danger">
-			Basic Plan
-		</div>
-
-	@endif
-
-	<h4>
-		Credits: 
-		<strong>
-			@if( $user->subscribed('pro') )
-				Unlimited
-			@else
-				{{ $user->userable->credits }}
-			@endif
-		</strong>
-	</h4>
-
-	<hr>
-
-	@if( !$user->subscribed('pro') )
-
-		<h3>Upgrade</h3>
-
-		<form action="{{ URL::route('account.goPro') }}" method="POST" id="payment-form">
+		<form action="{{ URL::route('activity.book', $activity->id) }}" method="POST" id="payment-form">
 
 			<span class="payment-errors"></span>
 		
@@ -77,31 +44,17 @@
 				<input type="text" size="4" data-stripe="exp-year"/>
 			</div>
 
-			<button type="submit" class="btn btn-success">Go Pro!</button>
+			<button type="submit" class="btn btn-success">Make Payment</button>
 
 		</form>
 
 	@else
 
-		@if( $user->onGracePeriod() )
-
-			<div class="alert alert-info">
-				You have cancelled your pro plan and your subscription will expire at {{ $user->subscription_ends_at }}
-			</div>
-
-			<form action="{{ URL::route('account.resumePro') }}" method="POST">
-				<button type="submit" class="btn btn-danger">Resume Pro Plan</button>
-			</form>			
-
-		@else
-
-			<h3>Cancel Subscription</h3>
-
-			<form action="{{ URL::route('account.cancelPro') }}" method="POST">
-				<button type="submit" class="btn btn-danger">Cancel Pro Plan</button>
-			</form>
-
-		@endif
+		<p>By Clicking the button below you confirm you are committing to pay {{ $activity->getPrice() }} to attend {{ $activity->getName() }} on {{ $activity->getDate() }} at {{ $activity->getTime() }}</p>
+	
+		<form action="{{ URL::route('activity.book', $activity->id) }}" method="POST" id="payment-form">
+			<button type="submit" class="btn btn-success">Make Payment</button>
+		</form>
 
 	@endif
 

@@ -4,12 +4,16 @@ use Illuminate\Auth\UserTrait;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
+use Laravel\Cashier\BillableTrait;
+use Laravel\Cashier\BillableInterface;
 
-class User extends Eloquent implements UserInterface, RemindableInterface {
+class User extends Eloquent implements UserInterface, RemindableInterface, BillableInterface {
 
-	use UserTrait, RemindableTrait;
+	use UserTrait, RemindableTrait, BillableTrait;
 
 	protected $guarded = [];
+
+	protected $dates = ['trial_ends_at', 'subscription_ends_at'];
 
 	// This array is used to distinguish which fields should be stored in the users table as opposed to the clients or instructors table. It's used when static::createAccount() is called in UsersController
 
@@ -24,6 +28,17 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'postcode'
 	];
 
+	// Checks if the user is a stripe customer 
+	public function isStripe()
+	{
+		return $this->stripe_id != null;
+	}
+
+	public function hasStripeCard()
+	{
+		return $this->last_four != null;
+	}
+
 	// Returns a user's name
 	public function getName()
 	{
@@ -35,7 +50,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			}
 		}
 
-		return $this->first_name . ' ' . $this->last_name;
+		return $this->getActualName();
+	}
+
+	public function getActualName()
+	{
+		return $this->first_name . ' ' . $this->last_name;	
 	}
 
 	// Returns the correct form of the verb to be

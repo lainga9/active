@@ -1,17 +1,20 @@
 <?php
 
+use Services\Interfaces\AccountInterface;
+
 class AccountController extends \BaseController {
 
 	protected $layout = 'layouts.main';
 	protected $account;
 	protected $credit;
+	protected $stripe;
 
-	public function __construct(Account $account, Credit $credit)
+	public function __construct(Account $account, Credit $credit, AccountInterface $stripe)
 	{
 		$this->account 	= $account;
 		$this->credit 	= $credit;
-
-		$this->beforeFilter('instructor');
+		$this->stripe 	= $stripe;
+		$this->user 	= Auth::user();
 	}
 
 	/**
@@ -22,8 +25,19 @@ class AccountController extends \BaseController {
 	 */
 	public function index()
 	{
-		$user = Auth::user();
-		$this->layout->content = View::make('account.index', compact('user'));
+		if( $this->user->isInstructor() )
+		{
+			$this->layout->content = View::make('account.index', ['user' => $this->user]);
+		}
+		else
+		{
+			dd('todo client account');
+		}
+	}
+
+	public function addCard()
+	{
+		$this->layout->content = View::make('account.addCard');
 	}
 
 	public function goPro()
@@ -31,7 +45,7 @@ class AccountController extends \BaseController {
 		// Pass the generated token, an instance of the Credit model and the user to the stripe method in the Account model
 		try
 		{
-			$charge = $this->account->goPro(Input::get('stripeToken'), $this->credit, Auth::user()->userable);
+			$charge = $this->account->goPro(Input::get('stripeToken'), $this->credit, $this->user);
 		}
 		catch(Exception $e)
 		{
@@ -46,7 +60,7 @@ class AccountController extends \BaseController {
 
 	public function cancelPro()
 	{
-		$this->account->cancelPro(Auth::user());
+		$this->account->cancelPro($this->user);
 
 		return Redirect::back()
 		->with(
@@ -57,7 +71,7 @@ class AccountController extends \BaseController {
 
 	public function resumePro()
 	{
-		$this->account->resumePro(Auth::user());
+		$this->account->resumePro($this->user);
 
 		return Redirect::back()
 		->with(
@@ -66,63 +80,9 @@ class AccountController extends \BaseController {
 		);
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 * POST /account
-	 *
-	 * @return Response
-	 */
-	public function store()
+	public function makePayment()
 	{
-		//
-	}
 
-	/**
-	 * Display the specified resource.
-	 * GET /account/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 * GET /account/{id}/edit
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 * PUT /account/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 * DELETE /account/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
 	}
 
 }

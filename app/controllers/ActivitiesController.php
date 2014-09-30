@@ -3,6 +3,7 @@
 use Services\Interfaces\MailerInterface;
 use Services\Interfaces\SearchInterface;
 use Services\Interfaces\UploadInterface;
+use Services\Interfaces\AccountInterface;
 use Services\Repositories\ActionRepository;
 use Services\Repositories\ActivityRepository;
 
@@ -19,6 +20,7 @@ class ActivitiesController extends \BaseController {
 	protected $activityRepo;
 	protected $upload;
 	protected $validator;
+	protected $stripe;
 
 	public function __construct(
 		Activity $activity, 
@@ -31,7 +33,8 @@ class ActivitiesController extends \BaseController {
 		SearchInterface $search,
 		ActivityRepository $activityRepo,
 		UploadInterface $upload,
-		Services\Validators\Activity $validator
+		Services\Validators\Activity $validator,
+		AccountInterface $stripe
 	)
 	{
 		$this->activity 	= $activity;
@@ -44,6 +47,7 @@ class ActivitiesController extends \BaseController {
 		$this->action 		= $action;
 		$this->search 		= $search;
 		$this->upload 		= $upload;
+		$this->stripe 		= $stripe;
 		$this->user 		= Auth::user();
 
 		/*-------- FILTERS -------*/
@@ -290,6 +294,8 @@ class ActivitiesController extends \BaseController {
 			]);
 		}
 
+		$charge = $this->stripe->createCharge($this->user, $activity, Input::get('stripeToken'));
+
 		$activity->book($this->user);
 	
 		try
@@ -306,10 +312,23 @@ class ActivitiesController extends \BaseController {
 
 		$reminder 	= $this->mailer->scheduleReminder($activity, $this->user);
 		
-		return Redirect::back()
+		return Redirect::route('activities.show', $activity->id)
 		->with('success', 'You have successfully booked this activity');
 	}
 
+	/**
+	 * Shows the payment for for booking an activity
+	 * GET /activity/pay
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function pay($id)
+	{
+		$activity = $this->activity->find($id);
+		
+		$this->layout->content = View::make('activities.pay')->with(compact('activity'));
+	}
 
 	/**
 	 * Allows an instructor to cancel an activity

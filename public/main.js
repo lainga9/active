@@ -20,7 +20,7 @@ jQuery(document).ready(function($) {
 
 	})();
 
-	$infinite.init();
+	// $infinite.init();
 
 	$(document).on('click', 'a.remove-favourite, a.add-favourite', function(e) {
 		$this = $(this);

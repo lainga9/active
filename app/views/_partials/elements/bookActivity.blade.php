@@ -7,12 +7,5 @@
 @elseif( $activity->isAttending() )
 	@include('_partials.elements.attendingActivity')
 @else
-	{{ Form::open(
-	['route' => 
-		['activity.book', $activity->id]
-	] ) }}
-
-	{{ Form::submit('Book Now', ['class' => 'btn btn-success btn-lg']) }}
-
-{{ Form::close() }}
+	<a href="{{ URL::route('activity.pay', $activity->id) }}" class="btn btn-large btn-success">Book Now</a>
 @endif

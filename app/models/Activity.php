@@ -310,4 +310,9 @@ class Activity extends \Eloquent {
     		'level_id'		=> $this->getLevelId()
     	];
     }
+
+    public function stripeCost()
+    {
+    	return number_format($this->cost, 0) * 100;
+    }
 }

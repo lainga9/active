@@ -21,6 +21,44 @@ class DefaultSearch implements SearchInterface {
 		$this->classType 	= $classType;	
 	}
 
+	public function distanceFilter($collection, $input)
+	{
+		$distance = $input['distance'];
+		$location = $input['location'];	
+
+		if( $distance && $location )
+		{
+			$collection = $collection->filter(function($model) use ($distance, $location)
+			{
+				if( !$model->postcode ) return false;
+
+				$modelAddress = $model->street_address . ',' . $model->postcode;
+
+				$string = 'origins=' . urlencode($modelAddress) . '&destinations=' . urlencode($location);
+
+				$ch = curl_init();
+
+				curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/distancematrix/xml?units=imperial&' . $string);
+
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+				$output = curl_exec($ch);
+
+				$xml = simplexml_load_string($output);
+
+				$retrievedDistance = intval($xml->row->element->distance->text);
+
+				if( $retrievedDistance <= $distance)
+				{
+					return true;
+				}
+
+			});
+		}
+
+		return $collection;
+	}
+
 	public function organisations($input)
 	{
 		$organisations = $this->user;
@@ -50,38 +88,7 @@ class DefaultSearch implements SearchInterface {
 		// Distance Search
 		if( isset($input['distance']) && isset($input['location']) )
 		{
-			$distance = $input['distance'];
-			$location = $input['location'];
-
-			if( $distance && $location )
-			{
-				$organisations = $organisations->filter(function($organisation) use ($distance, $location)
-				{
-					if( !$organisation->postcode ) return false;
-					
-					$organisationAddress = $organisation->street_address . ',' . $organisation->postcode;
-
-					$string = 'origins=' . urlencode($organisationAddress) . '&destinations=' . urlencode($location);
-
-					$ch = curl_init();
-
-					curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/distancematrix/xml?units=imperial&' . $string);
-
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-					$output = curl_exec($ch);
-
-					$xml = simplexml_load_string($output);
-
-					$retrievedDistance = intval($xml->row->element->distance->text);
-
-					if( $retrievedDistance <= $distance)
-					{
-						return true;
-					}
-
-				});
-			}
+			$organisations = $this->distanceFilter($organisations, $input);
 		}
 
 		// Check if we have changed page in the pagination. If we have then subtract 1 from the page query parameter to get the correct index in the array i.e. page1 is the first page so equals index 0 in the array
@@ -305,36 +312,7 @@ class DefaultSearch implements SearchInterface {
 		// Distance Search
 		if( isset($input['distance']) && isset($input['location']) )
 		{
-			$distance = $input['distance'];
-			$location = $input['location'];
-
-			if( $distance && $location )
-			{
-				$activities = $activities->filter(function($activity) use ($distance, $location)
-				{
-					$activityAddress = $activity->street_address . ',' . $activity->postcode;
-
-					$string = 'origins=' . urlencode($activityAddress) . '&destinations=' . urlencode($location);
-
-					$ch = curl_init();
-
-					curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/distancematrix/xml?units=imperial&' . $string);
-
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-					$output = curl_exec($ch);
-
-					$xml = simplexml_load_string($output);
-
-					$retrievedDistance = intval($xml->row->element->distance->text);
-
-					if( $retrievedDistance <= $distance)
-					{
-						return true;
-					}
-
-				});
-			}
+			$activities = $this->distanceFilter($activities, $input);
 		}
 
 		// Check if we have changed page in the pagination. If we have then subtract 1 from the page query parameter to get the correct index in the array i.e. page1 is the first page so equals index 0 in the array

@@ -110,7 +110,8 @@
 			{{ Form::select(
 				'level_id',
 				Base::toSelect(Level::all()),
-				Input::get('level_id', Input::old('level_id'))
+				Input::get('level_id', Input::old('level_id')),
+				['class' => 'select-chosen']
 			) }}
 		</p>
 

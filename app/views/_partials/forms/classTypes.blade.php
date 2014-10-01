@@ -1,7 +1,7 @@
 <?php $activity = isset($activity) ? $activity : null; ?>
 
 @if( $classTypes )
-	<select name="class_type_id[]" multiple class="form-control class-types">
+	<select name="class_type_id[]" multiple class="form-control class-types select-chosen">
 		@foreach( $classTypes as $classType)
 			@if( !$classType->children->isEmpty() )
 				<optgroup label="{{ $classType->name }}">

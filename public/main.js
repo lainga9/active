@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
 
-	$('select').chosen();
+	$('select.select-chosen').chosen();
 
 	var $infinite = (function() {
 

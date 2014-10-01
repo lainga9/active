@@ -2,7 +2,7 @@
 
 <h3>Type of Search</h3>
 
-<select class="search-select">
+<select class="search-select select-chosen">
 	<option data-type="activity" value="{{ URL::route('activities.search') }}">Activities</option>
 	<option data-type="user" value="{{ URL::route('users.search') }}">Users</option>
 	<option data-type="organisation" value="{{ URL::route('organisations.search') }}">Organisations</option>
@@ -12,14 +12,28 @@
 
 <div class="organisation-search" style="display: none;">
 	<h3>Organisations</h3>
-	<div>Name</div>
-	<p>
-		{{ Form::text(
-			'orgName',
-			Input::get('orgName'),
-			['placeholder' => 'Name']
-		) }}
-	</p>
+	<div class="row">
+		<div class="col-md-4">
+			<div>Postcode/Area</div>
+			<p>
+				{{ Form::text(
+					'location', 
+					Input::get('location'),
+					['placeholder' => 'eg: G1 HGH / Glasgow']
+				) }}
+			</p>	
+		</div>
+		<div class="col-sm-4">
+			<div>Name</div>
+			<p>
+				{{ Form::text(
+					'orgName',
+					Input::get('orgName'),
+					['placeholder' => 'Name']
+				) }}
+			</p>	
+		</div>
+	</div>
 </div>
 
 <div class="user-search" style="display: none;">
@@ -115,11 +129,11 @@
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div style="display: none;" class="refine">
-		<div>Refine Search Radius (miles): <span class="distance-value"></span></div>
-		<div class="distance-slider"></div>
-	</div>
+<div style="display: none;" class="refine">
+	<div>Refine Search Radius (miles): <span class="distance-value"></span></div>
+	<div class="distance-slider"></div>
 </div>
 
 {{ HTML::script('js/search.js') }}

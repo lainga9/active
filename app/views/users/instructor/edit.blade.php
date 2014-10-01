@@ -5,9 +5,9 @@
 	<h3>Welcome {{ $user->first_name }}, edit your details below</h3>
 
 	<div class="row">
-		<div class="col-sm-4">Profile View: </div>
-		<div class="col-sm-4">Feedback Received: </div>
-		<div class="col-sm-4">Classes Listed: </div>
+		<div class="col-sm-4">Profile View: {{ $user->userable->page_views }}</div>
+		<div class="col-sm-4">Feedback Received: {{ count($user->feedback) }}</div>
+		<div class="col-sm-4">Classes Listed: {{ count($user->activities) }}</div>
 	</div>
 
 	<h4>Profile Picture</h4>

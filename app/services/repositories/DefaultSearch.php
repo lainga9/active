@@ -47,6 +47,43 @@ class DefaultSearch implements SearchInterface {
 						->whereUserTypeId(2)
 						->get();
 
+		// Distance Search
+		if( isset($input['distance']) && isset($input['location']) )
+		{
+			$distance = $input['distance'];
+			$location = $input['location'];
+
+			if( $distance && $location )
+			{
+				$organisations = $organisations->filter(function($organisation) use ($distance, $location)
+				{
+					if( !$organisation->postcode ) return false;
+					
+					$organisationAddress = $organisation->street_address . ',' . $organisation->postcode;
+
+					$string = 'origins=' . urlencode($organisationAddress) . '&destinations=' . urlencode($location);
+
+					$ch = curl_init();
+
+					curl_setopt($ch, CURLOPT_URL, 'http://maps.googleapis.com/maps/api/distancematrix/xml?units=imperial&' . $string);
+
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+					$output = curl_exec($ch);
+
+					$xml = simplexml_load_string($output);
+
+					$retrievedDistance = intval($xml->row->element->distance->text);
+
+					if( $retrievedDistance <= $distance)
+					{
+						return true;
+					}
+
+				});
+			}
+		}
+
 		// Check if we have changed page in the pagination. If we have then subtract 1 from the page query parameter to get the correct index in the array i.e. page1 is the first page so equals index 0 in the array
 		$page = isset($input['page']) ? (int) $input['page'] - 1 : 0;
 
@@ -129,7 +166,7 @@ class DefaultSearch implements SearchInterface {
 
 	public function activities($input)
 	{
-		$activities = $this->activity;
+		$activities = $this->activity->future();
 
 		// Keyword Search
 		if( isset($input['terms']) )

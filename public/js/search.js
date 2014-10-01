@@ -40,6 +40,10 @@ jQuery(document).ready(function($) {
 				min: 0,
 				value: $distance,
 				max: 70,
+				slide: function( event, ui ) {
+					$distance = ui.value;
+					$('.distance-value').html($distance);
+				},
 				change: function( event, ui ) {
 					$distance = ui.value;
 					$('.distance-value').html($distance);
@@ -60,6 +64,7 @@ jQuery(document).ready(function($) {
 
 		searchSelect = function() {
 			$page = 1;
+			$distance = 20;
 			$('div[class*="-search"]').fadeOut();
 			var $type = $searchSelect.find('option:selected').data('type');
 			$('.' + $type + '-search').fadeIn();
@@ -234,7 +239,7 @@ jQuery(document).ready(function($) {
 			}
 
 			if($type === 'organisation') {
-				$query = "orgName=" + $orgName + "&page=" + $page;
+				$query = "orgName=" + $orgName + "&distance=" + $distance + "&location=" + $location + "&page=" + $page;
 			}
 
 			return $query;

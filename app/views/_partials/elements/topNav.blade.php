@@ -14,6 +14,9 @@
 			</li>
 		@endif
 		<li>
+			<a href="{{ URL::route('account') }}">My Account</a>
+		</li>
+		<li>
 			<a href="{{ URL::route('profile') }}">Profile</a>
 		</li>
 		<li>

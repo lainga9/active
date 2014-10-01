@@ -271,7 +271,7 @@ Route::filter('activity.notFavourite', function($route)
 // Checks the instructor has enough credits to list an activity
 Route::filter('instructor.hasCredits', function() 
 {
-	if( !Auth::user()->userable->subscribed() )
+	if( !Auth::user()->subscribed() )
 	{
 		$credits = Auth::user()->userable->credits;
 

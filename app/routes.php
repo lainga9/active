@@ -124,6 +124,16 @@ Route::group(['before' => 'auth'], function() {
 		['as' => 'account.resumePro', 
 		'uses' => 'AccountController@resumePro']);
 
+	// Delete a card
+	Route::post('account/card/delete/{cardId}', 
+		['as' => 'account.card.delete', 
+		'uses' => 'AccountController@deleteCard']);
+
+	// Add a card
+	Route::post('account/card/add', 
+		['as' => 'account.card.add', 
+		'uses' => 'AccountController@doAddCard']);
+
 	// Handles failed payments - http://laravel.com/docs/billing#handling-failed-payments
 	Route::post('stripe/webhook', 'Laravel\Cashier\WebhookController@handleWebhook');
 

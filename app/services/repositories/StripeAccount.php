@@ -27,8 +27,10 @@ class StripeAccount implements \Services\Interfaces\AccountInterface {
 					'amount'		=> $activity->stripeCost(),
 					'currency'		=> 'gbp',
 					'customer'		=> $customer,
-					'name'			=> 'iya',
-					'description'	=> 'Payment for ' . $activity->getName()
+					'description'	=> 'Payment for ' . $activity->getName(),
+					'metadata'		=> [
+						'activity_id'	=> $activity->id
+					]
 				]);
 
 				return $charge;
@@ -63,8 +65,92 @@ class StripeAccount implements \Services\Interfaces\AccountInterface {
 		return $customer;
 	}
 
-	public function getCustomerById($id)
+	public function getCustomerById($customerId)
 	{
-		return $this->customer->retrieve($id);
+		return $this->customer->retrieve($customerId);
+	}
+
+	public function getCards($customerId)
+	{
+		if( !$customerId ) return null;
+
+		$customer = $this->getCustomerById($customerId);
+
+		if( $customer->cards )
+		{
+			return $customer->cards->data;
+		}
+
+		return $customer->cards;
+	}
+
+	public function deleteCard($customerId, $cardId)
+	{
+		if( !$customerId ) return null;
+
+		$customer = $this->getCustomerById($customerId);
+
+		if( $customer )
+		{
+			$card = $customer->cards->retrieve($cardId);
+
+			if( $card )
+			{
+				$delete = $customer->cards->retrieve($cardId)->delete();
+
+				return $delete;
+			}
+		}
+
+		return null;
+	}
+
+	public function addCard($customerId, $token)
+	{
+		if( !$customerId )
+		{
+			$customer = $this->createCustomer(\	Auth::user(), $token);
+
+			return $customer;
+		}
+		else
+		{
+			$customer = $this->getCustomerById($customerId);
+
+			if( $customer )
+			{
+				$card = $customer->cards->create(["card" => $token]);
+
+				return $card;
+			}
+		}
+
+		return null;
+	}
+
+	public function getChargesByCustomerId($customerId)
+	{
+		if( !$customerId ) return null;
+
+		$charges = $this->charge->all(['customer' => $customerId]);
+
+		if( $charges )
+		{
+			return $charges->data;
+		}
+
+		return null;
+	}
+
+	public function getActivityFromCharge($charge)
+	{
+		$id = $charge->metadata->activity_id;
+
+		if( $id )
+		{
+			return \Activity::find($id);
+		}
+
+		return null;
 	}
 }

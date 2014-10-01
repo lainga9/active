@@ -30,7 +30,7 @@ class Instructor extends \Eloquent {
 
     public static function spendCredit($user, $activity)
     {
-    	if( !$user->userable->subscribed('pro') )
+    	if( !$user->subscribed('pro') )
     	{
     		$user->userable->credits = (int) $user->userable->credits - 1;
 	    	$user->userable->save();

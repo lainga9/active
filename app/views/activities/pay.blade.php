@@ -13,9 +13,13 @@
 
 @section('content')
 
-	<h4>Pay for {{ $activity->name }}</h4>
+	<h3>Pay for {{ $activity->name }}</h3>
+
+	<hr />
 
 	@if( !Auth::user()->hasStripeCard() )
+
+		<h4>Add a Payment Method</h4>
 
 		<form action="{{ URL::route('activity.book', $activity->id) }}" method="POST" id="payment-form">
 
@@ -50,9 +54,9 @@
 
 	@else
 
-		<p>By Clicking the button below you confirm you are committing to pay {{ $activity->getPrice() }} to attend {{ $activity->getName() }} on {{ $activity->getDate() }} at {{ $activity->getTime() }}</p>
+		<p>By Clicking the button below you confirm you are committing to pay {{ $activity->getPrice() }} to attend {{ $activity->getName() }} on {{ $activity->getDate() }} at {{ $activity->getTime() }} using <strong>card ending in {{ Auth::user()->last_four }}</p>
 	
-		<form action="{{ URL::route('activity.book', $activity->id) }}" method="POST" id="payment-form">
+		<form action="{{ URL::route('activity.book', $activity->id) }}" method="POST">
 			<button type="submit" class="btn btn-success">Make Payment</button>
 		</form>
 

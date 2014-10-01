@@ -6,6 +6,8 @@
 	@include('_partials.elements.cancelledActivity')
 @elseif( $activity->isAttending() )
 	@include('_partials.elements.attendingActivity')
+@elseif( $activity->hasPassed() )
+	@include('_partials.elements.passedActivity')
 @else
 	<a href="{{ URL::route('activity.pay', $activity->id) }}" class="btn btn-large btn-success">Book Now</a>
 @endif

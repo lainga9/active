@@ -24,7 +24,11 @@
 					<div class="tab-pane active" id="activities">
 						@include('_partials.elements.timetable', ['activities' => $user->makeTimetable($user)])
 						<hr />
-						@include('_partials.instructor.activities', ['activities' => $user->instructorActivities()])
+						<h4>Activities</h4>
+						@include('_partials.instructor.activities', ['activities' => $user->activities()->future()->get()])
+						<hr />
+						<h4>Passed Activities</h4>
+						@include('_partials.instructor.activities', ['activities' => $user->activities()->passed()->get()])
 					</div>
 					<div class="tab-pane" id="following">
 						@include('_partials.elements.following', compact('user'))

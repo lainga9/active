@@ -3,6 +3,16 @@
 class Activity extends \Eloquent {
 	protected $guarded = [];
 
+	public function scopeFuture($query)
+	{
+		return $query->where('date', '>=', date('Y-m-d'));
+	}
+
+	public function scopePassed($query)
+	{
+		return $query->where('date', '<', date('Y-m-d'));
+	}
+
 	public function ClassTypes()
 	{
 		return $this->belongsToMany('ClassType');

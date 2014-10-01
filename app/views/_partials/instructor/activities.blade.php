@@ -1,5 +1,3 @@
-<h4>All Activities</h4>
-
 @if( !$activities->isEmpty() )
 
 	@foreach($activities as $activity)

@@ -22,7 +22,7 @@ class DashboardController extends \BaseController {
 	{
 		if( $this->user->isClient() || $this->user->isAdmin() )
 		{
-			$activities = $this->activity->orderBy('created_at', 'DESC')->paginate(10);
+			$activities = $this->activity->future()->orderBy('created_at', 'DESC')->paginate(10);
 			$this->layout->content =  View::make('activities.client.index', compact('activities'));
 			return;
 		}

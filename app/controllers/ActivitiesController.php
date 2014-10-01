@@ -85,11 +85,12 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function index()
 	{
-		$activities = $this->activity->orderBy('created_at', 'DESC')->paginate(10);
+		$activities = $this->activity->future()->orderBy('created_at', 'DESC')->paginate(10);
 
 		if( $this->user->isInstructor() )
 		{
-			$activities = $this->user->activities;
+			$activities = $this->user->activities()->future()->get();
+			$passed 	= $this->user->activities()->passed()->get();
 		}
 
 		$data = [
@@ -97,12 +98,17 @@ class ActivitiesController extends \BaseController {
 			'user'			=> $this->user
 		];
 
+		if( $this->user->isInstructor() )
+		{
+			$data['passed'] = $passed;
+		}
+
 		$this->layout->content = View::make('activities.' . strtolower(get_class($this->user->userable)) . '.index')->with($data);
 	}
 
 	public function attending()
 	{
-		$activities = $this->user->clientActivities();
+		$activities = $this->user->activities()->future()->get();
 
 		$this->layout->content = View::make('activities.client.attending', compact('activities'));
 	}

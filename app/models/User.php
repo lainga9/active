@@ -113,34 +113,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 		return $this->hasMany('Activity');
 	}
 
-	public function instructorActivities()
-	{
-		$activities = $this->activities()->get();
-
-		$activities = $activities->filter(function($activity) 
-		{
-			return !$activity->hasPassed();
-		});
-
-		return $activities;
-	}
-
 	// Classes that client is attending
 	public function AttendingActivities() 
 	{
 		return $this->belongsToMany('Activity');
-	}
-
-	public function clientActivities()
-	{
-		$activities = $this->attendingActivities()->get();
-
-		$activities = $activities->filter(function($activity) 
-		{
-			return !$activity->hasPassed();
-		});
-
-		return $activities;
 	}
 
 	// Actions performed this user
@@ -184,13 +160,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 
 		$page = Input::get('page') ? (int) Input::get('page') - 1 : 0;
 
+		$pageSize = 5;
+
+		$total = count($stream);
+
 		// Split the users into chunks of 10
-		$chunk = $stream->chunk(5);
+		$chunk = $stream->chunk($pageSize);
 
-		// Find the correct chunk depending on the page
-		$activeChunk = $chunk->get($page);
+		if( $page * $pageSize > $total )
+		{
+			return Illuminate\Database\Eloquent\Collection::make([]);
+		}
+		else
+		{
+			// Find the correct chunk depending on the page
+			$activeChunk = $chunk->get($page);
+		}
 
-		$paginator = Paginator::make($activeChunk->all(), count($stream), 5);
+		$paginator = Paginator::make($activeChunk->all(), $total, $pageSize);
 
 		return $paginator;
 	}
@@ -369,15 +356,15 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 	}
 
 	// Class types associated to an instructor. It checks all activities listed by an instructor and returns all of the classtypes associated to them.
-	public static function ClassTypes($user)
+	public function ClassTypes()
 	{
 		$classTypes = [];
 
-	    foreach ($user->activities as $activity)
+	    foreach ($this->activities as $activity)
 	    {
 	        foreach ($activity->classTypes as $classType)
 	        {
-	            if ($classType->id !== $user->id && !isset($classTypes[$classType->id]))
+	            if ($classType->id !== $this->id && !isset($classTypes[$classType->id]))
 	            {
 	                $classTypes[$classType->id] = $classType;
 	            }

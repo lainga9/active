@@ -16,7 +16,7 @@
 
 	<hr>
 
-	<h3>All Activities</h3>
+	<h3>Activities</h3>
 
 	@if( !$activities->isEmpty() )
 

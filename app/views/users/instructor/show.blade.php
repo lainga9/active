@@ -1,6 +1,6 @@
 @extends('layouts.full')
 
-@section('title', $user->first_name . ' ' . $user->last_name . ' Profile')
+@section('title', $user->getName() . ' Profile')
 
 @section('content')
 
@@ -25,10 +25,10 @@
 						@include('_partials.elements.timetable', ['activities' => $user->makeTimetable($user)])
 						<hr />
 						<h4>Activities</h4>
-						@include('_partials.instructor.activities', ['activities' => $user->activities()->future()->get()])
+						@include('_partials.instructor.activities', ['activities' => $user->activities])
 						<hr />
 						<h4>Passed Activities</h4>
-						@include('_partials.instructor.activities', ['activities' => $user->activities()->passed()->get()])
+						@include('_partials.instructor.activities', ['activities' => $user->passedActivities])
 					</div>
 					<div class="tab-pane" id="following">
 						@include('_partials.elements.following', compact('user'))

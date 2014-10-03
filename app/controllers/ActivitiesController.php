@@ -85,12 +85,12 @@ class ActivitiesController extends \BaseController {
 	 */
 	public function index()
 	{
-		$activities = $this->activity->future()->orderBy('created_at', 'DESC')->paginate(10);
+		$activities = $this->activity->orderBy('created_at', 'DESC')->paginate(10);
 
 		if( $this->user->isInstructor() )
 		{
-			$activities = $this->user->activities()->future()->get();
-			$passed 	= $this->user->activities()->passed()->get();
+			$activities = $this->user->activities;
+			$passed 	= $this->user->passedActivities;
 		}
 
 		$data = [
@@ -108,7 +108,7 @@ class ActivitiesController extends \BaseController {
 
 	public function attending()
 	{
-		$activities = $this->user->activities()->future()->get();
+		$activities = $this->user->attendingActivities;
 
 		$this->layout->content = View::make('activities.client.attending', compact('activities'));
 	}
@@ -187,7 +187,7 @@ class ActivitiesController extends \BaseController {
 			->with('error', $e->getMessage());
 		}
 
-		return Redirect::route('dashboard')
+		return Redirect::route('activities.show', $activity->id)
 		->with('success', 'Activity added successfully');
 	}
 
@@ -262,7 +262,7 @@ class ActivitiesController extends \BaseController {
 
 		$activity->attachClassTypes(Input::get('class_type_id'));
 
-		return Redirect::back()
+		return Redirect::route('activities.show', $activity->id)
 		->with('success', 'Activity updated successfully');
 	}
 

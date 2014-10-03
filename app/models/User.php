@@ -110,13 +110,25 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 			return $this->hasMany('Activity')->whereDate($date);	
 		}
 
-		return $this->hasMany('Activity');
+		return $this->hasMany('Activity')->where('date', '>=', date('Y-m-d'));
+	}
+
+	// Passed activities listed by an Instructor
+	public function passedActivities()
+	{
+		return $this->hasMany('Activity')->where('date', '<', date('Y-m-d'));
 	}
 
 	// Classes that client is attending
 	public function AttendingActivities() 
 	{
-		return $this->belongsToMany('Activity');
+		return $this->belongsToMany('Activity')->where('date', '>=', date('Y-m-d'));
+	}
+
+	// Classes that client is attending
+	public function AttendedActivities() 
+	{
+		return $this->belongsToMany('Activity')->where('date', '<', date('Y-m-d'));
 	}
 
 	// Actions performed this user
@@ -601,9 +613,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
     	return $this;
     }
 
-    // Get the link to a user
-    public function getLink()
-    {
-    	return URL::route('users.show', $this->id);
-    }
+	// Get the link to a user
+	public function getLink()
+	{
+		return URL::route('users.show', $this->id);
+	}
 }

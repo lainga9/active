@@ -227,7 +227,7 @@ Route::filter('activity.exists', function($route)
 // Check is an activity has passed or not
 Route::filter('activity.hasPassed', function($route)
 {
-	$id = Route::input('activityId');
+	$id = Route::input('id');
 
 	$activity = Activity::find($id);
 
@@ -271,7 +271,7 @@ Route::filter('activity.notFavourite', function($route)
 // Checks the instructor has enough credits to list an activity
 Route::filter('instructor.hasCredits', function() 
 {
-	if( !Auth::user()->subscribed() )
+	if( !Auth::user()->subscribed('pro') )
 	{
 		$credits = Auth::user()->userable->credits;
 

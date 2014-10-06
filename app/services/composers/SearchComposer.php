@@ -18,7 +18,7 @@ class SearchComposer {
 	{
 		$return = [];
 
-		$activities = $this->activity->all();
+		$activities = $this->activity->future()->get();
 
 		if( $activities )
 		{

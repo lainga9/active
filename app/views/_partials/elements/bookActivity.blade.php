@@ -11,3 +11,4 @@
 @else
 	<a href="{{ URL::route('activity.pay', $activity->id) }}" class="btn btn-large btn-success">Book Now</a>
 @endif
+@include('_partials.elements.applyCover', compact('activity'))

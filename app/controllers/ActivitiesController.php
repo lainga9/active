@@ -53,10 +53,10 @@ class ActivitiesController extends \BaseController {
 		/*-------- FILTERS -------*/
 
 		// Checks that the activity exists
-		$this->beforeFilter('activity.exists', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending', 'cancel']] );
+		$this->beforeFilter('activity.exists', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending', 'cancel', 'findCover', 'applyToCover', 'acceptCover']] );
 
 		// Instructor Only Pages
-		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'timetable', 'cancel', 'close']] );
+		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'timetable', 'cancel', 'close', 'coverListings']] );
 
 		// Client Only Pages
 		$this->beforeFilter('client', ['only' => ['attending', 'favourites']] );
@@ -201,8 +201,10 @@ class ActivitiesController extends \BaseController {
 	public function show($id)
 	{
 		$activity = $this->activity->find($id);
+		$instructor = $activity->isCovered() ? $activity->coverInstructor : $activity->instructor;
+
 		$this->layout = View::make('layouts.full');
-		$this->layout->content = View::make('activities.show', compact('activity'));
+		$this->layout->content = View::make('activities.show', ['activity' => $activity, 'instructor' => $instructor]);
 	}
 
 	/**
@@ -375,6 +377,75 @@ class ActivitiesController extends \BaseController {
 			'success',
 			'Booking has successfully been closed for this activity'
 		);
+	}
+
+	/**
+	 * Moves an activity to the find cover board
+	 * PUT /activity/cover/find/{id}
+	 *
+	 * @param $id
+	 * @return Response
+	 */
+	public function findCover($id)
+	{
+		$activity = $this->activity->find($id);
+		$activity = $activity->findCover();
+
+		return Redirect::route('activities.coverListings')
+		->with('success', 'Activity successfully listed on the find cover board');
+	}
+
+	/**
+	 * Lets an instructor apply to cover an activity
+	 * POST /activity/cover/apply/{id}
+	 *
+	 * @param $id
+	 * @return Response
+	 */
+	public function applyToCover($id)
+	{
+		$activity = $this->activity->find($id);
+		$activity = $activity->applyToCover($this->user);
+
+		$email 	= $this->mailer->send($activity->instructor, 'emails.blank', $this->user->getName() . ' has applied to cover ' . $activity->getName());
+
+		return Redirect::route('dashboard')
+		->with('success', 'You have successfully applied to cover ' . $activity->getName());
+	}
+
+	/**
+	 * Selects an applicant to cover an activity
+	 * POST /activity/cover/apply/{id}
+	 *
+	 * @param $id
+	 * @return Response
+	 */
+	public function acceptCover($id)
+	{
+		$activity = $this->activity->find($id);
+
+		$applicant = User::find(Input::get('cover_applicant_id'));
+		
+		$activity = $activity->acceptCover($applicant);
+
+		$email 	= $this->mailer->send($applicant, 'emails.blank', 'You have been selected to cover ' . $activity->getName());
+
+		return Redirect::route('dashboard')
+		->with('success', 'You have successfully selected ' . $applicant->getName() . ' to cover ' . $activity->getName());
+	}
+
+	/**
+	 * Shows all activities requiring cover
+	 * GET /activities/cover
+	 *
+	 * @param $id
+	 * @return Response
+	 */
+	public function coverListings()
+	{
+		$activities = $this->activity->needCover()->paginate(10);
+
+		$this->layout->content = View::make('activities.client.index')->with(compact('activities'));
 	}
 
 	/**

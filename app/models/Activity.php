@@ -3,6 +3,26 @@
 class Activity extends \Eloquent {
 	protected $guarded = [];
 
+	public function scopeFuture($query)
+	{
+		return $query->where('date', '>=', date('Y-m-d'));
+	}
+
+	public function scopeNeedCover($query)
+	{
+		return $query->where('need_cover', '=', 1);
+	}
+
+	public function coverApplicants()
+	{
+		return $this->belongsToMany('User', 'activity_cover', 'activity_id', 'instructor_id');
+	}
+
+	public function coverInstructor()
+	{
+		return $this->belongsTo('User', 'cover_instructor_id');
+	}
+
 	public function ClassTypes()
 	{
 		return $this->belongsToMany('ClassType');
@@ -43,6 +63,16 @@ class Activity extends \Eloquent {
 		return $this->cancelled == 1 ? true : false;
 	}
 
+	public function needsCover()
+	{
+		return $this->need_cover == 1 ? true : false;
+	}
+
+	public function isCoverable()
+	{
+		return $this->needsCover() && Auth::user()->isInstructor() && !$this->isOwn();
+	}
+
 	public function close()
 	{
 		$this->closed = 1;
@@ -54,6 +84,36 @@ class Activity extends \Eloquent {
 	public function cancel()
 	{
 		$this->cancelled = 1;
+		$this->save();
+
+		return $this;
+	}
+
+	public function findCover()
+	{
+		$this->need_cover = 1;
+		$this->save();
+
+		return $this;
+	}
+
+	public function isCovered()
+	{
+		if( $this->coverInstructor ) return true;
+
+		return false;
+	}
+
+	public function applyToCover($applicant)
+	{
+		$this->coverApplicants()->attach($applicant->id);
+
+		return $this;
+	}
+
+	public function acceptCover($applicant)
+	{
+		$this->cover_instructor_id = $applicant->id;
 		$this->save();
 
 		return $this;
@@ -246,7 +306,7 @@ class Activity extends \Eloquent {
 
     public function getDate()
     {
-    	return $this->date;
+    	return date('d-m-Y', strtotime($this->date));
     }
 
     public function getTime()

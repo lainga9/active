@@ -170,7 +170,7 @@ Route::filter('user.exists', function($route)
 	}
 });
 
-// Checks to see if the user exists
+// Doesn't allow a user to perform certain actions to himself
 Route::filter('user.notSelf', function($route)
 {
 	$id = Route::input('id');

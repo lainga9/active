@@ -156,6 +156,11 @@ Route::group(['before' => 'auth'], function() {
 		'uses'	=> 'ActivitiesController@create'
 	]);
 
+	Route::get('activities/cover', [
+		'as'	=> 'activities.coverListings',
+		'uses'	=> 'ActivitiesController@coverListings'
+	]);
+
 	// Single Activity
 	Route::get('activities/{id}', [
 		'as'	=> 'activities.show',
@@ -178,6 +183,24 @@ Route::group(['before' => 'auth'], function() {
 	Route::put('activities/{id}', [
 		'as'	=> 'activities.update',
 		'uses'	=> 'ActivitiesController@update'
+	]);
+
+	// Find Cover for an Activity
+	Route::put('activity/cover/find/{id}', [
+		'as'	=> 'activity.findCover',
+		'uses'	=> 'ActivitiesController@findCover'
+	]);
+
+	// Apply to cover an activity
+	Route::post('activity/cover/apply/{id}', [
+		'as'	=> 'activity.applyToCover',
+		'uses'	=> 'ActivitiesController@applyToCover'
+	]);
+
+	// Select an applicant to cover your activity
+	Route::post('activity/cover/accept/{id}', [
+		'as'	=> 'activity.acceptCover',
+		'uses'	=> 'ActivitiesController@acceptCover'
 	]);
 
 	// Activities a user is attending

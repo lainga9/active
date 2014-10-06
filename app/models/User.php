@@ -125,6 +125,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 		return $this->belongsToMany('Activity')->where('date', '>=', date('Y-m-d'));
 	}
 
+	// Classes an instructor has applied to cover
+	public function activitiesAppliedToCover()
+	{
+		return $this->belongsToMany('Activity', 'activity_cover', 'instructor_id', 'activity_id');
+	}
+
 	// Classes that client is attending
 	public function AttendedActivities() 
 	{
@@ -617,5 +623,22 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 	public function getLink()
 	{
 		return URL::route('users.show', $this->id);
+	}
+
+	// Checks if the user has applied to cover an activity
+	public function appliedToCover($activityId)
+	{
+		return $this->activitiesAppliedToCover->contains($activityId);
+	}
+
+	// Checks to see if the user has been selected to cover an activity
+	public function isCovering($activity)
+	{
+		if( $activity->coverInstructor)
+		{
+			return $activity->coverInstructor->id == $this->id;
+		}
+
+		return false;
 	}
 }

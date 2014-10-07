@@ -46,7 +46,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 		{
 			if( Auth::user()->id == $this->id )
 			{
-				return 'You';
+				return 'Your';
 			}
 		}
 
@@ -103,14 +103,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 	}
 
 	// Classes listed by an Instructor
-	public function Activities($date = null)
+	public function Activities()
 	{
-		if( $date )
-		{
-			return $this->hasMany('Activity')->whereDate($date);	
-		}
-
-		return $this->hasMany('Activity')->where('date', '>=', date('Y-m-d'));
+		return $this->hasMany('Activity')->future()->orWhere('taught_by_id', $this->id)->orWhere('cover_instructor_id', $this->id);
 	}
 
 	// Passed activities listed by an Instructor
@@ -356,12 +351,21 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 			$dates[] = date( "Y-m-d", strtotime("+{$i} day", $start) );
 		}
 
-		// For each date, find the corresponding activities and store them in an array
+		// For each date, find the corresponding activities and store them in an array. The key of the array is the name of the day in lowercase, for use with the jQuery tabs
 		foreach($dates as $date)
 		{
 			if( $user->isInstructor() )
 			{
-				$activities[ strtolower( date( 'l', strtotime($date) ) ) ] = Activity::whereUserId($user->id)->whereDate($date)->get();
+				// All of the users activities
+				$allActivities = $user->activities;
+
+				// Only activities which are on the specified date
+				$allActivities = $allActivities->filter(function($activity) use ($date)
+				{
+					return $activity->date == $date;
+				});
+
+				$activities[ strtolower( date( 'l', strtotime($date) ) ) ] = $allActivities;
 			}
 
 			if( $user->isClient() )

@@ -137,6 +137,23 @@ class ActivitiesController extends \BaseController {
 	}
 
 	/**
+	 * Duplicates an activity and adds it to logged in users timetable
+	 * POST /activity/duplicate/{id}
+	 *
+	 * @param $id
+	 * @return Response
+	 */
+	public function addToTimetable($id)
+	{
+		$activity = $this->activity->find($id);
+		$activity->taught_by_id = $this->user->id;
+		$activity->save();
+
+		return Redirect::route('dashboard')
+		->with('success', 'Activity successfully added to your timetable');
+	}
+
+	/**
 	 * Store a newly created resource in storage.
 	 * POST /activities
 	 *

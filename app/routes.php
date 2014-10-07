@@ -185,6 +185,12 @@ Route::group(['before' => 'auth'], function() {
 		'uses'	=> 'ActivitiesController@update'
 	]);
 
+	// Adds an activity to an instructors timetable
+	Route::post('activity/addToTimetable/{id}', [
+		'as'	=> 'activity.addToTimetable',
+		'uses'	=> 'ActivitiesController@addToTimetable'
+	]);
+
 	// Find Cover for an Activity
 	Route::put('activity/cover/find/{id}', [
 		'as'	=> 'activity.findCover',

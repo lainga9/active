@@ -49,6 +49,16 @@
 				@include('_partials.activities.coverApplicants', compact('activity'))
 
 			@else
+
+				<!-- Add to your timetable -->
+				@if( $instructor->isOrganisation() && Auth::user()->isInstructor() && !$activity->taughtBy )
+
+					{{ Form::open(['route' => ['activity.addToTimetable', $activity->id]]) }}
+						<button type="submit" class="btn btn-info">Add to my timetable</button>
+					{{ Form::close() }}
+
+				@endif
+
 				<!-- Book Button -->
 				@include('_partials.elements.bookActivity', compact('activity'))
 			@endif

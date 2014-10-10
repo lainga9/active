@@ -56,7 +56,7 @@ class ActivitiesController extends \BaseController {
 		$this->beforeFilter('activity.exists', ['only' => ['show', 'edit', 'update', 'book', 'addFavourite', 'removeFavourite', 'isFavourite', 'isAttending', 'cancel', 'findCover', 'applyToCover', 'acceptCover']] );
 
 		// Instructor Only Pages
-		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'timetable', 'cancel', 'close', 'coverListings']] );
+		$this->beforeFilter('instructor', ['only' => ['create', 'edit', 'store', 'cancel', 'close', 'coverListings']] );
 
 		// Client Only Pages
 		$this->beforeFilter('client', ['only' => ['attending', 'favourites']] );
@@ -149,7 +149,7 @@ class ActivitiesController extends \BaseController {
 		$activity->taught_by_id = $this->user->id;
 		$activity->save();
 
-		return Redirect::route('dashboard')
+		return Redirect::route('activities.show', $activity->id)
 		->with('success', 'Activity successfully added to your timetable');
 	}
 
@@ -218,8 +218,11 @@ class ActivitiesController extends \BaseController {
 	public function show($id)
 	{
 		$activity = $this->activity->find($id);
+
+		// Checks to see who the instructor of the activity is: the original instructor or someone who is covering it
 		$instructor = $activity->isCovered() ? $activity->coverInstructor : $activity->instructor;
 
+		// Full width layout
 		$this->layout = View::make('layouts.full');
 		$this->layout->content = View::make('activities.show', ['activity' => $activity, 'instructor' => $instructor]);
 	}
@@ -285,20 +288,9 @@ class ActivitiesController extends \BaseController {
 		->with('success', 'Activity updated successfully');
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 * DELETE /activities/{id}
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
 
 	/**
-	 * Attaches a user to an activity
+	 * Attaches a user to an activity i.e. allows them to book in
 	 * POST /bookActivity
 	 *
 	 * @param  int  $id
@@ -308,6 +300,7 @@ class ActivitiesController extends \BaseController {
 	{
 		$activity = $this->activity->find($id);
 
+		// Checks to see if the user is already booked into any other activities at the same time
 		$clashes = $this->user->checkAvailable($activity);
 
 		if( !$clashes->isEmpty() )
@@ -319,10 +312,13 @@ class ActivitiesController extends \BaseController {
 			]);
 		}
 
+		// Charge the user through stripe. If the user doesn't have a card they will be prompted to add one.
 		$charge = $this->stripe->createCharge($this->user, $activity, Input::get('stripeToken'));
 
+		// Create the database relationships
 		$activity->book($this->user);
 	
+		// Store the action for use with the social stream i.e. "Client user has booked into Activity"
 		try
 		{
 			$action 	= $this->action->create($this->user, 'booked into', $activity, 'Activity');
@@ -333,8 +329,10 @@ class ActivitiesController extends \BaseController {
 			->with('error', $e->getMessage());
 		}
 
+		// Send an email to the instructor informing them someone has booked in
 		$email 		= $this->mailer->send($activity->instructor, 'emails.blank', 'Testing Email');
 
+		// Schedule a email which is to be sent an hour before the class starts to remind the user
 		$reminder 	= $this->mailer->scheduleReminder($activity, $this->user);
 		
 		return Redirect::route('activities.show', $activity->id)

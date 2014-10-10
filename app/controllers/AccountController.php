@@ -103,4 +103,24 @@ class AccountController extends \BaseController {
 		->with('success', 'Card successfully added');
 	}
 
+	/* Function to handle the code sent from stripe connect when an instructor registers with Stripe */
+	public function stripeConnect()
+	{
+		$code = Input::get('code');
+		$this->user->stripe_connect_code = $code;
+		$this->user->save();
+
+		// Get access tokens for user
+		$token = $this->stripe->getAccessToken($code);
+
+		// Save these tokens to the user	
+		$user = $this->user->updateStripeTokens($token);
+		
+		if( $user )
+		{
+			return Redirect::route('account')
+			->with('success', 'You are now successfully connected with Stripe!');
+		}
+	} 
+
 }

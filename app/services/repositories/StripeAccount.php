@@ -2,58 +2,63 @@
 
 use \Stripe_Customer;
 use \Stripe_Charge;
+use \Stripe_Token;
 
 class StripeAccount implements \Services\Interfaces\AccountInterface {
 
 	protected $customer;
 	protected $charge;
+	protected $token;
 
-	public function __construct(Stripe_Customer $customer, Stripe_Charge $charge)
+	public function __construct(Stripe_Customer $customer, Stripe_Charge $charge, Stripe_Token $token)
 	{
 		$this->customer = $customer;
 		$this->charge 	= $charge;
+		$this->token 	= $token;
+	}
+
+	public function createToken($customerId, $accessToken)
+	{
+		$token = $this->token->create([
+			'customer'	=> $customerId
+		],
+		$accessToken);
+
+		return $token;
 	}
 
 	public function createCharge($user, $activity, $token = null)
 	{
 		if( !$token )
 		{
-			// Check if customer already exists
-			if( $user->hasStripeCard() )
-			{
-				$customer = $this->customer->retrieve($user->stripe_id);
-
-				$charge = $this->charge->create([
-					'amount'		=> $activity->stripeCost(),
-					'currency'		=> 'gbp',
-					'customer'		=> $customer,
-					'description'	=> 'Payment for ' . $activity->getName(),
-					'metadata'		=> [
-						'activity_id'	=> $activity->id
-					]
-				]);
-
-				return $charge;
-			}
+			$customer = $this->customer->retrieve($user->stripe_id);
 		}
 		else
 		{
 			$customer = $this->createCustomer($user, $token);
+		}
 
-			$charge = $this->charge->create([
+		$token = $this->createToken($customer->id, $activity->instructor->stripe_access_token);
+
+		$charge = $this->charge->create(
+			[
 				'amount'		=> $activity->stripeCost(),
 				'currency'		=> 'gbp',
-				'customer'		=> $customer,
-				'description'	=> 'Payment for ' . $activity->getName()
-			]);
+				'card'			=> $token->id,
+				'description'	=> 'Payment for ' . $activity->getName(),
+				'metadata'		=> [
+					'activity_id'	=> $activity->id
+				]
+			],
+			$activity->instructor->stripe_access_token
+		);
 
-			return $charge;
-		}
+		return $charge;
 	}
 
 	public function createCustomer($user, $token)
 	{
-		$customer = Stripe_Customer::create([
+		$customer = $this->customer->create([
 			'card'	=> $token,
 			'email'	=> $user->email
 		]);
@@ -152,5 +157,39 @@ class StripeAccount implements \Services\Interfaces\AccountInterface {
 		}
 
 		return null;
+	}
+
+	public function getAccessToken($code)
+	{
+		$url = 'https://connect.stripe.com/oauth/token';
+
+		$postFields = [
+			'client_secret' => 'sk_test_4QR832L2BoSdqhwKsrNwIBt3',
+			'grant_type' 	=> 'authorization_code',
+			'client_id' 	=> 'ca_4vqCgoetFXAQtOjNSzpfYK0nIrLt2Uz2',
+			'code' 			=> $code,
+		];
+
+		$ch = curl_init();
+
+		$options = [
+			CURLOPT_URL				=> $url,
+			CURLOPT_RETURNTRANSFER 	=> true,
+			CURLOPT_POST			=> true,
+			CURLOPT_POSTFIELDS		=> http_build_query($postFields)
+		];
+
+		curl_setopt_array($ch, $options);
+
+		$data = curl_exec($ch);
+
+		curl_close($ch);
+
+		if( $data )
+		{
+			$data = json_decode($data);
+		}
+
+		return $data;
 	}
 }

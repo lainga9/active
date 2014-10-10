@@ -28,7 +28,7 @@
 
 				@foreach( $collection as $activity )
 
-					@include('_partials.instructor.activity', ['activity' => $activity])
+					@include('_partials.instructor.activity', compact('activity'))
 
 				@endforeach
 

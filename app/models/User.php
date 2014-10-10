@@ -645,4 +645,23 @@ class User extends Eloquent implements UserInterface, RemindableInterface, Billa
 
 		return false;
 	}
+
+	// Checks if the logged in user is the same as a user object
+	public function isSelf()
+	{
+		return $this->id == Auth::user()->id;
+	}
+
+	public function updateStripeTokens($token)
+	{
+		if( !$token ) return false;
+
+		$this->stripe_access_token 		= $token->access_token;
+		$this->stripe_refresh_token		= $token->refresh_token;
+		$this->stripe_publishable_key	= $token->stripe_publishable_key;
+		$this->stripe_user_id 			= $token->stripe_user_id;
+		$this->save();
+
+		return $this;
+	}
 }

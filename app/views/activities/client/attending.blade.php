@@ -14,13 +14,15 @@
 
 		@foreach($activities as $activity)
 
-			<h4><a href="{{ URL::route('activities.show', $activity->id) }}" class="text-success">{{ $activity->name }}</a></h4>
+			<!-- <h4><a href="{{ URL::route('activities.show', $activity->id) }}" class="text-success">{{ $activity->name }}</a></h4>
 			<p>{{ $activity->time_from }} - {{ $activity->time_until }}</p>
 			<p>{{ date('l', strtotime($activity->date)) }} {{ $activity->date }}</p>
 			<p>{{ $activity->street_address }}</p>
 			<p>{{ $activity->town }}, {{ $activity->postcode }}</p>
 
-			<hr />
+			<hr /> -->
+
+			@include('_partials.client.activity', compact('activity'))
 
 		@endforeach
 

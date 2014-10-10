@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Fedeisas\\LaravelJsRoutes\\' => array($vendorDir . '/fedeisas/laravel-js-routes/src'),
+    'Barryvdh\\DomPDF\\' => array($vendorDir . '/barryvdh/laravel-dompdf/src'),
 );

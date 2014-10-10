@@ -4,11 +4,15 @@
 <!-- Name -->
 <h3>{{ $user->first_name }} {{ $user->last_name }}</h3>
 
-<!-- Follow Button -->
-@include('_partials.elements.followButton', compact('user'))
+@if( !$user->isSelf() )
 
-<!-- Send Message -->
-@include('_partials.elements.sendMessage', compact('user'))
+	<!-- Follow Button -->
+	@include('_partials.elements.followButton', compact('user'))
+
+	<!-- Send Message -->
+	@include('_partials.elements.sendMessage', compact('user'))
+
+@endif
 
 <!-- Average Rating -->
 @if( $user->isInstructor() )
@@ -37,8 +41,10 @@
 	Profile Views: {{ $user->userable->page_views }}
 	<hr />
 
-	<!-- Leave Feedback -->
-	@include('_partials.elements.leaveFeedback', ['instructor' => $user])
+	@if( !$user->isSelf() )
+		<!-- Leave Feedback -->
+		@include('_partials.elements.leaveFeedback', ['instructor' => $user])
+	@endif
 @endif
 
 <hr />

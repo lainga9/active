@@ -15,6 +15,21 @@
 
 	<h2>My Account</h2>
 
+	<?php 
+		$options = [
+			'response_type'	=> 'code',
+			'client_id'		=> 'ca_4vqCgoetFXAQtOjNSzpfYK0nIrLt2Uz2',
+			'scope'			=> 'read_write',
+			'stripe_user'	=> [
+				'email'	=> $user->email
+			]
+		];
+
+		$query = http_build_query($options);
+	?>
+
+	<a href="https://connect.stripe.com/oauth/authorize?<?= $query; ?>">Connect with stripe</a>
+
 	<hr />
 
 	<h3>My Plan</h3>
